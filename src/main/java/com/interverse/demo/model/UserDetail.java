@@ -38,6 +38,4 @@ public class UserDetail {
 	@JoinColumn(name="user_id")
 	private User user;
 	
-	
-
 }
