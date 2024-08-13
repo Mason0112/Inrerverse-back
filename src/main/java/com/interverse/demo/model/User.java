@@ -40,14 +40,14 @@ public class User {
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;
 	
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private UserDetail userDetail;
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sender")
-	private List<Notification> sentNotification;
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "receiver")
-	private List<Notification> receivedNotification;
+//	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+//	private UserDetail userDetail;
+//	
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sender")
+//	private List<Notification> sentNotification;
+//	
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "receiver")
+//	private List<Notification> receivedNotification;
 	
 	
 	//暐欣的
@@ -55,17 +55,17 @@ public class User {
 	private List<Order> orders;
 	
 	
-	//靖緯的
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creator")
-	private List<Club> club;
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creator")
-	private List<Event> event;
-	
-	
-	//勁甫的
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private List<UserPost> userPost;
+//	//靖緯的
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creator")
+//	private List<Club> club;
+//	
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "creator")
+//	private List<Event> event;
+//	
+//	
+//	//勁甫的
+//	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+//	private List<UserPost> userPost;
 	
 	@PrePersist
     public void onCreate() {
