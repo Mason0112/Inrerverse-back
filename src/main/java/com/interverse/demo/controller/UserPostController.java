@@ -1,12 +1,12 @@
 package com.interverse.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.example.demo.Service.UserPostService;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+
+import com.interverse.demo.service.UserPostService;
+import com.interverse.demo.service.UserService;
 
 
 @RestController

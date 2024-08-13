@@ -5,8 +5,8 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.example.demo.model.PostComment;
-import com.example.demo.model.PostCommentRepository;
+import com.interverse.demo.model.PostComment;
+import com.interverse.demo.model.PostCommentRepository;
 
 @Service
 public class PostCommentService {

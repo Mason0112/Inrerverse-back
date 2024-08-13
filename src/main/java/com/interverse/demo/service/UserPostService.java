@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.UserPost;
-import com.example.demo.model.UserPostRepository;
+import com.interverse.demo.model.UserPost;
+import com.interverse.demo.model.UserPostRepository;
 
 
 @Service

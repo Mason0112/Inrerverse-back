@@ -1,15 +1,13 @@
 package com.interverse.demo.service;
 
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.ClubArticleComment;
-import com.example.demo.model.ClubArticleCommentRepository;
-import com.example.demo.model.ClubArticle;
+import com.interverse.demo.model.ClubArticleComment;
+import com.interverse.demo.model.ClubArticleCommentRepository;
 
 @Service
 public class ClubArticlesCommentsService {

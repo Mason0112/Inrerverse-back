@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.example.demo.model.ClubArticle;
-import com.example.demo.model.ClubArticlesRepository;
+import com.interverse.demo.model.ClubArticle;
+import com.interverse.demo.model.ClubArticlesRepository;
 
 @Service
 public class ClubArticleService {
