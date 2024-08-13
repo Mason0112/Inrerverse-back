@@ -1,44 +1,42 @@
 package com.interverse.demo.model;
 
-import java.time.LocalDateTime;
 import java.util.Date;
-import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 
 @Entity
-@Table(name = "user_posts")
-public class UserPost {
-	
+@Table(name = "post_comments")
+public class PostComment {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
+	@JoinColumn(name = "post_id")
+	private UserPost userPost;
+	
+	@ManyToOne
 	@JoinColumn(name = "user_id")
 	private User user;
 	
-	@Column(name = "content")
-	private String content;
+	@Column(name = "comment")
+	private String comment;
 	
-	@Column(name = "created_at")
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")// 規範時間格式 EEEE=>星期幾
-	@Temporal(TemporalType.TIMESTAMP)					// 年月日時分秒
+	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date createdAt;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
@@ -48,10 +46,7 @@ public class UserPost {
 		}
 	}
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user_posts")
-	private List<PostComment> comment;
-	
-	public UserPost() {
+	public PostComment() {
 	}
 
 	public Integer getId() {
@@ -62,6 +57,14 @@ public class UserPost {
 		this.id = id;
 	}
 
+	public UserPost getUserPost() {
+		return userPost;
+	}
+
+	public void setUserPost(UserPost userPost) {
+		this.userPost = userPost;
+	}
+
 	public User getUsers() {
 		return user;
 	}
@@ -70,12 +73,12 @@ public class UserPost {
 		this.user = user;
 	}
 
-	public String getContent() {
-		return content;
+	public String getComment() {
+		return comment;
 	}
 
-	public void setContent(String content) {
-		this.content = content;
+	public void setComment(String comment) {
+		this.comment = comment;
 	}
 
 	public Date getCreatedAt() {
@@ -84,22 +87,6 @@ public class UserPost {
 
 	public void setCreatedAt(Date createdAt) {
 		this.createdAt = createdAt;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public List<PostComment> getComment() {
-		return comment;
-	}
-
-	public void setComment(List<PostComment> comment) {
-		this.comment = comment;
 	}
 
 	
