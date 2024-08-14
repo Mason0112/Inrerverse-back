@@ -3,8 +3,6 @@ package com.interverse.demo.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.management.Notification;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
