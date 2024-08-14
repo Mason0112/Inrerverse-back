@@ -1,5 +1,5 @@
-//package com.interverse.demo.model;
-//
-//public class Event {
-//
-//}
+package com.interverse.demo.model;
+
+public class Event {
+
+}

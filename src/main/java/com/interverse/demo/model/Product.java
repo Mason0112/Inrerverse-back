@@ -44,7 +44,7 @@ public class Product {
 	private Integer price;
 	
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE", timezone = "GMT+8")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "added")
 	private LocalDateTime addtime;

@@ -1,5 +1,5 @@
-//package com.interverse.demo.model;
-//
-//public class Club {
-//
-//}
+package com.interverse.demo.model;
+
+public class Club {
+
+}
