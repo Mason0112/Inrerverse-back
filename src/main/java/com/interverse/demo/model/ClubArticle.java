@@ -1,5 +1,6 @@
 package com.interverse.demo.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -42,17 +43,16 @@ public class ClubArticle {
 	@Column(name = "content")
 	private String content;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club_articles")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
 	private List<ClubArticleComment> comment;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date added;
+	private LocalDateTime added;
 
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
 		if (added == null) {
-			added = new Date();
+			added =LocalDateTime.now();
 		}
 	}
 
@@ -91,11 +91,11 @@ public class ClubArticle {
 		this.content = content;
 	}
 
-	public Date getAdded() {
+	public LocalDateTime getAdded() {
 		return added;
 	}
 
-	public void setAdded(Date added) {
+	public void setAdded(LocalDateTime added) {
 		this.added = added;
 	}
 

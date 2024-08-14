@@ -1,6 +1,6 @@
 package com.interverse.demo.model;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
@@ -13,11 +13,13 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.Setter;
 
 @Entity
 @Table(name = "post_comments")
+@Getter
+@Setter
 public class PostComment {
 
 	@Id
@@ -36,59 +38,13 @@ public class PostComment {
 	private String comment;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date createdAt;
+	private LocalDateTime added;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
-		if (createdAt == null) {
-			createdAt = new Date();
+		if (added == null) {
+			added =LocalDateTime.now();
 		}
 	}
-
-	public PostComment() {
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public UserPost getUserPost() {
-		return userPost;
-	}
-
-	public void setUserPost(UserPost userPost) {
-		this.userPost = userPost;
-	}
-
-	public User getUsers() {
-		return user;
-	}
-
-	public void setUsers(User user) {
-		this.user = user;
-	}
-
-	public String getComment() {
-		return comment;
-	}
-
-	public void setComment(String comment) {
-		this.comment = comment;
-	}
-
-	public Date getCreatedAt() {
-		return createdAt;
-	}
-
-	public void setCreatedAt(Date createdAt) {
-		this.createdAt = createdAt;
-	}
-
-	
 	
 }

@@ -48,7 +48,7 @@ public class Event {
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="userId")
-	private User user;
+	private User creator;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	@Temporal(TemporalType.TIMESTAMP)
