@@ -65,7 +65,7 @@ public class User {
 	
 	//勁甫的
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private List<UserPost> userPost;
+	private List<UserPost> UserPost;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<PostComment> postComment;
