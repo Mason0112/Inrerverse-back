@@ -25,10 +25,10 @@ public class PostComment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
-	@ManyToOne
-	@JoinColumn(name = "post_id")
-	private UserPost userPost;
+//	
+//	@ManyToOne
+//	@JoinColumn(name = "post_id")
+//	private UserPost userPost;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
@@ -39,6 +39,10 @@ public class PostComment {
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;
+	
+	@ManyToOne
+	@JoinColumn(name = "post_id")
+	private UserPost userPost;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
