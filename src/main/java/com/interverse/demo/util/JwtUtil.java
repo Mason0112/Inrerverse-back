@@ -11,5 +11,7 @@ public class JwtUtil {
 	
 	@Value("${jwt.token.expiration}")
 	private long expiration;
+	
+	
 
 }
