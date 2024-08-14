@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,8 +32,8 @@ public class User {
 	private Integer id;
 	@Column(unique = true, nullable = false)
 	private String accountNumber;
-	@Column(nullable = false)
-	private String password;
+	@Column(nullable = false) @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+	private String password;  //避免密碼欄位在用JSON回應時顯示
 	@Column(unique = true, nullable = false)
 	private String email;
 	@Column(nullable = false)
