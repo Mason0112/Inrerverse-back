@@ -5,20 +5,24 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interverse.demo.model.User;
+import com.interverse.demo.model.UserPost;
+import com.interverse.demo.service.UserPostService;
 import com.interverse.demo.service.UserService;
 
+
 @RestController
-public class UserController {
+public class UserPostController {
+
+	@Autowired
+	private UserPostService postService;
+	
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping("/users/addpost")
-	public User addUser(@RequestBody User user ) {
-		
-		return  userService.register(user);
-		
-		
+	@PostMapping("/userPost/addPost")
+	public UserPost addPost(@RequestBody UserPost post) {
+		return postService.savePost(post);
 	}
+	
 	
 }
