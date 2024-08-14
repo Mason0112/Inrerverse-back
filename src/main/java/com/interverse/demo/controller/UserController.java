@@ -16,7 +16,7 @@ public class UserController {
 	@PostMapping("/users/addpost")
 	public User postCategories(@RequestBody User user ) {
 		
-		return  userService.resgister(user);
+		return  userService.register(user);
 		
 		
 	}

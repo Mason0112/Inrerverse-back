@@ -29,7 +29,7 @@ public class CartController {
 	public String createCart(@RequestBody  CartDTO cartdto){
 		
 		Product productById = productService.findProductById(cartdto.getProductsId());
-		User userbyId = userService.findById(cartdto.getUsersId());
+		User userbyId = userService.findUserById(cartdto.getUsersId());
 		Cart cart = new Cart();
 		CartId cartId = new CartId();
 		cartId.setProductsId(cartdto.getProductsId());
