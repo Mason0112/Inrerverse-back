@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +59,52 @@ public class ProductPhotoService {
         productPhoto.setAdded(LocalDateTime.now());
         
 		return productPhotosRepo.save(productPhoto);
-		
-		
 	}
+	
+	 public void deleteProductPhoto(Integer photoId) throws IOException {
+	        ProductPhotos photo = productPhotosRepo.findById(photoId)
+	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+	        
+	        Path filePath = Paths.get(photo.getPhotoPath());
+	        Files.deleteIfExists(filePath);
+	        
+	        productPhotosRepo.delete(photo);
+	    }
+	    
+	    public ProductPhotos updateProductPhoto(Integer photoId, MultipartFile newFile) throws IOException {
+	        ProductPhotos photo = productPhotosRepo.findById(photoId)
+	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+	        
+	        // Delete old file
+	        Path oldFilePath = Paths.get(photo.getPhotoPath());
+	        Files.deleteIfExists(oldFilePath);
+	        
+	        // Save new file
+	        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
+	        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+	        Path uploadPath = Paths.get(uploadDir);
+	        Path newFilePath = uploadPath.resolve(uniqueFileName);
+	        newFile.transferTo(newFilePath.toFile());
+	        
+	        // Update photo information
+	        photo.setPhotoName(fileName);
+	        photo.setPhotoPath(newFilePath.toString());
+	        photo.setAdded(LocalDateTime.now());
+	        
+	        return productPhotosRepo.save(photo);
+	    }
+	    
+	    public ProductPhotos getProductPhoto(Integer photoId) {
+	        return productPhotosRepo.findById(photoId)
+	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+	    }
+	    
+	    public List<ProductPhotos> getAllProductPhotos(Integer productId) {
+	        Product product = productRepo.findById(productId)
+	            .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+	        return productPhotosRepo.findByProducts(product);
+	    }
+	
+	
+	
 }

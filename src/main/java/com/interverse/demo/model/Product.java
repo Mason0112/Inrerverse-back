@@ -1,10 +1,9 @@
 package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.CascadeType;
@@ -49,11 +48,12 @@ public class Product {
 	@Column(name = "added")
 	private LocalDateTime addtime;
 	
-
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category categories;
 	
+
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "products")
 	private List<ProductPhotos> productPhotos;
 	

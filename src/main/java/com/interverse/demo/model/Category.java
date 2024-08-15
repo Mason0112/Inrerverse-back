@@ -2,6 +2,8 @@ package com.interverse.demo.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -28,6 +30,8 @@ public class Category {
 	private Integer id;
 	@Column(name = "category_name")
 	private String name;
+	
+	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "categories")
 	private List<Product> products;
 	
