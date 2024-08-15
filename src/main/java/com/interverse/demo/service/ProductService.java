@@ -1,11 +1,10 @@
 package com.interverse.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import com.interverse.demo.model.Product;
 import com.interverse.demo.model.ProductRepository;
@@ -34,5 +33,25 @@ public class ProductService {
 		
 		return null;
 	}
+	
+
+    public List<Product> findAllProducts() {
+        return productRepo.findAll();
+    }
+
+    
+    public Product updateProduct(Integer id, Product productDetails) {
+        Product product = findProductById(id);
+        product.setName(productDetails.getName());
+        product.setDescription(productDetails.getDescription());
+        product.setPrice(productDetails.getPrice());
+        // 更新其他屬性...
+        return productRepo.save(product);
+    }
+
+    public void deleteProduct(Integer id) {
+        Product product = findProductById(id);
+        productRepo.delete(product);
+    }
 	
 }

@@ -1,9 +1,6 @@
 package com.interverse.demo.model;
 
-<<<<<<< HEAD
-public class Club {
 
-=======
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,8 +20,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -63,7 +62,5 @@ public class Club {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<Event> event;
 
-	public Club() {
-	}
->>>>>>> 2ce66402e2d1e0a264a657a3bfa26449b301993b
+
 }

@@ -1,10 +1,6 @@
 package com.interverse.demo.model;
 
-<<<<<<< HEAD
-public class Event {
 
-}
-=======
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -74,4 +70,4 @@ public class Event {
 	
 }	
 
->>>>>>> 2ce66402e2d1e0a264a657a3bfa26449b301993b
+
