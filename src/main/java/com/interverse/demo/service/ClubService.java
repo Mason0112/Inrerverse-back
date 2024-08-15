@@ -23,8 +23,7 @@ public class ClubService {
 		Optional<Club> optional = clubRepo.findById(id);
 
 		if (optional.isPresent()) {
-			Club result = optional.get();
-			return result;
+			return optional.get();
 		}
 		return null;
 	}
@@ -33,7 +32,7 @@ public class ClubService {
 		clubRepo.deleteById(id);
 	}
 
-	public List<Club> findAllCub() {
+	public List<Club> findAllClub() {
 		return clubRepo.findAll();
 	}
 }
