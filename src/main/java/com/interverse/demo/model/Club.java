@@ -26,6 +26,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "clubs")
 public class Club {
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
@@ -61,4 +62,5 @@ public class Club {
 
 	public Club() {
 	}
+
 }

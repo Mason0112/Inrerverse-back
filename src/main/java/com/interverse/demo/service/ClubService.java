@@ -9,8 +9,6 @@ import org.springframework.stereotype.Service;
 import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubRepository;
 
-
-
 @Service
 public class ClubService {
 

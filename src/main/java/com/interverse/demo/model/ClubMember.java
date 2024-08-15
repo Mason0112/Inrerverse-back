@@ -20,27 +20,31 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-@Entity
-@Table(name = "clubFavorites")
-public class ClassFavorite {
-
+@Entity@Table(name="clubMembers")
+public class ClubMember {
+	
 	@EmbeddedId
-	private ClubFavoriteId clubFavoriteId;
-
+	private ClubMemberId clubMemberId ;
+	
+	private Integer status;
+	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime added;
-
+	
 	@PrePersist
 	protected void onCreate() {
 		added = LocalDateTime.now();
 	}
 	
 	@ManyToOne(fetch = FetchType.LAZY)
+	@MapsId("userId")
+	private User user;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("clubId")
 	private Club club;
 	
-	@ManyToOne(fetch = FetchType.LAZY)
-	@MapsId("userId")
-	private User user;
+	
+	
 }
