@@ -42,7 +42,7 @@ public class Club {
 
 	@ManyToOne
 	@JoinColumn(name = "creatorId")
-	private User user;
+	private User creator;
 
 	private Integer isPublic;
 

@@ -1,11 +1,11 @@
 package com.interverse.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.CartDTO;
 import com.interverse.demo.model.Cart;
 import com.interverse.demo.model.CartId;
 import com.interverse.demo.model.Product;
@@ -13,7 +13,6 @@ import com.interverse.demo.model.User;
 import com.interverse.demo.service.CartService;
 import com.interverse.demo.service.ProductService;
 import com.interverse.demo.service.UserService;
-import com.interverse.demo.dto.CartDTO;
 
 
 @RestController

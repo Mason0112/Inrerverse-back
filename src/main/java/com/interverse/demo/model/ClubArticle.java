@@ -1,5 +1,6 @@
 package com.interverse.demo.model;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -17,11 +18,15 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
-import jakarta.persistence.Temporal;
-import jakarta.persistence.TemporalType;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Table(name = "club_articles")
+@Getter
+@Setter
+@NoArgsConstructor
 public class ClubArticle {
 
 	@Id
@@ -42,80 +47,16 @@ public class ClubArticle {
 	@Column(name = "content")
 	private String content;
 
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club_articles")
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
 	private List<ClubArticleComment> comment;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date added;
+	private LocalDateTime added;
 
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
 		if (added == null) {
-			added = new Date();
+			added = LocalDateTime.now();
 		}
 	}
-
-	public ClubArticle() {
-	}
-
-	public Integer getId() {
-		return id;
-	}
-
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	public User getUser() {
-		return user;
-	}
-
-	public void setUser(User user) {
-		this.user = user;
-	}
-
-	public String getTitle() {
-		return title;
-	}
-
-	public void setTitle(String title) {
-		this.title = title;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public Date getAdded() {
-		return added;
-	}
-
-	public void setAdded(Date added) {
-		this.added = added;
-	}
-
-	public Club getClub() {
-		return club;
-	}
-
-	public void setClub(Club club) {
-		this.club = club;
-	}
-
-	public List<ClubArticleComment> getComment() {
-		return comment;
-	}
-
-	public void setComment(List<ClubArticleComment> comment) {
-		this.comment = comment;
-	}
-
-
-
-
 }

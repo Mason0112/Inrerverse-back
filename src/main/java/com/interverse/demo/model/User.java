@@ -3,8 +3,6 @@ package com.interverse.demo.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import javax.management.Notification;
-
 import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.CascadeType;
@@ -45,17 +43,10 @@ public class User {
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private UserDetail userDetail;
 	
-<<<<<<< HEAD
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sender")
-	private List<Notification> sentNotification;
-	
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "receiver")
-=======
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "sender")
 	private List<Notification> sentNotification;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "receiver")
->>>>>>> 2ce66402e2d1e0a264a657a3bfa26449b301993b
 	private List<Notification> receivedNotification;
 	
 	
@@ -75,8 +66,8 @@ public class User {
 	//勁甫的
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<UserPost> userPost;
-<<<<<<< HEAD
-=======
+
+
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<PostComment> postComment;
@@ -86,7 +77,7 @@ public class User {
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<ClubArticleComment> clubArticleComment;
->>>>>>> 2ce66402e2d1e0a264a657a3bfa26449b301993b
+
 	
 	@PrePersist
     public void onCreate() {
