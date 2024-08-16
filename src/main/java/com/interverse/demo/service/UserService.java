@@ -21,6 +21,7 @@ public class UserService {
 	@Autowired
 	private UserRepository userRepo;
 	
+	
 	public User register(User user) {
 		
 		String encodedPassword = pwdEcoder.encode(user.getPassword());
@@ -28,6 +29,7 @@ public class UserService {
 		
 		return userRepo.save(user);
 	}
+	
 	
 	public User login(String accountNumber, String password) {
 		
@@ -60,5 +62,15 @@ public class UserService {
 		}
 		return null;
 	}
+	
+	public void deleteUserById(Integer id) {
+		userRepo.deleteById(id);
+	}
+	
+	public User updateUserDetail(User user) {
+		return userRepo.save(user);
+	}
+	
+	
 }
 	
