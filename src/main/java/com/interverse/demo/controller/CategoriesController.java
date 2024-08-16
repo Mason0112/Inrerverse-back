@@ -1,51 +1,80 @@
 package com.interverse.demo.controller;
 
+import java.net.URI;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.model.Category;
 import com.interverse.demo.service.CategoryService;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-
 
 
 
 @RestController
+@RequestMapping("/categories")
 public class CategoriesController {
 	@Autowired
 	private CategoryService categoryService;
 	
-	@GetMapping("/categoeies/{categoryid}")
-	@ResponseBody
-	public String  findCategory(@PathVariable("categoryid") Integer categoryid) {
+	@GetMapping("/{categoryId}")
+    public ResponseEntity<?> findCategory(@PathVariable("categoryId") Integer categoryId) {
+        try {
+            Category category = categoryService.findCateGoryById(categoryId);
+            if (category != null) {
+                return ResponseEntity.ok(category);
+            } else {
+                return ResponseEntity.notFound().build();
+            }
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An error occurred while processing your request");
+        }
+    }
+	
+	
+	@PostMapping
+	public ResponseEntity<Category> postCategories(@RequestBody Category category) {
 		
-		Category cateGoryById = categoryService.findCateGoryById(categoryid);
+		Category saveCategory = categoryService.saveCategory(category);
+		return ResponseEntity.created(URI.create("/categories"+saveCategory.getId())).body(saveCategory);
 		
-		if (cateGoryById != null) {
-			return cateGoryById.getId()+""+cateGoryById.getName()+"";
-		}
-		return "No result";
-			
+		
 	}
 	
 	
-	@PostMapping("/categoeies/addpost")
-	public Category postCategories(@RequestBody Category category) {
-		
-		return categoryService.saveCategory(category);
-		
-		
-	}
-	
-	
+	 @PutMapping("/{categoryId}")
+	    public ResponseEntity<Category> updateCategory(
+	            @PathVariable("categoryId") Integer categoryId,
+	            @RequestBody Category category) {
+	        category.setId(categoryId);
+	        Category updatedCategory = categoryService.updateCategory(category);
+	        if (updatedCategory != null) {
+	            return ResponseEntity.ok(updatedCategory);
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    }
 
+	    @DeleteMapping("/{categoryId}")
+	    public ResponseEntity<Void> deleteCategory(@PathVariable("categoryId") Integer categoryId) {
+	        boolean deleted = categoryService.deleteCategory(categoryId);
+	        if (deleted) {
+	            return ResponseEntity.noContent().build();
+	        } else {
+	            return ResponseEntity.notFound().build();
+	        }
+	    }
+	
 
 }

@@ -28,7 +28,7 @@ public class CartController {
 	public String createCart(@RequestBody  CartDTO cartdto){
 		
 		Product productById = productService.findProductById(cartdto.getProductsId());
-		User userbyId = userService.findUserById(cartdto.getUsersId());
+		User userById = userService.findUserById(cartdto.getUsersId());
 		Cart cart = new Cart();
 		CartId cartId = new CartId();
 		cartId.setProductsId(cartdto.getProductsId());
@@ -36,7 +36,7 @@ public class CartController {
 		cart.setCartId(cartId);
 		cart.setQuantity(cartdto.getVol());
 		cart.setProducts(productById);
-		cart.setUsers(userbyId);
+		cart.setUsers(userById);
 		cartService.addToCart(cart);
 		
 		return "ok";

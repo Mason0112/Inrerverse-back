@@ -69,7 +69,9 @@ public class User {
 	//勁甫的
 	@JsonManagedReference
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private List<UserPost> UserPost;
+	private List<UserPost> userPost;
+
+
 	
 	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
@@ -80,6 +82,7 @@ public class User {
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<ClubArticleComment> clubArticleComment;
+
 	
 	@PrePersist
     public void onCreate() {
