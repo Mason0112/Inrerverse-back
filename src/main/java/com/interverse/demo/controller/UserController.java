@@ -84,6 +84,7 @@ public class UserController {
 					.put("nickname", user.getNickname());
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
+			
 			userResponseJson.put("token", token);
 			userResponseJson.put("id", user.getId());
 		}
@@ -125,6 +126,4 @@ public class UserController {
 		return "ok";
 	}
 	
-	
-
 }
