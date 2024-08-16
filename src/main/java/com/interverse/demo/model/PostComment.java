@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -25,13 +27,10 @@ public class PostComment {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-//	
-//	@ManyToOne
-//	@JoinColumn(name = "post_id")
-//	private UserPost userPost;
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private User user;
 	
 	@Column(name = "comment")
@@ -42,6 +41,7 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "post_id")
+	@JsonBackReference
 	private UserPost userPost;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
