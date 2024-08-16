@@ -22,8 +22,8 @@ import lombok.Setter;
 @Table(name="eventDetails")
 public class EventDetail {
 	
-	@Column(insertable = false, updatable = false)
 	@Id
+	@Column(name = "id", nullable = false)
 	private Integer id;
 	
 	@OneToOne

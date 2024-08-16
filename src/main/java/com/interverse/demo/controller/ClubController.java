@@ -40,14 +40,14 @@ public class ClubController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<Club> getClubById(@PathVariable Integer id) {
+	public ResponseEntity<?> getClubById(@PathVariable Integer id) {
 		Club result = cService.findClubById(id);
 
 		if (result != null) {
 			return ResponseEntity.ok(result);
 
 		}
-		return ResponseEntity.notFound().build();
+		return ResponseEntity.status(HttpStatus.OK).body("無此ID");
 	}
 
 	@DeleteMapping("/delete/{id}")
@@ -62,16 +62,17 @@ public class ClubController {
 		return ResponseEntity.status(HttpStatus.OK).body("Delete Successful");
 	}
 
-	@PutMapping(value = "/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PutMapping("/{id}")
 	public ResponseEntity<String> updateClub(@PathVariable Integer id, @RequestBody Club club) {
-
-		if (cService.findClubById(id) == null) {
+		
+		Club existingclub = cService.findClubById(id);
+		
+		if (existingclub == null) {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
 		}
 		club.setId(id); 
-		club.setAdded(cService.findClubById(id).getAdded());
-		
-		Club result = cService.saveClub(club);
+		club.setAdded(existingclub.getAdded());
+		cService.saveClub(club);
 		
 		return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
 	}

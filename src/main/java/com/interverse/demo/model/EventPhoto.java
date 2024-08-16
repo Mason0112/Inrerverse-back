@@ -23,7 +23,7 @@ public class EventPhoto {
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	private String photos;
+	private String photo;
 	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="eventId")
