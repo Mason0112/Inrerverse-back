@@ -29,45 +29,42 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="events")
+@Table(name = "events")
 public class Event {
-	
-	@Column(insertable=false, updatable=false)
+
+	@Column(insertable = false, updatable = false)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	
+	// 來源
 	private Integer source;
-	
-	private String location;
-	
+
+	private String eventName;
+
 	private String eventPhoto;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="clubId")
+	@JoinColumn(name = "clubId")
 	private Club club;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name="userId")
+	@JoinColumn(name = "creator")
 	private User creator;
-	
+
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime added;
-	
-	@OneToOne(cascade = CascadeType.ALL,fetch = FetchType.LAZY)	
-	private EventDetail eventDetail;
-	
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name="eventId")
-	private List<EventPhoto> evenphoto;
-	
-	
+
 	@PrePersist
 	protected void onCreate() {
 		added = LocalDateTime.now();
 	}
-	
-}	
 
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private EventDetail eventDetail;
 
+	@OneToMany(fetch = FetchType.LAZY)
+	@JoinColumn(name = "eventId")
+	private List<EventPhoto> evenphoto;
+
+}

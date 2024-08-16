@@ -6,8 +6,6 @@ import org.springframework.format.annotation.DateTimeFormat;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.MapsId;
@@ -24,7 +22,7 @@ import lombok.Setter;
 @Table(name="eventDetails")
 public class EventDetail {
 	
-	@Column
+	@Column(insertable = false, updatable = false)
 	@Id
 	private Integer id;
 	

@@ -28,6 +28,9 @@ public class ClubPhoto {
 	@JoinColumn(name="clubId")
 	private Club club;
 	
+	@ManyToOne
+	@JoinColumn(name="uploaderId")
+	private User uploaderId;
 	
 	public ClubPhoto() {
 	}
