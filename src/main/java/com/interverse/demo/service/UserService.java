@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.dto.UserDTO;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserRepository;
 
@@ -34,5 +35,11 @@ public class UserService {
 		}
 		return null;
 	}
+	
+
+    public UserDTO findUserDTOById(Integer id) {
+        return uRepo.findUserDTOById(id)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+    }
 }
 	
