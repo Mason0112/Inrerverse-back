@@ -24,24 +24,7 @@ public class OrderDetailController {
 	@Autowired
 	private ProductService productService;
 	
-	@PostMapping("/orderDetail/addpost")
-	public String createOrderDetail(@RequestBody OrderDetailDTO orderDetailDTO ) {
-		
-		Product productById = productService.findProductById(orderDetailDTO.getProductId());
-		Order orderById = orderService.findOrderById(orderDetailDTO.getOrderId());
-		OrderDetail orderDetail = new OrderDetail();
-		OrderDetailId orderDetailId = new OrderDetailId();
-		orderDetailId.setOrdersId(orderDetailDTO.getOrderId());
-		orderDetailId.setProductsId(orderDetailDTO.getProductId());
-		orderDetail.setOrderDetailId(orderDetailId);
-		orderDetail.setQuantity(orderDetailDTO.getVol());
-		orderDetail.setOrders(orderById);
-		orderDetail.setProducts(productById);
-		orderDetailService.addToOrder(orderDetail);
-		
-		return "ok";
+	
 		
 	}
 	
-	
-}
