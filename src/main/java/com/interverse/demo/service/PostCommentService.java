@@ -1,9 +1,11 @@
 package com.interverse.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.interverse.demo.model.PostComment;
 import com.interverse.demo.model.PostCommentRepository;
@@ -26,6 +28,7 @@ public class PostCommentService {
 		return null;
 	}
 	
+	@Transactional
 	public PostComment updateComment(Integer commentId, String newComment) {
 		Optional<PostComment> optional = commentRepo.findById(commentId);
 		if(optional.isPresent()) {
@@ -40,7 +43,10 @@ public class PostCommentService {
 		commentRepo.deleteById(commentId);
 	}
 	
-	//findCommentByPostId
+	public List<PostComment> FindCommentByPost(Integer postId){
+		List<PostComment> commentList = commentRepo.findAllCommentByPost(postId);
+		return commentList;
+	}
 	
 }
 
