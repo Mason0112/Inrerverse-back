@@ -35,4 +35,8 @@ public class ClubService {
 	public List<Club> findAllClub() {
 		return clubRepo.findAll();
 	}
+	
+	 public boolean existsById(Integer id) {
+	        return clubRepo.existsById(id);
+	    }
 }
