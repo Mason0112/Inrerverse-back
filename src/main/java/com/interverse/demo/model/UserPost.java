@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -34,13 +37,21 @@ public class UserPost {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonBackReference
 	private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
+	@JsonManagedReference
 	private List<PostComment> comment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
 	private List<PostPhotos> photos;
 	
+	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
+	public void onCreate() {
+		if (added == null) {
+			added =LocalDateTime.now();
+		}
+	}
 
 }
