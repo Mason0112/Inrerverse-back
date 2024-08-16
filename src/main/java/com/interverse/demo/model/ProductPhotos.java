@@ -2,6 +2,9 @@ package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -35,7 +38,10 @@ public class ProductPhotos {
 	@Column(name = "added")
 	private LocalDateTime added;
 	
+	
+
 	@ManyToOne
+	@JsonBackReference
 	@JoinColumn(name = "product_id")
 	private Product products;
 	

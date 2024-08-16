@@ -34,10 +34,10 @@ public class CartController {
 		cartId.setProductsId(cartdto.getProductsId());
 		cartId.setUsersId(cartdto.getUsersId());
 		cart.setCartId(cartId);
-		cart.setQuantity(cartdto.getVol());
+		cart.setVol(cartdto.getVol());
 		cart.setProducts(productById);
 		cart.setUsers(userById);
-		cartService.addToCart(cart);
+		cartService.addOrUpdateCart(cart);
 		
 		return "ok";
 	}

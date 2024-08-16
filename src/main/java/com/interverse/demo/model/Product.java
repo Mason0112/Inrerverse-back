@@ -1,10 +1,12 @@
 package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -48,14 +50,13 @@ public class Product {
 	@Column(name = "added")
 	private LocalDateTime addtime;
 	
-	@JsonBackReference
+	@JsonManagedReference
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category categories;
 	
-
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "products")
-	private List<ProductPhotos> productPhotos;
+	private List<ProductPhotos> productPhotos = new LinkedList<>();
 	
 	
 	

@@ -36,8 +36,8 @@ public class ProductPhotosContoller {
 	        return new ResponseEntity<>(createdPhoto, HttpStatus.CREATED);
 	    }
 
-	    @PutMapping("/{photoId}")
-	    public ResponseEntity<ProductPhotos> updateProductPhoto(
+	   @PutMapping("/{photoId}")
+	   public ResponseEntity<ProductPhotos> updateProductPhoto(
 	            @PathVariable Integer photoId,
 	            @RequestParam("file") MultipartFile file) throws IOException {
 	        ProductPhotos updatedPhoto = productPhotoService.updateProductPhoto(photoId, file);
