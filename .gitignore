@@ -124,6 +124,3 @@ nb-configuration.xml
 ## Miscellaneous
 ##############################
 *.log
-
-####################
-application.properties
