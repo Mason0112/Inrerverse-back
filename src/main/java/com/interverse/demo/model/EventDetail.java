@@ -33,7 +33,7 @@ public class EventDetail {
 	
 	private String location;
 	
-	private String EventPhoto;
+	private String eventPhoto;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime startTime;

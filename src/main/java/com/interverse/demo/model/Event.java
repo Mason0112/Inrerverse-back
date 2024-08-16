@@ -39,16 +39,14 @@ public class Event {
 	private Integer source;
 
 	private String eventName;
-
-	private String eventPhoto;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "clubId")
 	private Club club;
-
+	
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "creator")
-	private User creator;
+	@JoinColumn(name = "creatorId")
+	private User eventCreator;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	@Temporal(TemporalType.TIMESTAMP)
@@ -59,11 +57,10 @@ public class Event {
 		added = LocalDateTime.now();
 	}
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "event")
 	private EventDetail eventDetail;
-
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "eventId")
-	private List<EventPhoto> evenphoto;
+	
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "event") 
+	private List<EventPhoto> evenPhoto;
 
 }

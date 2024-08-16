@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -19,8 +20,10 @@ import jakarta.persistence.Table;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+@NoArgsConstructor
 @Setter
 @Getter
 @Entity
@@ -39,7 +42,7 @@ public class Club {
 
 	@ManyToOne
 	@JoinColumn(name = "creatorId")
-	private User creator;
+	private User clubCreator;
 
 	private Integer isPublic;
 
@@ -53,14 +56,12 @@ public class Club {
 	protected void onCreate() {
 		added = LocalDateTime.now();
 	}
-
+	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<ClubPhoto> clubPhoto;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<Event> event;
 
-	public Club() {
-	}
 
 }
