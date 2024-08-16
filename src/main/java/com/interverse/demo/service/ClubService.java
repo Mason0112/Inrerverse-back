@@ -28,7 +28,7 @@ public class ClubService {
 		return null;
 	}
 
-	public void deleteById(Integer id) {
+	public void deleteClubById(Integer id) {
 		clubRepo.deleteById(id);
 	}
 
