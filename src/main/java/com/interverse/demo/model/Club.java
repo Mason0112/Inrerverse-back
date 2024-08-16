@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -36,8 +38,8 @@ public class Club {
 	private String description;
 
 	private String photo;
-
-	@ManyToOne
+	
+	@ManyToOne @JsonIgnore
 	@JoinColumn(name = "creatorId")
 	private User creator;
 
@@ -49,14 +51,16 @@ public class Club {
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime added;
 
-	@PrePersist
+	@PrePersist 
 	protected void onCreate() {
 		added = LocalDateTime.now();
 	}
-
+	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<ClubPhoto> clubPhoto;
 	
+	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<Event> event;
 
