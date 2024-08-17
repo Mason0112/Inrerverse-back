@@ -14,14 +14,14 @@ import io.jsonwebtoken.security.Password;
 @Component
 public class JwtUtil {
 
-	@Value("${jwtt.secret-string}")
+	@Value("${jwtt.secret}")
 	private String secret;
 
 	@Value("${jwtt.token.expiration}")
 	private long expiration;
 	
 	// JWT Encrypted with a Password
-	Password password = Keys.password("hihi".toCharArray());
+	Password password = Keys.password("edawizF0cyw1KWcZHzcwzDFvQYOpy0vSw4obselq89Y=".toCharArray());
 
 	// Choose the desired PBES2 key derivation algorithm:
 	KeyAlgorithm<Password, Password> alg = Jwts.KEY.PBES2_HS512_A256KW;
