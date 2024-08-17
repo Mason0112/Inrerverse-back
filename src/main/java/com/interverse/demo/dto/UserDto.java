@@ -14,6 +14,7 @@ public class UserDto {
 	private String password;
 	private String email;
 	private String nickname;
+	private LocalDateTime added;
 	
 	private String phoneNumber;
 	private String country;
