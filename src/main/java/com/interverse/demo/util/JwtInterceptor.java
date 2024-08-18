@@ -25,7 +25,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 			if (loggedInUserData != null && loggedInUserData.length() != 0) {
 				
-				// 方法回傳JSONObject 因為login Controller 塞入JSONObject型別資料
+				// 方法直接回傳JSONObject 因為login Controller 塞入JSONObject型別資料
 				return new JSONObject(loggedInUserData);
 			}
 		}
