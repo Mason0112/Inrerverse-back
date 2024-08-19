@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.dto.UserDto;
@@ -16,55 +17,83 @@ import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserDetail;
 import com.interverse.demo.service.UserService;
 import com.interverse.demo.util.JwtUtil;
+import com.interverse.demo.util.NullOrEmptyUtil;
 
 @CrossOrigin
 @RestController
+@RequestMapping("/user")
 public class UserController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
 
 	@Autowired
+	private NullOrEmptyUtil noeUtil;
+
+	@Autowired
 	private UserService userService;
 
 	@PostMapping("/register")
-	public String register(@RequestBody UserDto userDto) {
-		
+	public String register(@RequestBody UserDto userDto) throws JSONException {
+		JSONObject responseJson = new JSONObject();
+
+		if (noeUtil.determineString(userDto.getAccountNumber()) || noeUtil.determineString(userDto.getPassword())
+				|| noeUtil.determineString(userDto.getEmail()) || noeUtil.determineString(userDto.getNickname())
+				|| noeUtil.determineString(userDto.getPhoneNumber()) || noeUtil.determineString(userDto.getCountry())
+				|| noeUtil.determineString(userDto.getCity()) || noeUtil.determineLocalDate(userDto.getBirthday())
+				|| noeUtil.determineString(userDto.getGender())) {
+
+			responseJson.put("success", false);
+			responseJson.put("message", "請輸入必填欄位");
+			
+			return responseJson.toString();
+		}
+
 		User user = new User();
 		UserDetail userDetail = new UserDetail();
-		
+
 		user.setAccountNumber(userDto.getAccountNumber());
 		user.setPassword(userDto.getPassword());
 		user.setEmail(userDto.getEmail());
 		user.setNickname(userDto.getNickname());
-		
+
 		userDetail.setPhoneNumber(userDto.getPhoneNumber());
 		userDetail.setCountry(userDto.getCountry());
 		userDetail.setCity(userDto.getCity());
 		userDetail.setBirthday(userDto.getBirthday());
 		userDetail.setGender(userDto.getGender());
-		userDetail.setPhoto(userDto.getPhoto());
-		userDetail.setBio(userDto.getBio());
-		
+
 		user.setUserDetail(userDetail);
-		
-		userService.register(user);
-		
-		return "ok";
+
+		try {
+			userService.register(user);
+
+			responseJson.put("success", true);
+			responseJson.put("message", "註冊成功");
+
+		} catch (Exception e) {
+
+			responseJson.put("success", false);
+			responseJson.put("message", "註冊失敗");
+		}
+
+		return responseJson.toString();
 	}
 
 	@PostMapping("/login")
-	public String login(@RequestBody String userLoginJson) throws JSONException {
+	public String login(@RequestBody String userJson) throws JSONException {
 
-		JSONObject userResponseJson = new JSONObject(userLoginJson);
-		String accountNumber = userResponseJson.isNull("accountNumber") ? null : userResponseJson.getString("accountNumber");
-		String password = userResponseJson.isNull("password") ? null : userResponseJson.getString("password");
+		JSONObject responseJson = new JSONObject();
+
+		JSONObject userObj = new JSONObject(userJson);
+		String accountNumber = userObj.isNull("accountNumber") ? null : userObj.getString("accountNumber");
+		String password = userObj.isNull("password") ? null : userObj.getString("password");
 
 		// 先檢查是否有輸入值
 		if (accountNumber == null || accountNumber.length() == 0 || password == null || password.length() == 0) {
-			userResponseJson.put("success", false);
-			userResponseJson.put("message", "請輸入帳號與密碼");
-			return userResponseJson.toString();
+			responseJson.put("success", false);
+			responseJson.put("message", "請輸入帳號與密碼");
+			return responseJson.toString();
 		}
 
 		// 上面有輸入值的話，執行登入邏輯
@@ -72,58 +101,64 @@ public class UserController {
 
 		// 判斷登入結果
 		if (user == null) {
-			userResponseJson.put("success", false);
-			userResponseJson.put("message", "登入失敗");
+			responseJson.put("success", false);
+			responseJson.put("message", "登入失敗");
 		} else {
-			userResponseJson.put("success", true);
-			userResponseJson.put("message", "登入成功");
+			responseJson.put("success", true);
+			responseJson.put("message", "登入成功");
 
-			JSONObject loggedInUser = new JSONObject()
-					.put("id", user.getId())
-					.put("accountNumber", user.getAccountNumber())
-					.put("nickname", user.getNickname());
+			JSONObject loggedInUser = new JSONObject().put("id", user.getId())
+					.put("accountNumber", user.getAccountNumber()).put("nickname", user.getNickname());
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
-			
-			userResponseJson.put("token", token);
-			userResponseJson.put("id", user.getId());
+
+			responseJson.put("token", token);
+			responseJson.put("id", user.getId());
+			responseJson.put("nickname", user.getNickname());
 		}
 
-		return userResponseJson.toString();
+		return responseJson.toString();
 
 	}
-	
-	@DeleteMapping("/user/{id}")
+
+	@DeleteMapping("/secure/{id}")
 	public String deleteUserById(@PathVariable Integer id) {
 		userService.deleteUserById(id);
-		
+
 		return "ok";
 	}
-	
-	@PutMapping("/user/{id}")
+
+	@PutMapping("/secure/{id}")
 	public String updateUserById(@PathVariable Integer id, @RequestBody UserDto userDto) {
-		
+
 		User user = userService.findUserById(id);
 		UserDetail userDetail = user.getUserDetail();
-		
+
 		user.setId(id);
 		user.setAccountNumber(userDto.getAccountNumber());
 		user.setEmail(userDto.getEmail());
 		user.setNickname(userDto.getNickname());
-		
+
 		userDetail.setPhoneNumber(userDto.getPhoneNumber());
 		userDetail.setCountry(userDto.getCountry());
 		userDetail.setCity(userDto.getCity());
 		userDetail.setBirthday(userDto.getBirthday());
 		userDetail.setGender(userDto.getGender());
-		userDetail.setPhoto(userDto.getPhoto());
-		userDetail.setBio(userDto.getBio());
-		
+
 		user.setUserDetail(userDetail);
-		
+
 		userService.updateUserDetail(user);
-		
+
 		return "ok";
 	}
-	
+
+//	@GetMapping("/user/{id}")
+//	public String getUserById(@PathVariable Integer id) {
+//		
+//		User user = userService.findUserById(id);
+//		
+//		
+//		
+//	}
+//	
 }

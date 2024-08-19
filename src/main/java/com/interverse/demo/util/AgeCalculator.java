@@ -3,6 +3,9 @@ package com.interverse.demo.util;
 import java.time.LocalDate;
 import java.time.Period;
 
+import org.springframework.stereotype.Component;
+
+@Component
 public class AgeCalculator {
 	
 	public static int calculateAge(LocalDate birthDate) {
