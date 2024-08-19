@@ -3,8 +3,13 @@ package com.interverse.demo.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -15,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.interverse.demo.dto.UserDto;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserDetail;
+import com.interverse.demo.service.UserDetailService;
 import com.interverse.demo.service.UserService;
 import com.interverse.demo.util.JwtUtil;
 import com.interverse.demo.util.NullOrEmptyUtil;
@@ -37,6 +43,7 @@ public class UserController {
 	public String register(@RequestBody UserDto userDto) throws JSONException {
 		JSONObject responseJson = new JSONObject();
 
+		// 先檢查是否有輸入值
 		if (noeUtil.determineString(userDto.getAccountNumber()) || noeUtil.determineString(userDto.getPassword())
 				|| noeUtil.determineString(userDto.getEmail()) || noeUtil.determineString(userDto.getNickname())
 				|| noeUtil.determineString(userDto.getPhoneNumber()) || noeUtil.determineString(userDto.getCountry())
@@ -45,7 +52,7 @@ public class UserController {
 
 			responseJson.put("success", false);
 			responseJson.put("message", "請輸入必填欄位");
-			
+
 			return responseJson.toString();
 		}
 
@@ -66,6 +73,23 @@ public class UserController {
 		user.setUserDetail(userDetail);
 
 		try {
+			// 檢查unique欄位有沒有違反unique約束
+	        if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的帳號已被註冊");
+	            return responseJson.toString();
+	        }
+	        if (userService.existsByEmail(userDto.getEmail())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的email已被使用");
+	            return responseJson.toString();
+	        }
+	        if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的電話已被使用");
+	            return responseJson.toString();
+	        }
+			// 註冊
 			userService.register(user);
 
 			responseJson.put("success", true);
@@ -129,10 +153,24 @@ public class UserController {
 	}
 
 	@PutMapping("/secure/{id}")
-	public String updateUserById(@PathVariable Integer id, @RequestBody UserDto userDto) {
+	public String updateUserById(@PathVariable Integer id, @RequestBody UserDto userDto) throws JSONException {
 
 		User user = userService.findUserById(id);
 		UserDetail userDetail = user.getUserDetail();
+
+		JSONObject responseJson = new JSONObject();
+
+		// 先檢查是否有輸入值
+		if (noeUtil.determineString(userDto.getAccountNumber()) || noeUtil.determineString(userDto.getEmail())
+				|| noeUtil.determineString(userDto.getNickname()) || noeUtil.determineString(userDto.getPhoneNumber())
+				|| noeUtil.determineString(userDto.getCountry()) || noeUtil.determineString(userDto.getCity())
+				|| noeUtil.determineLocalDate(userDto.getBirthday()) || noeUtil.determineString(userDto.getGender())) {
+
+			responseJson.put("success", false);
+			responseJson.put("message", "請輸入必填欄位");
+
+			return responseJson.toString();
+		}
 
 		user.setId(id);
 		user.setAccountNumber(userDto.getAccountNumber());
@@ -147,18 +185,66 @@ public class UserController {
 
 		user.setUserDetail(userDetail);
 
-		userService.updateUserDetail(user);
+		try {
+			// 檢查unique欄位有沒有違反unique約束
+	        if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的帳號已被註冊");
+	            return responseJson.toString();
+	        }
+	        if (userService.existsByEmail(userDto.getEmail())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的email已被使用");
+	            return responseJson.toString();
+	        }
+	        if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+	            responseJson.put("success", false);
+	            responseJson.put("message", "您輸入的電話已被使用");
+	            return responseJson.toString();
+	        }
+	        // 更新會員資料
+			userService.updateUserDetail(user);
 
-		return "ok";
+			responseJson.put("success", true);
+			responseJson.put("message", "更新成功");
+
+		} catch (Exception e) {
+
+			responseJson.put("success", false);
+			responseJson.put("message", "更新失敗");
+		}
+
+		return responseJson.toString();
 	}
 
-//	@GetMapping("/user/{id}")
-//	public String getUserById(@PathVariable Integer id) {
-//		
-//		User user = userService.findUserById(id);
-//		
-//		
-//		
-//	}
-//	
+	@GetMapping("/secure/{id}")
+	public ResponseEntity<String> getUserById(@PathVariable Integer id) throws JSONException {
+		
+		
+		User user = userService.findUserById(id);
+		
+		if(user != null) {
+			UserDetail userDetail = user.getUserDetail();
+			
+			HttpHeaders httpHeaders = new HttpHeaders();
+			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
+			
+			JSONObject responseJson = new JSONObject();
+			
+            responseJson.put("accountNumber", user.getAccountNumber());
+            responseJson.put("email", user.getEmail());
+            responseJson.put("nickname", user.getNickname());
+            responseJson.put("phoneNumber", userDetail.getPhoneNumber());
+            responseJson.put("country", userDetail.getCountry());
+            responseJson.put("city", userDetail.getCity());
+            responseJson.put("birthday", userDetail.getBirthday().toString());
+            responseJson.put("gender", userDetail.getGender());
+            responseJson.put("bio", userDetail.getBio());
+            
+            return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
+		}
+		
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+	
 }
