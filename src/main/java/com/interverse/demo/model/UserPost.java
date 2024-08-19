@@ -38,11 +38,11 @@ public class UserPost {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	@JsonBackReference
+	@JsonBackReference("user-posts")
 	private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-	@JsonManagedReference
+	@JsonManagedReference("post-comments")
 	private List<PostComment> comment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
