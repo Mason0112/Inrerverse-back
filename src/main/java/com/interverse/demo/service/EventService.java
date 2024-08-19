@@ -37,4 +37,8 @@ public class EventService {
 	public List<Event> findAllEvent(){
 		return eRepo.findAll();
 	}
+	
+	 public boolean existsById(Integer id) {
+	        return eRepo.existsById(id);
+	    }
 }

@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -19,36 +21,34 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="eventDetails")
+@Table(name = "eventDetails")
 public class EventDetail {
-	
+
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
-	
+
 	@OneToOne
-    @MapsId
-    @JoinColumn(name = "id")
-    private Event event;
-	
+	@MapsId
+	@JoinColumn(name = "id")
+	private Event event;
+
 	private String location;
-	
+
 	private String eventPhoto;
-	
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime startTime;
-	
-	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime endTime;
-	
+
 	private String description;
-	
+
 	private Integer participantMax;
-	
+
 	private Integer participantMin;
-	
+
 	private Integer fee;
-	
-	
-	
+
 }
