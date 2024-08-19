@@ -57,7 +57,7 @@ public class Event {
 	@JoinColumn(name = "creatorId")
 	private User eventCreator;	
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY,mappedBy = "event")
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "event")
 	private EventDetail eventDetail;
 	
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "event") 

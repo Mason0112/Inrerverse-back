@@ -37,17 +37,17 @@ public class ClubController {
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<?> getClubById(@PathVariable Integer id) {
+	public ResponseEntity<?> getClub(@PathVariable Integer id) {
 		Club result = cService.findClubById(id);
 
 		if (result != null) {
 			return ResponseEntity.ok(result);
 
 		}
-		return ResponseEntity.status(HttpStatus.OK).body("無此ID");
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
 	}
 
-	@DeleteMapping("/delete/{id}")
+	@DeleteMapping("/{id}")
 	public ResponseEntity<String> deleteClub(@PathVariable Integer id) {
 
 		if (cService.findClubById(id) == null) {

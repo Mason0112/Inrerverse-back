@@ -26,8 +26,8 @@ public class EventDetailService {
 		return null;
 	}
 	
-	public void deleteEDById(Integer id) {
-		edRepo.deleteById(id);
-	}
+//	public void deleteEDById(Integer id) {
+//		edRepo.deleteById(id);
+//	}
 	
 }

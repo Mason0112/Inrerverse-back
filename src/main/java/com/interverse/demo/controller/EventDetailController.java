@@ -72,16 +72,16 @@ public class EventDetailController {
 	}
 	
 	
-	@DeleteMapping("/{id}")
-	public ResponseEntity<String> deleteEventDetail(@PathVariable Integer id){
-		if(edService.findEDById(id)==null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-		}
-		edService.deleteEDById(id);
-		
-		return ResponseEntity.status(HttpStatus.OK).body("Delete Successful");
-				
-	}
+//	@DeleteMapping("/{id}")
+//	public ResponseEntity<String> deleteEventDetail(@PathVariable Integer id){
+//		if(edService.findEDById(id)==null) {
+//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
+//		}
+//		edService.deleteEDById(id);
+//		
+//		return ResponseEntity.status(HttpStatus.OK).body("Delete Successful");
+//				
+//	}
 	
 	
 	
