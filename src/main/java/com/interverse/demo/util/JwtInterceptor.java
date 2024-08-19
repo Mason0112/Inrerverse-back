@@ -21,7 +21,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 			// 取得token淨值
 			String token = auth.substring(7);  //'Bearer '
 			// 呼叫驗證token方法來取得加密資訊
-			String loggedInUserData = jwtUtil.ValidateJWT(token);
+			String loggedInUserData = jwtUtil.validateJWT(token);
 
 			if (loggedInUserData != null && loggedInUserData.length() != 0) {
 				

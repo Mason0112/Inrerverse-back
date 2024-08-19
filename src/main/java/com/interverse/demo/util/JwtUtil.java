@@ -38,7 +38,7 @@ public class JwtUtil {
 				.compact();
 	}
 
-	public String ValidateJWT(String token) {
+	public String validateJWT(String token) {
 		try {
 			return Jwts.parser()
 					.decryptWith(password)

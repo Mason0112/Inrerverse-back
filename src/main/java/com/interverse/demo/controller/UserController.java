@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 import com.interverse.demo.dto.UserDto;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserDetail;
-import com.interverse.demo.service.UserDetailService;
 import com.interverse.demo.service.UserService;
 import com.interverse.demo.util.JwtUtil;
 import com.interverse.demo.util.NullOrEmptyUtil;
