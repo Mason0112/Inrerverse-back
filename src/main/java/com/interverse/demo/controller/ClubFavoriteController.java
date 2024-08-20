@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.model.Club;
@@ -22,7 +23,7 @@ import com.interverse.demo.service.ClubService;
 import com.interverse.demo.service.UserService;
 
 @RestController
-@RequestMapping("/{club-favorite}")
+@RequestMapping("/clubFavorite")
 public class ClubFavoriteController {
 
 	@Autowired
@@ -52,39 +53,45 @@ public class ClubFavoriteController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedFavorite);
 	}
 
-	@GetMapping
-	public List<ClubFavorite> getAllClubFavorite() {
-		return cfService.findAllClubFavorite();
-	}
+//	@GetMapping
+//	public List<ClubFavorite> getAllClubFavorite() {
+//		return cfService.findAllClubFavorite();
+//	}
+//	
+//	有誰收藏這個俱樂部(X) 
+//	@GetMapping("/{clubFavoriteId}")
+//	public ResponseEntity<?> getClubFavorite(@PathVariable ClubFavoriteId clubFavoriteId) {
+//		ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
+//
+//		if (existingCf != null) {
+//			return ResponseEntity.ok(existingCf);
+//		}
+//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
+//
+//	}
 
-	@GetMapping("/{clubFavoriteId}")
-	public ResponseEntity<?> getClubFavorite(@PathVariable ClubFavoriteId clubFavoriteId) {
-		ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
+	@DeleteMapping("/{userId}")
+	public ResponseEntity<String> deleteClubFavorite(@PathVariable Integer userId, @RequestParam Integer clubId ) {
+		
+		 ClubFavoriteId clubFavoriteId = new ClubFavoriteId(clubId, userId);
+		 ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
 
-		if (existingCf != null) {
-			return ResponseEntity.ok(existingCf);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
+		 if (existingCf == null) {
+		        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
+		    }
 
-	}
+		    // 验证登录用户是否与请求的 userId 匹配
+		    // 如果你有登录用户信息，可以在这里进行进一步的身份验证
+		    // 如：if (!loggedInUserId.equals(userId)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("無權限");
 
-	@DeleteMapping("/{clubFavoriteId}")
-	public ResponseEntity<String> deleteClubFavorite(@PathVariable ClubFavoriteId clubFavoriteId) {
-		ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
-
-		if (existingCf == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-		}
-		cfService.deleteClubFavoriteById(clubFavoriteId);
-		return ResponseEntity.status(HttpStatus.OK).body("刪除成功");
-
+		    cfService.deleteClubFavoriteById(clubFavoriteId);
+		    return ResponseEntity.status(HttpStatus.OK).body("刪除成功");
 	}
 	
-	//用userId查詢
-	
+	//用戶收藏哪些俱樂部
 	@GetMapping("/user/{userId}")
 	public ResponseEntity<?> getClubFavoriteByUserId(@PathVariable Integer userId) {
-		List<ClubFavorite> existingCf = cfService.findClubFavoriteByUserId(userId);
+		List<ClubFavorite> existingCf = cfService.findByClubFavoriteIdUserId(userId);
 
 		if (existingCf != null) {
 			return ResponseEntity.ok(existingCf);

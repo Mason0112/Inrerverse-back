@@ -32,12 +32,12 @@ public class ClubFavoriteService {
 		cfRepo.deleteById(clubFavoriteId);
 	}
 	
-	public List<ClubFavorite> findAllClubFavorite(){
-		return cfRepo.findAll();
-	}
+//	public List<ClubFavorite> findAllClubFavorite(){
+//		return cfRepo.findAll();
+//	}
 	
 	//用userId搜尋
-	 public List<ClubFavorite> findClubFavoriteByUserId(Integer userId) {
+	 public List<ClubFavorite> findByClubFavoriteIdUserId(Integer userId) {
 	        return cfRepo.findByClubFavoriteIdUserId(userId);
 	    }
 }
