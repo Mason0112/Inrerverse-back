@@ -1,7 +1,10 @@
 package com.interverse.demo.controller;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -153,10 +156,10 @@ public class UserController {
 	}
 
 	@DeleteMapping("/secure/{id}")
-	public String deleteUserById(@PathVariable Integer id) {
+	public ResponseEntity<?> deleteUserById(@PathVariable Integer id) {
 		userService.deleteUserById(id);
 
-		return "ok";
+		return ResponseEntity.ok().build();
 	}
 
 	@PutMapping("/secure/{id}")
@@ -251,20 +254,41 @@ public class UserController {
 			return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
 		}
 
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return ResponseEntity.notFound().build();
 	}
 
 	@PostMapping("/secure/profile-photo/{id}")
-	public ResponseEntity<String> uploadProfilePhoto(@PathVariable Integer id, @RequestParam MultipartFile file) throws IOException {
+	public ResponseEntity<String> uploadProfilePhoto(@PathVariable Integer id, @RequestParam MultipartFile file)
+			throws IOException {
 
 		User user = userService.findUserById(id);
-		
+
 		if (user != null) {
+
 			String photoDir = userService.updatePhoto(id, file).getUserDetail().getPhoto();
 			return new ResponseEntity<String>(photoDir, HttpStatus.CREATED);
 		}
 
-		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+		return ResponseEntity.notFound().build();
 	}
 
+	@GetMapping("/secure/profile-photo/{id}")
+	public ResponseEntity<String> showProfilePhoto(@PathVariable Integer id) throws IOException {
+
+		User user = userService.findUserById(id);
+
+		if (user != null) {
+			UserDetail userDetail = user.getUserDetail();
+			String photo = userDetail.getPhoto();
+	
+			File file = new File(photo);
+	        byte[] photoFile = Files.readAllBytes(file.toPath());
+	        
+	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
+	        
+	        return new ResponseEntity<String>(base64Photo, HttpStatus.OK);
+		}
+
+		return ResponseEntity.notFound().build();
+	}
 }
