@@ -1,5 +1,9 @@
 package com.interverse.demo.controller;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
@@ -15,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.interverse.demo.dto.UserDto;
 import com.interverse.demo.model.User;
@@ -55,6 +61,7 @@ public class UserController {
 			return responseJson.toString();
 		}
 
+		// 有值，封裝資料
 		User user = new User();
 		UserDetail userDetail = new UserDetail();
 
@@ -71,23 +78,24 @@ public class UserController {
 
 		user.setUserDetail(userDetail);
 
+		List<String> errorMessages = new ArrayList<>();
+
 		try {
 			// 檢查unique欄位有沒有違反unique約束
-	        if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的帳號已被註冊");
-	            return responseJson.toString();
-	        }
-	        if (userService.existsByEmail(userDto.getEmail())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的email已被使用");
-	            return responseJson.toString();
-	        }
-	        if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的電話已被使用");
-	            return responseJson.toString();
-	        }
+			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+				errorMessages.add("您輸入的帳號已被註冊; ");
+			}
+			if (userService.existsByEmail(userDto.getEmail())) {
+				errorMessages.add("您輸入的email已被使用");
+			}
+			if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+				errorMessages.add("您輸入的電話已被使用");
+			}
+			if (!errorMessages.isEmpty()) {
+				responseJson.put("success", false);
+				responseJson.put("messages", errorMessages);
+				return responseJson.toString();
+			}
 			// 註冊
 			userService.register(user);
 
@@ -184,24 +192,25 @@ public class UserController {
 
 		user.setUserDetail(userDetail);
 
+		List<String> errorMessages = new ArrayList<>();
+
 		try {
 			// 檢查unique欄位有沒有違反unique約束
-	        if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的帳號已被註冊");
-	            return responseJson.toString();
-	        }
-	        if (userService.existsByEmail(userDto.getEmail())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的email已被使用");
-	            return responseJson.toString();
-	        }
-	        if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
-	            responseJson.put("success", false);
-	            responseJson.put("message", "您輸入的電話已被使用");
-	            return responseJson.toString();
-	        }
-	        // 更新會員資料
+			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+				errorMessages.add("您輸入的帳號已被註冊; ");
+			}
+			if (userService.existsByEmail(userDto.getEmail())) {
+				errorMessages.add("您輸入的email已被使用");
+			}
+			if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+				errorMessages.add("您輸入的電話已被使用");
+			}
+			if (!errorMessages.isEmpty()) {
+				responseJson.put("success", false);
+				responseJson.put("messages", errorMessages);
+				return responseJson.toString();
+			}
+			// 更新會員資料
 			userService.updateUserDetail(user);
 
 			responseJson.put("success", true);
@@ -218,32 +227,44 @@ public class UserController {
 
 	@GetMapping("/secure/{id}")
 	public ResponseEntity<String> getUserById(@PathVariable Integer id) throws JSONException {
-		
-		
+
 		User user = userService.findUserById(id);
-		
-		if(user != null) {
+
+		if (user != null) {
 			UserDetail userDetail = user.getUserDetail();
-			
+
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
-			
+
 			JSONObject responseJson = new JSONObject();
-			
-            responseJson.put("accountNumber", user.getAccountNumber());
-            responseJson.put("email", user.getEmail());
-            responseJson.put("nickname", user.getNickname());
-            responseJson.put("phoneNumber", userDetail.getPhoneNumber());
-            responseJson.put("country", userDetail.getCountry());
-            responseJson.put("city", userDetail.getCity());
-            responseJson.put("birthday", userDetail.getBirthday().toString());
-            responseJson.put("gender", userDetail.getGender());
-            responseJson.put("bio", userDetail.getBio());
-            
-            return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
+
+			responseJson.put("accountNumber", user.getAccountNumber());
+			responseJson.put("email", user.getEmail());
+			responseJson.put("nickname", user.getNickname());
+			responseJson.put("phoneNumber", userDetail.getPhoneNumber());
+			responseJson.put("country", userDetail.getCountry());
+			responseJson.put("city", userDetail.getCity());
+			responseJson.put("birthday", userDetail.getBirthday().toString());
+			responseJson.put("gender", userDetail.getGender());
+			responseJson.put("bio", userDetail.getBio());
+
+			return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
 		}
-		
+
 		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 	}
-	
+
+	@PostMapping("/secure/profile-photo/{id}")
+	public ResponseEntity<String> uploadProfilePhoto(@PathVariable Integer id, @RequestParam MultipartFile file) throws IOException {
+
+		User user = userService.findUserById(id);
+		
+		if (user != null) {
+			String photoDir = userService.updatePhoto(id, file).getUserDetail().getPhoto();
+			return new ResponseEntity<String>(photoDir, HttpStatus.CREATED);
+		}
+
+		return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+	}
+
 }
