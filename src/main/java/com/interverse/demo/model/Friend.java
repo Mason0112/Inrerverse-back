@@ -22,7 +22,7 @@ import lombok.Setter;
 public class Friend {
 	
 	@EmbeddedId
-	private FriendId firendId;
+	private FriendId friendId;
 	private boolean status;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
