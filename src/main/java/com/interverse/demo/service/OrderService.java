@@ -1,14 +1,131 @@
 package com.interverse.demo.service;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.interverse.demo.dto.OrderDTO;
+import com.interverse.demo.model.Order;
 import com.interverse.demo.model.OrderRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class OrderService {
-    @Autowired
-    private OrderRepository orderRepo;  
 
+    @Autowired
+    private OrderRepository orderRepository;
+
+    @Autowired
+    private UserService userService;
+
+    @Transactional
+    public OrderDTO createOrder(OrderDTO orderDTO) {
+        Order order = new Order();
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setStatus(orderDTO.getStatus());
+        order.setUsers(userService.findUserById(orderDTO.getUserId()));
+        // 不需要設置 added，因為 @PrePersist 會自動設置
+        order = orderRepository.save(order);
+
+        return convertToDTO(order);
+    }
+
+    public OrderDTO getOrderById(Integer orderId) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        return convertToDTO(order);
+    }
+
+    public List<OrderDTO> getOrdersByUserId(Integer userId) {
+        return orderRepository.findByUsersId(userId).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public Page<OrderDTO> getOrdersByUserIdPaginated(Integer userId, Pageable pageable) {
+        return orderRepository.findByUsersId(userId, pageable)
+                .map(this::convertToDTO);
+    }
+
+    public List<OrderDTO> getOrdersByStatus(Integer status) {
+        return orderRepository.findByStatus(status).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDTO> getOrdersByDateRange(LocalDateTime start, LocalDateTime end) {
+        return orderRepository.findByAddedBetween(start, end).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional
+    public OrderDTO updateOrderStatus(Integer orderId, Integer newStatus) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        order.setStatus(newStatus);
+        order = orderRepository.save(order);
+        return convertToDTO(order);
+    }
+
+    @Transactional
+    public OrderDTO updateOrderPaymentMethod(Integer orderId, Integer newPaymentMethod) {
+        Order order = orderRepository.findById(orderId)
+                .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+        order.setPaymentMethod(newPaymentMethod);
+        order = orderRepository.save(order);
+        return convertToDTO(order);
+    }
+
+    @Transactional
+    public void deleteOrder(Integer orderId) {
+        orderRepository.deleteById(orderId);
+    }
+
+    private OrderDTO convertToDTO(Order order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+        dto.setUserId(order.getUsers().getId());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setAdded(order.getAdded());
+        return dto;
+    }
+    
+    public List<OrderDTO> getOrdersByPaymentMethod(Integer paymentMethod) {
+        return orderRepository.findByPaymentMethod(paymentMethod).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public List<OrderDTO> getRecentOrders(Pageable pageable) {
+        return orderRepository.findRecentOrders(pageable).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    public long countOrdersByStatus(Integer status) {
+        return orderRepository.countByStatus(status);
+    }
+
+    public OrderDTO getLastOrderByUser(Integer userId) {
+        Order order = orderRepository.findFirstByUsersIdOrderByAddedDesc(userId);
+        return order != null ? convertToDTO(order) : null;
+    }
+
+    public List<OrderDTO> searchOrders(LocalDateTime start, LocalDateTime end, Integer status, Integer paymentMethod) {
+        return orderRepository.findOrdersByConditions(start, end, status, paymentMethod).stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+    
+    
     
 }

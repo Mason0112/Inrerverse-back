@@ -36,7 +36,7 @@ public class Order {
 	@Column(name = "status")
 	private Integer status;
 
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "added")
 	private LocalDateTime added;
