@@ -34,7 +34,10 @@ public class ClubFavoriteId implements Serializable{
 		return Objects.equals(clubId, other.clubId) && Objects.equals(userId, other.userId);
 	}
 	
-	
+	public ClubFavoriteId(Integer clubId, Integer userId) {
+	    this.clubId = clubId;
+	    this.userId = userId;
+	}
 	
 
 }

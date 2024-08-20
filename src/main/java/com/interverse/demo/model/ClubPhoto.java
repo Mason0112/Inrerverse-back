@@ -17,7 +17,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
-@Table(name="clubPhoto")
+@Table(name="clubPhotos")
 public class ClubPhoto {
 	
 	@Column(insertable=false, updatable=false)
