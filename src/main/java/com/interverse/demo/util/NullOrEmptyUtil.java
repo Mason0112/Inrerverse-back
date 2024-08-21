@@ -14,4 +14,5 @@ public class NullOrEmptyUtil {
 	public boolean determineLocalDate(LocalDate localDate) {
 		return localDate == null;
 	}
+	
 }

@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interverse.demo.model.Friend;
+import com.interverse.demo.dto.FriendDto;
 import com.interverse.demo.service.FriendService;
 
 @CrossOrigin
@@ -24,23 +24,20 @@ public class FriendController {
 	
 	@GetMapping("/switch-status/{user1Id}")
 	public ResponseEntity<?> switchFriendStatus(@PathVariable Integer user1Id, @RequestParam Integer user2Id) {
-		
 		friendService.switchFriendStatus(user1Id, user2Id);
 		return ResponseEntity.ok().build();
 	}
 	
-	//TODO 測試會不會無限迴圈，否則用Friend 
 	@GetMapping("/{user1Id}/list")
-	public ResponseEntity<List<Friend>> showMyFriend(@PathVariable Integer user1Id) {
-		
-		List<Friend> myFriendList = friendService.findMyFriend(user1Id);
+	public ResponseEntity<List<FriendDto>> showMyFriend(@PathVariable Integer user1Id) {
+		List<FriendDto> myFriendList = friendService.findMyFriend(user1Id);
 		return ResponseEntity.ok(myFriendList);
 	}
-	//TODO 測試會不會無限迴圈，否則用Friend 
+
 	@GetMapping("/{user1Id}/requests")
-	public ResponseEntity<List<Friend>> showFriendRequest(@PathVariable Integer user1Id) {
-		List<Friend> requestList = friendService.findMyFriendRequest(user1Id);
+	public ResponseEntity<List<FriendDto>> showFriendRequest(@PathVariable Integer user1Id) {
+		List<FriendDto> requestList = friendService.findMyFriendRequest(user1Id);
 		return ResponseEntity.ok(requestList);
 	}
-	
+
 }

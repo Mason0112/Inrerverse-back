@@ -19,26 +19,22 @@ import lombok.Setter;
 @Setter
 @Getter
 @NoArgsConstructor
-@Entity @Table(name="notifications")
-public class Notification {
+@Entity @Table(name="transactions")
+public class Transaction {
 	
 	@Id @GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private Integer source;
-	private String content;
-	private Boolean status = false;
-	
-	@ManyToOne
-	@JoinColumn(name="sender_id")
-	private User sender;
-	
-	@ManyToOne
-	@JoinColumn(name="receiver_id")
-	private User receiver;
+	private String transactionNo;
+	private String paymentMethod;
+	private Long amount;
+	private Boolean status;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;
 	
+	@ManyToOne
+	@JoinColumn(name="user_id")
+	private User user;
 	
 	@PrePersist
     public void onCreate() {
@@ -46,5 +42,5 @@ public class Notification {
             added = LocalDateTime.now(); // 設置當前的日期時間
         }
     }
-	
+
 }

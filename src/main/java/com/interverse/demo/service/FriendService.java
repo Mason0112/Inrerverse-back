@@ -2,10 +2,12 @@ package com.interverse.demo.service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.dto.FriendDto;
 import com.interverse.demo.model.Friend;
 import com.interverse.demo.model.FriendId;
 import com.interverse.demo.model.FriendRepository;
@@ -20,6 +22,15 @@ public class FriendService {
 
 	@Autowired
 	private UserRepository userRepo;
+	
+	public FriendDto convert(Friend friend) {
+		FriendDto friendDto = new FriendDto();
+		friendDto.setUser1Id(friend.getUser1().getId());
+		friendDto.setUser2Id(friend.getUser2().getId());
+		friendDto.setStatus(friend.getStatus());
+		
+		return friendDto;
+	}
 
 	public void switchFriendStatus(Integer user1Id, Integer user2Id) {
 		Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
@@ -98,14 +109,26 @@ public class FriendService {
 		friendRepo.deleteById(friendId);
 	}
 
-	public List<Friend> findMyFriend(Integer user1Id) {
+	public List<FriendDto> findMyFriend(Integer user1Id) {
 
-		return friendRepo.findByUser1Id(user1Id);
+		List<Friend> friendList = friendRepo.findByUser1Id(user1Id);
+		
+		List<FriendDto> friendDtoList = friendList.stream()
+        .map(this::convert)
+        .collect(Collectors.toList());
+		
+		return friendDtoList;
 	}
 
-	public List<Friend> findMyFriendRequest(Integer user2Id) {
+	public List<FriendDto> findMyFriendRequest(Integer user2Id) {
 
-		return friendRepo.findByUser2Id(user2Id);
+		List<Friend> friendList = friendRepo.findByUser2Id(user2Id);
+		
+		List<FriendDto> friendDtoList = friendList.stream()
+		        .map(this::convert)
+		        .collect(Collectors.toList());
+		
+		return friendDtoList;
 	}
 	
 }

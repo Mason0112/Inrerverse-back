@@ -37,9 +37,7 @@ public class FriendEventListener implements PostInsertEventListener, PostUpdateE
 		Object entity = event.getEntity();
 		
 		if(entity instanceof Friend) {
-			Friend friend = (Friend) entity
-//					---
-;
+			Friend friend = (Friend) entity;
 			}
 	}
 
