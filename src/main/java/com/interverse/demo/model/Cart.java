@@ -25,7 +25,7 @@ public class Cart {
 	private CartId cartId;
 	
 	@Column(name = "quantity")
-	private Integer quantity;
+	private Integer vol;
 	
 	@JsonManagedReference
 	@ManyToOne(fetch = FetchType.LAZY)

@@ -1,5 +1,6 @@
 package com.interverse.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,11 @@ import com.interverse.demo.model.CategoryRepository;
 public class CategoryService {
 	@Autowired
 	private CategoryRepository categoriesRepo;
+	
+	
+	public List<Category> findAllCategories() {
+        return categoriesRepo.findAll();
+    }
 	
 	
 	public Category saveCategory(Category category) {
@@ -59,6 +65,8 @@ public class CategoryService {
         }
         return false; // Category not found
     }
+    
+    
 	
 	
 }

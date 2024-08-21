@@ -5,13 +5,18 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderDetailDTO {
+public class OrderDetailDTO  extends OrderDTO{
 
 	
-	private Integer orderId;
+
+	    private Integer orderId; // 關聯的訂單ID
+	    private Integer productId;
+	    private Integer quantity;
+	    private Integer price;
+
 	
-	private Integer productId;
-	
-	private Integer vol;
-	
+
+	    public Integer getSubtotal() {
+	        return price * quantity;
+	    }
 }

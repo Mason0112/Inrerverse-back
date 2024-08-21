@@ -1,9 +1,7 @@
 package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
-import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 
@@ -37,8 +35,8 @@ public class Order {
 	private Integer paymentMethod;
 	@Column(name = "status")
 	private Integer status;
-	
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = "added")
 	private LocalDateTime added;
