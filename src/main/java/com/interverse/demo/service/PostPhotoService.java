@@ -27,6 +27,7 @@ public class PostPhotoService {
 	@Autowired
 	private PostPhotosRepository postPhotoRepo;
 	
+	@Autowired
 	private UserPostRepository postRepo;
 	
 	public PostPhoto createPhoto(MultipartFile file, Integer postId) throws IOException {

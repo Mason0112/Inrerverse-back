@@ -6,10 +6,7 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-<<<<<<< HEAD
 import com.fasterxml.jackson.annotation.JsonIgnore;
-=======
->>>>>>> origin/www2
 
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Entity;
