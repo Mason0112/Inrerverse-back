@@ -23,7 +23,7 @@ import com.interverse.demo.model.ProductRepository;
 @Service
 public class ProductPhotoService {
 	
-	@Value("${upload.dir}")
+	@Value("${upload.product.dir}")
 	private String uploadDir;
 	
 	@Autowired
