@@ -40,31 +40,28 @@ public class Event {
 	private Integer source;
 
 	private String eventName;
-
-	private String eventPhoto;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "clubId")
-	private Club club;
-
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "creator")
-	private User creator;
-
+	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	@Temporal(TemporalType.TIMESTAMP)
 	private LocalDateTime added;
-
+	
 	@PrePersist
 	protected void onCreate() {
 		added = LocalDateTime.now();
 	}
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "clubId")
+	private Club club;
+	
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "creatorId")
+	private User eventCreator;	
 
-	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	@OneToOne(cascade = CascadeType.ALL, orphanRemoval = true,fetch = FetchType.LAZY,mappedBy = "event")
 	private EventDetail eventDetail;
-
-	@OneToMany(fetch = FetchType.LAZY)
-	@JoinColumn(name = "eventId")
-	private List<EventPhoto> evenphoto;
+	
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "event") 
+	private List<EventPhoto> evenPhoto;
 
 }

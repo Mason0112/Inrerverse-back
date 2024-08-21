@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.interverse.demo.model.Club;
+import com.interverse.demo.model.ClubPhoto;
 import com.interverse.demo.model.ClubRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class ClubService {
@@ -28,11 +31,21 @@ public class ClubService {
 		return null;
 	}
 
-	public void deleteById(Integer id) {
-		clubRepo.deleteById(id);
+	public void deleteClubById(Integer id) {
+//		Optional<Club> optional = clubRepo.findById(id);
+//
+//		if (optional.isPresent()) {
+			clubRepo.deleteById(id);
+//			return;
+//		}
+//		throw new EntityNotFoundException("Club with id " + id + " not found");
 	}
 
 	public List<Club> findAllClub() {
 		return clubRepo.findAll();
 	}
+
+//	public boolean existsById(Integer id) {
+//		return clubRepo.existsById(id);
+//	}
 }
