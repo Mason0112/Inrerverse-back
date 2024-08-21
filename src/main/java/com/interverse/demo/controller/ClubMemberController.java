@@ -1,6 +1,7 @@
 package com.interverse.demo.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.ClubMemberDTO;
 import com.interverse.demo.model.ClubMember;
 import com.interverse.demo.model.ClubMemberId;
 import com.interverse.demo.service.ClubMemberService;
@@ -25,14 +27,32 @@ public class ClubMemberController {
 	@Autowired
 	private ClubMemberService cmService;
 	
-	@PostMapping
-	public ClubMember createClubMember(@RequestBody ClubMember cm) {
-		return cmService.saveClubMember(cm);
+	private ClubMemberDTO convertToDTO(ClubMember clubMember) {
+		ClubMemberDTO dto = new ClubMemberDTO();
+		
+		dto.setUserId(clubMember.getClubMemberId().getUserId());
+		dto.setClubId(clubMember.getClubMemberId().getClubId());
+		dto.setStatus(clubMember.getStatus());
+		dto.setAdded(clubMember.getAdded());
+		
+		return dto;
+	}
+	
+	
+	@PostMapping  //@RequestParam Integer clubId,@RequestParam Integer userI
+	public ClubMemberDTO createClubMember(@RequestBody ClubMember cm) {
+	ClubMember saveClubMember = cmService.saveClubMember(cm);
+	return convertToDTO(saveClubMember);
 	}
 	
 	@GetMapping
-	public List<ClubMember> getAllClubMember(){
-		return cmService.findAllClubMember();
+	public List<ClubMemberDTO> getAllClubMember(){
+		List<ClubMember> allClubMember = cmService.findAllClubMember();
+		
+		return allClubMember.stream()
+				.map(this::convertToDTO)
+				.collect(Collectors.toList());
+
 	}
 	
 	@GetMapping("/{ClubMemberId}")

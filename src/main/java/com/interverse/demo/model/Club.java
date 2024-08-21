@@ -62,7 +62,6 @@ public class Club {
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<ClubPhoto> clubPhoto;
 	
-	@JsonIgnore
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "club")
 	private List<Event> event;
 
