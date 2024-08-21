@@ -38,15 +38,16 @@ public class UserPost {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	@JsonBackReference
+	@JsonBackReference("user-posts")
 	private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-	@JsonManagedReference
+	@JsonManagedReference("post-comments")
 	private List<PostComment> comment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-	private List<PostPhotos> photos;
+	@JsonManagedReference("post-photos")
+	private List<PostPhoto> photos;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {

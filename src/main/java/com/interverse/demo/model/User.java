@@ -70,13 +70,13 @@ public class User {
 	private List<ClubPhoto> clubPhoto;
 	
 	//勁甫的
-	@JsonManagedReference
+	@JsonManagedReference("user-posts")
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<UserPost> userPost;
 
 
 	
-	@JsonIgnore
+	@JsonManagedReference("user-comments")
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<PostComment> postComment;
 	

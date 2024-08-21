@@ -43,7 +43,7 @@ public class PostCommentService {
 		commentRepo.deleteById(commentId);
 	}
 	
-	public List<PostComment> FindCommentByPost(Integer postId){
+	public List<PostComment> findCommentByPost(Integer postId){
 		List<PostComment> commentList = commentRepo.findAllCommentByPost(postId);
 		return commentList;
 	}

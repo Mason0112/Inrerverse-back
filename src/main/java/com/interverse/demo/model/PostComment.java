@@ -30,7 +30,7 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	@JsonBackReference
+	@JsonBackReference("user-comments")
 	private User user;
 	
 	@Column(name = "comment")
@@ -41,7 +41,7 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "post_id")
-	@JsonBackReference
+	@JsonBackReference("post-comments")
 	private UserPost userPost;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法

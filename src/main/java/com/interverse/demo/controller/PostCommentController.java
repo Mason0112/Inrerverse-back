@@ -25,7 +25,6 @@ public class PostCommentController {
 	private PostCommentService commentService;
 	
 	@PostMapping(
-//			consumes =MediaType.MULTIPART_FORM_DATA_VALUE , name=
 			"/postComment/addComment")
 	public PostComment addComment(@RequestBody PostComment postComment) {
 		return commentService.addComment(postComment);
@@ -43,7 +42,7 @@ public class PostCommentController {
 	
 	@GetMapping("/postComment/{postId}")
 	public List<PostComment> showPostComment(@PathVariable Integer postId) {
-		return commentService.FindCommentByPost(postId);
+		return commentService.findCommentByPost(postId);
 	}
 	
 }

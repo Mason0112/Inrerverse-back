@@ -1,5 +1,7 @@
 package com.interverse.demo.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -17,7 +19,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class PostPhotos {
+public class PostPhoto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,7 +27,11 @@ public class PostPhotos {
 
 	@JoinColumn(name = "post_id")
 	@ManyToOne
+	@JsonBackReference("post-photos")
 	private UserPost userPost;
+	
+	@Column(name="name")
+	private String name;
 
 	@Column(name = "url")
 	private String url;
