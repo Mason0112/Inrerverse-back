@@ -36,7 +36,7 @@ public class ProductPhotoService {
 		//取代option直接傳出product出來 要塞進去class內 ManyTOone
 		Product product = productRepo.findById(id).orElseThrow(()-> new RuntimeException("ProductPhoto not found with id: " + id));
 		
-		System.out.println("1111111111asdasdadasd"+ product.getId());
+
 		//獲取上傳文件的名字  再去除路徑的不安全字符
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		//生成一個唯一的文件名 防止名字衝突 文件名前面加上uuid再加上原始文件名
@@ -53,7 +53,7 @@ public class ProductPhotoService {
 		//將Path轉型為File符合參數 將檔案寫入指定地點
 		file.transferTo(filePath.toFile());
 		
-		System.out.println("2222222asdasdadasd"+ product.getId());
+
 		
 		//存入class
 		ProductPhotos productPhoto = new ProductPhotos();
