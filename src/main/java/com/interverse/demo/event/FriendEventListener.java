@@ -9,14 +9,15 @@ import org.hibernate.event.spi.PostUpdateEventListener;
 import org.hibernate.persister.entity.EntityPersister;
 import org.springframework.stereotype.Component;
 
+import com.interverse.demo.model.Friend;
+
 
 @Component
 public class FriendEventListener implements PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
 
 	@Override
 	public boolean requiresPostCommitHandling(EntityPersister persister) {
-		// TODO Auto-generated method stub
-		return false;
+		return true;
 	}
 
 	@Override
@@ -33,8 +34,12 @@ public class FriendEventListener implements PostInsertEventListener, PostUpdateE
 
 	@Override
 	public void onPostInsert(PostInsertEvent event) {
-		// TODO Auto-generated method stub
+		Object entity = event.getEntity();
 		
+		if(entity instanceof Friend) {
+			Friend friend = (Friend) entity
+;
+			}
 	}
 
 }
