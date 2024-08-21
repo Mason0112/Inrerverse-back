@@ -29,7 +29,7 @@ public class UserPostController {
 	@Autowired
 	private UserService userService;
 	
-	@PostMapping("/userPost/addPost")
+	@PostMapping("/userPost")
 	public UserPost addPost(@RequestBody UserPost post) {
 		return postService.savePost(post);
 	}
