@@ -56,9 +56,11 @@ public class ProductPhotoService {
 
 		
 		//存入class
+		// 更新照片信息
+        String relativeFilePath = "product_photos/" + uniqueFileName;
 		ProductPhotos productPhoto = new ProductPhotos();
 		productPhoto.setPhotoName(fileName);
-		productPhoto.setPhotoPath(filePath.toString());
+		productPhoto.setPhotoPath(relativeFilePath);
 		productPhoto.setProducts(product);
         productPhoto.setAdded(LocalDateTime.now());
         
@@ -66,36 +68,43 @@ public class ProductPhotoService {
 		return productPhotosRepo.save(productPhoto);
 	}
 	
-	 public void deleteProductPhoto(Integer photoId) throws IOException {
-	        ProductPhotos photo = productPhotosRepo.findById(photoId)
-	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
-	        
-	        Path filePath = Paths.get(photo.getPhotoPath());
-	        Files.deleteIfExists(filePath);
-	        
-	        productPhotosRepo.delete(photo);
-	    }
+	@Transactional
+    public void deleteProductPhoto(Integer photoId) throws IOException {
+        ProductPhotos photo = productPhotosRepo.findById(photoId)
+            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+
+        Path filePath = Paths.get(uploadDir, photo.getPhotoPath().substring("/product_photos/".length()));
+        Files.deleteIfExists(filePath);
+
+        productPhotosRepo.delete(photo);
+    }
 	    
+	    @Transactional
 	    public ProductPhotos updateProductPhoto(Integer photoId, MultipartFile newFile) throws IOException {
+	        if (newFile.isEmpty()) {
+	            throw new IllegalArgumentException("New file is empty");
+	        }
+
 	        ProductPhotos photo = productPhotosRepo.findById(photoId)
 	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
-	        
+
 	        // Delete old file
-	        Path oldFilePath = Paths.get(photo.getPhotoPath());
+	        Path oldFilePath = Paths.get(uploadDir, photo.getPhotoPath().substring("/product_photos/".length()));
 	        Files.deleteIfExists(oldFilePath);
-	        
+
 	        // Save new file
 	        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
 	        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
 	        Path uploadPath = Paths.get(uploadDir);
 	        Path newFilePath = uploadPath.resolve(uniqueFileName);
 	        newFile.transferTo(newFilePath.toFile());
-	        
+
 	        // Update photo information
+	        String relativeFilePath = "/product_photos/" + uniqueFileName;
 	        photo.setPhotoName(fileName);
-	        photo.setPhotoPath(newFilePath.toString());
+	        photo.setPhotoPath(relativeFilePath);
 	        photo.setAdded(LocalDateTime.now());
-	        
+
 	        return productPhotosRepo.save(photo);
 	    }
 	    

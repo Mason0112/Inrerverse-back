@@ -1,6 +1,5 @@
 package com.interverse.demo.dto;
 
-import java.util.List;
 
 
 import lombok.AllArgsConstructor;
@@ -15,4 +14,5 @@ public class CartResponseDTO {
 	    private Integer productId;
 	    private Integer vol;
 	    private String productName;
+	    
 }
