@@ -43,7 +43,7 @@ public class ClubPhotoController {
 		ClubPhoto saveClubPhoto = cpService.saveClubPhoto(ClubPhoto);
 		return convertToDTO(saveClubPhoto);
 	}
-
+	//要改from club
 	@GetMapping
 	public List<ClubPhotoDTO> getAllClubPhoto() {
 		List<ClubPhoto> allClubPhoto = cpService.findAllClubPhoto();

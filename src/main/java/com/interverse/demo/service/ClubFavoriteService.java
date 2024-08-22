@@ -17,8 +17,14 @@ public class ClubFavoriteService {
 	private ClubFavoriteRepository cfRepo;
 	
 	public ClubFavorite saveClubFavorite(ClubFavorite clubfavorite) {
+		
+		ClubFavoriteId clubFavoriteId=clubfavorite.getClubFavoriteId();
+		 if (cfRepo.existsById(clubFavoriteId)) {
+	            throw new IllegalStateException("ClubFavorite already exists.");
+	        }
 		return cfRepo.save(clubfavorite);
 	}	
+	
 	public ClubFavorite findClubFavoriteById(ClubFavoriteId clubFavoriteId) {
 		Optional<ClubFavorite> optional = cfRepo.findById(clubFavoriteId);
 		
@@ -28,8 +34,8 @@ public class ClubFavoriteService {
 		return null;
 	}
 	
-	public void deleteClubFavoriteById(ClubFavoriteId clubFavoriteId) {
-		cfRepo.deleteById(clubFavoriteId);
+	public void deleteClubFavoriteFromUser(Integer clubId, Integer userId) {
+		cfRepo.deleteClubFavoriteFromUser(clubId,userId);
 	}
 	
 //	public List<ClubFavorite> findAllClubFavorite(){

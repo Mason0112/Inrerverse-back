@@ -1,24 +1,22 @@
 package com.interverse.demo.controller;
 
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import com.interverse.demo.dto.ClubDTO;
 import com.interverse.demo.dto.ClubMemberDTO;
+import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubMember;
 import com.interverse.demo.model.ClubMemberId;
+import com.interverse.demo.model.ClubRepository;
+import com.interverse.demo.model.User;
+import com.interverse.demo.model.UserRepository;
 import com.interverse.demo.service.ClubMemberService;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/clubMember")
@@ -26,67 +24,110 @@ public class ClubMemberController {
 
 	@Autowired
 	private ClubMemberService cmService;
-	
-	private ClubMemberDTO convertToDTO(ClubMember clubMember) {
+
+	@Autowired
+	private ClubRepository cRepo;
+
+	@Autowired
+	UserRepository uRepo;
+
+	// 單一成員加入社團(user新增club;status預設0)
+	@PostMapping
+	public ResponseEntity<?> joinClub(@RequestBody ClubMemberDTO clubMemberDTO) {
+		ClubMember newMember = convertToEntity(clubMemberDTO);
+		ClubMember savedMember = cmService.saveClubMember(newMember);
+		if (savedMember != null) {
+			return ResponseEntity.status(HttpStatus.CREATED).body(convertToDTO(savedMember));
+		}
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Failed to submit membership request.");
+	}
+
+	// 查詢單一user的全部已加入club(status=1)
+	@GetMapping("/user/{userId}/clubs")
+	public ResponseEntity<?> findClubsByUserId(@PathVariable Integer userId) {
+		List<Club> clubs = cmService.findClubsByUserId(userId);
+		List<ClubDTO> clubDTOs = clubs.stream().map(this::convertToDTO).collect(Collectors.toList());
+		if (clubDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(clubDTOs);
+	}
+
+	// 查詢單一club的全部已加入user(status=1)
+	@GetMapping("/club/{clubId}/approved-members")
+	public ResponseEntity<?> listApprovedMembers(@PathVariable Integer clubId) {
+		List<ClubMember> approvedMembers = cmService.findApprovedMembersByClubId(clubId);
+		List<ClubMemberDTO> clubMemberDTOs = approvedMembers.stream().map(this::convertToDTO).collect(Collectors.toList());
+		if (clubMemberDTOs.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+		}
+		return ResponseEntity.ok(clubMemberDTOs);
+	}
+
+	// 查詢單一社團的待審核user(status=0)
+	@GetMapping("/club/{clubId}/pending-members")
+	public ResponseEntity<?> listPendingMembers(@PathVariable Integer clubId) {
+		List<ClubMember> pendingMembers = cmService.getPendingMembers(clubId);
+		List<ClubMemberDTO> memberDTOs = pendingMembers.stream().map(this::convertToDTO).collect(Collectors.toList());
+		return ResponseEntity.ok(memberDTOs);
+	}
+
+	// 審核通過方法(status=0更新為1)
+	@PutMapping("/approve/{clubId}/{userId}")
+	public ResponseEntity<String> approveMember(@PathVariable Integer clubId, @PathVariable Integer userId) {
+		boolean approved = cmService.approveMember(clubId, userId);
+		if (approved) {
+			return ResponseEntity.ok("審核通過");
+		} else {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無該成員或該成員已是社團成員");
+		}
+	}
+
+	// 從社團中刪除指定用戶
+	@DeleteMapping("/club/{clubId}/user/{userId}")
+	public ResponseEntity<?> removeMember(@PathVariable Integer clubId, @PathVariable Integer userId) {
+		try {
+			cmService.deleteUserFromClub(clubId, userId);
+			return ResponseEntity.ok("成員已成功從社團刪除");
+		} catch (IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
+		}
+	}
+
+	// 將ClubMemberDTO轉為entity實體
+	private ClubMember convertToEntity(ClubMemberDTO dto) {
+		ClubMember member = new ClubMember();
+		ClubMemberId memberId = new ClubMemberId(dto.getClubId(), dto.getUserId()); // 創建複合主鍵
+
+		Club club = cRepo.findById(dto.getClubId()).orElse(null);
+		User user = uRepo.findById(dto.getUserId()).orElse(null);
+
+		if (club == null || user == null) {
+			throw new IllegalStateException("Club or User not found");
+		}
+		member.setClubMemberId(memberId); //設置複合主鍵
+		member.setClub(club);
+	    member.setUser(user);
+		member.setStatus(0); // 預設為0
+		return member;
+	}
+
+	// 將ClubMember轉為DTO
+	private ClubMemberDTO convertToDTO(ClubMember member) {
 		ClubMemberDTO dto = new ClubMemberDTO();
-		
-		dto.setUserId(clubMember.getClubMemberId().getUserId());
-		dto.setClubId(clubMember.getClubMemberId().getClubId());
-		dto.setStatus(clubMember.getStatus());
-		dto.setAdded(clubMember.getAdded());
-		
+		dto.setUserId(member.getUser().getId());
+	    dto.setClubId(member.getClub().getId());
+	    dto.setStatus(member.getStatus());
+	    dto.setAdded(member.getAdded());
 		return dto;
 	}
-	
-	
-	@PostMapping  //@RequestParam Integer clubId,@RequestParam Integer userI
-	public ClubMemberDTO createClubMember(@RequestBody ClubMember cm) {
-	ClubMember saveClubMember = cmService.saveClubMember(cm);
-	return convertToDTO(saveClubMember);
-	}
-	
-	@GetMapping
-	public List<ClubMemberDTO> getAllClubMember(){
-		List<ClubMember> allClubMember = cmService.findAllClubMember();
-		
-		return allClubMember.stream()
-				.map(this::convertToDTO)
-				.collect(Collectors.toList());
 
+	// 將Club轉為ClubDTO
+	private ClubDTO convertToDTO(Club club) {
+		ClubDTO dto = new ClubDTO();
+		dto.setId(club.getId());
+		dto.setClubName(club.getClubName());
+		dto.setPhoto(club.getPhoto());
+		return dto;
 	}
-	
-	@GetMapping("/{ClubMemberId}")
-	public ResponseEntity<?> getClubMember(@PathVariable ClubMemberId cmId){
-		ClubMember result = cmService.findClubMemberById(cmId);
-		if(result != null) {
-			return ResponseEntity.ok(result);
-		}
-		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-	}
-	
-	@DeleteMapping("/{ClubMemberId}")
-	public ResponseEntity<String> deleteClubMember(@PathVariable ClubMemberId cmId){
-		ClubMember result = cmService.findClubMemberById(cmId);
-		if(result == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-		}
-		cmService.deleteClubMemberById(cmId);
-		return ResponseEntity.status(HttpStatus.OK).body("刪除成功");
-	}
-	
-	@PutMapping("/{ClubMemberId}")
-	public ResponseEntity<String> updateClubMember(@PathVariable ClubMemberId cmId, @RequestBody ClubMember clubMember){
-		
-		ClubMember existingCm = cmService.findClubMemberById(cmId);
-		
-		if(existingCm == null) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-		}
-		clubMember.setClubMemberId(cmId);
-		clubMember.setAdded(existingCm.getAdded());
-		cmService.saveClubMember(clubMember);
-		
-		return ResponseEntity.status(HttpStatus.OK).body("更新成功");
-	}
-	
 }
