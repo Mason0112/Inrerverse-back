@@ -10,7 +10,7 @@ public interface TransactionRepository extends JpaRepository<Transaction, Intege
 	
 	List<Transaction> findByUserId(Integer userId);
 	
-//	@Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.userId = :userId")
-//    Long sumAmountsByUserId(@Param("userId") Integer userId);
+	@Query("SELECT COALESCE(SUM(t.amount), 0) FROM Transaction t WHERE t.user.id = :userId and t.status = true")
+    Long sumAmountsByUserId(@Param("userId") Integer userId);
 
 }
