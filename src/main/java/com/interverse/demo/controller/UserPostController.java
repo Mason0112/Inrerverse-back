@@ -31,6 +31,8 @@ public class UserPostController {
 	
 	@PostMapping("/userPost")
 	public UserPost addPost(@RequestBody UserPost post) {
+		String content = post.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		post.setContent(content);
 		return postService.savePost(post);
 	}
 	
