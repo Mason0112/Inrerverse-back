@@ -69,6 +69,9 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "uploaderId") 
 	private List<ClubPhoto> clubPhoto;
 	
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "uploaderId") 
+	private List<EventPhoto> eventPhoto;
+	
 	//勁甫的
 	@JsonManagedReference("user-posts")
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")

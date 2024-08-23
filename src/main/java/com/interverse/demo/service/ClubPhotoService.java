@@ -8,8 +8,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.interverse.demo.dto.ClubPhotoDTO;
+import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubPhoto;
 import com.interverse.demo.model.ClubPhotoRepository;
+import com.interverse.demo.model.ClubRepository;
+import com.interverse.demo.model.User;
+import com.interverse.demo.model.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -19,8 +23,19 @@ public class ClubPhotoService {
 	@Autowired
 	private ClubPhotoRepository cpRepo;
 	
+	@Autowired
+	private ClubRepository cRepo;
+	
+	@Autowired
+	private UserRepository uRepo;
+	
 	public ClubPhoto saveClubPhoto(ClubPhoto clubPhoto) {
-		return cpRepo.save(clubPhoto);
+		Club club = clubPhoto.getClub();
+		User uploaderId = clubPhoto.getUploaderId();
+		if(cRepo.existsById(club.getId()) && uRepo.existsById(uploaderId.getId())) {
+			return cpRepo.save(clubPhoto);
+		}
+		throw new IllegalStateException("Club or User is not exists.");
 	}
 	
 	//尋找club中所有照片

@@ -8,6 +8,8 @@ import org.springframework.stereotype.Service;
 import com.interverse.demo.model.ClubFavorite;
 import com.interverse.demo.model.ClubFavoriteId;
 import com.interverse.demo.model.ClubFavoriteRepository;
+import com.interverse.demo.model.ClubMemberId;
+
 import jakarta.transaction.Transactional;
 
 @Service
@@ -25,9 +27,12 @@ public class ClubFavoriteService {
 			return cfRepo.save(clubFavorite);
 	}
 
-	
-	public void deleteClubFavoriteFromUser(Integer clubId, Integer userId) {
-		cfRepo.deleteClubFavoriteFromUser(clubId,userId);
+	@Transactional
+	public void deleteClubFavoriteFromUser(Integer userId, Integer clubId) {
+		if (!cfRepo.existsById(new ClubFavoriteId(clubId, userId))) {
+			throw new IllegalArgumentException("ClubFavoriteId not found with userId " + userId + " and clubId " + clubId);
+		}
+	    cfRepo.deleteClubFavoriteFromUser(userId,clubId);
 	}
 	
 	//用userId搜尋
