@@ -29,7 +29,7 @@ public class ClubMemberController {
 	private ClubRepository cRepo;
 
 	@Autowired
-	UserRepository uRepo;
+	private UserRepository uRepo;
 
 	// 單一成員加入社團(user新增club;status預設0)
 	@PostMapping

@@ -17,6 +17,11 @@ public class EventParticipantId implements Serializable{
 	private Integer eventId;
 	private Integer userId;
 	
+	public EventParticipantId(Integer eventId, Integer userId) {
+		this.eventId = eventId;
+		this.userId = userId;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(eventId, userId);
