@@ -80,7 +80,7 @@ public class ClubPhotoController {
 		ClubPhotoDTO dto = new ClubPhotoDTO();
 
 		dto.setId(clubPhoto.getId());
-		dto.setPhoto(clubPhoto.getPhoto());
+//		dto.setPhoto(clubPhoto.getPhoto());
 		dto.setClubId(clubPhoto.getClub().getId());
 		dto.setUploaderId(clubPhoto.getUploaderId().getId());
 
@@ -90,7 +90,7 @@ public class ClubPhotoController {
 	// DTO轉換實體
 	private ClubPhoto convertToEntity(ClubPhotoDTO dto) {
 		ClubPhoto clubPhoto = new ClubPhoto();
-		clubPhoto.setPhoto(dto.getPhoto());
+//		clubPhoto.setPhoto(dto.getPhoto());
 		clubPhoto.setUploaderId(uRepo.findById(dto.getUploaderId()).orElse(null));
 		clubPhoto.setClub(cRepo.findById(dto.getClubId()).orElse(null));
 		return clubPhoto;

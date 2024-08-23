@@ -15,7 +15,7 @@ public class EventDetailDTO {
 	
 	private Integer id;
     private String location;
-    private String eventPhoto;
+//    private String eventPhoto;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
     private LocalDateTime startTime;

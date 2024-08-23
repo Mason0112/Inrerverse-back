@@ -83,7 +83,7 @@ public class EventPhotoController {
 		   EventPhotoDTO dto = new EventPhotoDTO();
 		   
 		   dto.setId(eventPhoto.getId());
-		   dto.setPhoto(eventPhoto.getPhoto());
+//		   dto.setPhoto(eventPhoto.getPhoto());
 		   dto.setEventId(eventPhoto.getEvent().getId());
 		   dto.setUploaderId(eventPhoto.getUploaderId().getId());
 		   
@@ -93,7 +93,7 @@ public class EventPhotoController {
 		// DTO轉換實體
 		private EventPhoto convertToEntity(EventPhotoDTO dto) {
 			EventPhoto eventPhoto = new EventPhoto();
-			eventPhoto.setPhoto(dto.getPhoto());
+//			eventPhoto.setPhoto(dto.getPhoto());
 			eventPhoto.setUploaderId(uRepo.findById(dto.getUploaderId()).orElse(null));
 			eventPhoto.setEvent(eRepo.findById(dto.getEventId()).orElse(null));
 			return eventPhoto;

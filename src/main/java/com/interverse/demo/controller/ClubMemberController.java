@@ -127,7 +127,6 @@ public class ClubMemberController {
 		ClubDTO dto = new ClubDTO();
 		dto.setId(club.getId());
 		dto.setClubName(club.getClubName());
-		dto.setPhoto(club.getPhoto());
 		return dto;
 	}
 }
