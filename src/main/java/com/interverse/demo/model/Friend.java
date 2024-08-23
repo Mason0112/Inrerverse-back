@@ -23,7 +23,8 @@ public class Friend {
 	
 	@EmbeddedId
 	private FriendId friendId;
-	private boolean status;
+	
+	private Boolean status;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;

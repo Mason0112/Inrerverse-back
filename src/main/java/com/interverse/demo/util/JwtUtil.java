@@ -33,7 +33,7 @@ public class JwtUtil {
 		return Jwts.builder()
 				.subject(loggedInUserData)
 				.issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + expiration))
+				.expiration(new Date(System.currentTimeMillis() + 86400000))
 				.encryptWith(password, alg, enc)
 				.compact();
 	}

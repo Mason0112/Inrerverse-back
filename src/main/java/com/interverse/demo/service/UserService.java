@@ -13,6 +13,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.interverse.demo.model.TransactionRepository;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserDetail;
 import com.interverse.demo.model.UserDetailRepository;
@@ -32,6 +33,9 @@ public class UserService {
 
 	@Autowired
 	private UserDetailRepository uDetailRepo;
+	
+	@Autowired
+	private TransactionRepository transRepo;
 
 	public User register(User user) {
 
@@ -114,6 +118,20 @@ public class UserService {
 		file.transferTo(filePath.toFile());
 		
 		userDetail.setPhoto(filePath.toString());
+		
+		return userRepo.save(user);
+	}
+	
+	public User updateUserWalletBalance(Integer id) {
+		Optional<User> optional = userRepo.findById(id);
+		Long balance = transRepo.sumAmountsByUserId(id);
+
+		if (optional.isEmpty()) {
+			return null;
+		} 
+		
+		User user = optional.get();
+		user.setWalletBalance(balance);
 		
 		return userRepo.save(user);
 	}

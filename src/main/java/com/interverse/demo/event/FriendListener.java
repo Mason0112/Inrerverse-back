@@ -13,7 +13,7 @@ import com.interverse.demo.model.Friend;
 
 
 @Component
-public class FriendEventListener implements PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
+public class FriendListener implements PostInsertEventListener, PostUpdateEventListener, PostDeleteEventListener {
 
 	@Override
 	public boolean requiresPostCommitHandling(EntityPersister persister) {
@@ -37,8 +37,7 @@ public class FriendEventListener implements PostInsertEventListener, PostUpdateE
 		Object entity = event.getEntity();
 		
 		if(entity instanceof Friend) {
-			Friend friend = (Friend) entity
-;
+			Friend friend = (Friend) entity;
 			}
 	}
 
