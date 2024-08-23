@@ -1,9 +1,16 @@
 package com.interverse.demo.controller;
 
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,6 +22,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.model.Product;
+import com.interverse.demo.model.ProductPhotos;
+import com.interverse.demo.service.ProductPhotoService;
 import com.interverse.demo.service.ProductService;
 
 @RestController
@@ -23,6 +32,34 @@ public class ProductController {
 	
 	@Autowired
 	private ProductService productService;
+	@Autowired
+	private ProductPhotoService productPhotoService;
+	
+	
+	@GetMapping("/{productId}/firstphoto")
+    public ResponseEntity<Resource> getFirstProductPhoto(@PathVariable Integer productId) throws MalformedURLException {
+        List<ProductPhotos> photos = productPhotoService.getAllProductPhotos(productId);
+        
+        if (photos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        ProductPhotos firstPhoto = photos.get(0);
+        String photoPath = firstPhoto.getPhotoPath(); 
+        
+        Path path = Paths.get(photoPath);
+        Resource resource = new UrlResource(path.toUri());
+        
+        if (resource.exists() || resource.isReadable()) {
+            return ResponseEntity.ok()
+                    .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
+                    .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
+                    .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
 	
 	@PostMapping
     public ResponseEntity<Product> createProduct(@RequestBody Product product) {

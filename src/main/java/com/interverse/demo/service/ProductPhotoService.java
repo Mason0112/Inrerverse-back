@@ -57,10 +57,10 @@ public class ProductPhotoService {
 		
 		//存入class
 		// 更新照片信息
-        String relativeFilePath = "product_photos/" + uniqueFileName;
+ 
 		ProductPhotos productPhoto = new ProductPhotos();
 		productPhoto.setPhotoName(fileName);
-		productPhoto.setPhotoPath(relativeFilePath);
+		productPhoto.setPhotoPath(filePath.toString());
 		productPhoto.setProducts(product);
         productPhoto.setAdded(LocalDateTime.now());
         
@@ -100,9 +100,9 @@ public class ProductPhotoService {
 	        newFile.transferTo(newFilePath.toFile());
 
 	        // Update photo information
-	        String relativeFilePath = "/product_photos/" + uniqueFileName;
+	       
 	        photo.setPhotoName(fileName);
-	        photo.setPhotoPath(relativeFilePath);
+	        photo.setPhotoPath(newFilePath.toString());
 	        photo.setAdded(LocalDateTime.now());
 
 	        return productPhotosRepo.save(photo);
