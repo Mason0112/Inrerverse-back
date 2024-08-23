@@ -23,7 +23,7 @@ public class ClubPhoto {
 	@Column(insertable=false, updatable=false)
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private int id;
+	private Integer id;
 	
 	private String photo;
 	

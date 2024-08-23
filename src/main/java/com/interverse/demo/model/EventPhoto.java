@@ -28,4 +28,8 @@ public class EventPhoto {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="eventId")
 	private Event event;
+	
+	@ManyToOne
+	@JoinColumn(name="uploaderId")
+	private User uploaderId;
 }

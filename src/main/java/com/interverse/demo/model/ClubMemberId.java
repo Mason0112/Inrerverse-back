@@ -19,11 +19,16 @@ public class ClubMemberId implements Serializable{
 	
 	private Integer clubId;
 	
+	public ClubMemberId(Integer clubId, Integer userId) {
+		this.clubId = clubId;
+		this.userId = userId;
+	}
+	
 	@Override
 	public int hashCode() {
 		return Objects.hash(clubId, userId);
 	}
-
+	
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)

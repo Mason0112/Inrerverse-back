@@ -5,6 +5,9 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
@@ -46,6 +49,7 @@ public class User {
 	private LocalDateTime added;
 	
 	@OneToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
+	@JsonIgnoreProperties("user")
 	private UserDetail userDetail;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "sender")
@@ -73,10 +77,13 @@ public class User {
 	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "uploaderId") 
 	private List<ClubPhoto> clubPhoto;
 	
+	@OneToMany(cascade = CascadeType.ALL,fetch = FetchType.LAZY,mappedBy = "uploaderId") 
+	private List<EventPhoto> eventPhoto;
+	
 	//勁甫的
-	@JsonManagedReference("user-posts")
-	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
-	private List<UserPost> userPost;
+    @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user") // 忽略 user 屬性
+    private List<UserPost> userPosts;
 
 
 	

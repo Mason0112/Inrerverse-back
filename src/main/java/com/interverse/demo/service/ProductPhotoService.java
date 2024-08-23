@@ -23,7 +23,7 @@ import com.interverse.demo.model.ProductRepository;
 @Service
 public class ProductPhotoService {
 	
-	@Value("${upload.dir}")
+	@Value("${upload.product.dir}")
 	private String uploadDir;
 	
 	@Autowired
@@ -36,7 +36,7 @@ public class ProductPhotoService {
 		//取代option直接傳出product出來 要塞進去class內 ManyTOone
 		Product product = productRepo.findById(id).orElseThrow(()-> new RuntimeException("ProductPhoto not found with id: " + id));
 		
-		System.out.println("1111111111asdasdadasd"+ product.getId());
+
 		//獲取上傳文件的名字  再去除路徑的不安全字符
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 		//生成一個唯一的文件名 防止名字衝突 文件名前面加上uuid再加上原始文件名
@@ -53,9 +53,11 @@ public class ProductPhotoService {
 		//將Path轉型為File符合參數 將檔案寫入指定地點
 		file.transferTo(filePath.toFile());
 		
-		System.out.println("2222222asdasdadasd"+ product.getId());
+
 		
 		//存入class
+		// 更新照片信息
+ 
 		ProductPhotos productPhoto = new ProductPhotos();
 		productPhoto.setPhotoName(fileName);
 		productPhoto.setPhotoPath(filePath.toString());
@@ -66,36 +68,43 @@ public class ProductPhotoService {
 		return productPhotosRepo.save(productPhoto);
 	}
 	
-	 public void deleteProductPhoto(Integer photoId) throws IOException {
-	        ProductPhotos photo = productPhotosRepo.findById(photoId)
-	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
-	        
-	        Path filePath = Paths.get(photo.getPhotoPath());
-	        Files.deleteIfExists(filePath);
-	        
-	        productPhotosRepo.delete(photo);
-	    }
+	@Transactional
+    public void deleteProductPhoto(Integer photoId) throws IOException {
+        ProductPhotos photo = productPhotosRepo.findById(photoId)
+            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+
+        Path filePath = Paths.get(uploadDir, photo.getPhotoPath().substring("/product_photos/".length()));
+        Files.deleteIfExists(filePath);
+
+        productPhotosRepo.delete(photo);
+    }
 	    
+	    @Transactional
 	    public ProductPhotos updateProductPhoto(Integer photoId, MultipartFile newFile) throws IOException {
+	        if (newFile.isEmpty()) {
+	            throw new IllegalArgumentException("New file is empty");
+	        }
+
 	        ProductPhotos photo = productPhotosRepo.findById(photoId)
 	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
-	        
+
 	        // Delete old file
-	        Path oldFilePath = Paths.get(photo.getPhotoPath());
+	        Path oldFilePath = Paths.get(uploadDir, photo.getPhotoPath().substring("/product_photos/".length()));
 	        Files.deleteIfExists(oldFilePath);
-	        
+
 	        // Save new file
 	        String fileName = StringUtils.cleanPath(newFile.getOriginalFilename());
 	        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
 	        Path uploadPath = Paths.get(uploadDir);
 	        Path newFilePath = uploadPath.resolve(uniqueFileName);
 	        newFile.transferTo(newFilePath.toFile());
-	        
+
 	        // Update photo information
+	       
 	        photo.setPhotoName(fileName);
 	        photo.setPhotoPath(newFilePath.toString());
 	        photo.setAdded(LocalDateTime.now());
-	        
+
 	        return productPhotosRepo.save(photo);
 	    }
 	    

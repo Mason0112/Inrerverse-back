@@ -109,6 +109,7 @@ public class UserController {
 
 			responseJson.put("success", false);
 			responseJson.put("message", "註冊失敗");
+			e.printStackTrace();
 		}
 
 		return responseJson.toString();
