@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.interverse.demo.model.Category;
 import com.interverse.demo.service.CategoryService;
 
+
 @RestController
 @RequestMapping("/categories")
 public class CategoriesController {

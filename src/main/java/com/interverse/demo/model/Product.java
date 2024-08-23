@@ -50,7 +50,7 @@ public class Product {
 	@Column(name = "added")
 	private LocalDateTime addtime;
 	
-	@JsonManagedReference
+	@JsonBackReference
 	@ManyToOne
 	@JoinColumn(name = "category_id")
 	private Category categories;
