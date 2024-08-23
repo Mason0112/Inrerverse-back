@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
@@ -19,6 +20,8 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.PrePersist;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,12 +37,13 @@ public class UserPost {
 	private String content;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
+	@Temporal(TemporalType.TIMESTAMP) // 年月日時分秒
 	private LocalDateTime added;
 	
-	@ManyToOne
-	@JoinColumn(name = "user_id")
-	@JsonBackReference("user-posts")
-	private User user;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    @JsonIgnoreProperties({"userPosts"}) // 忽略不需要序列化的屬性
+    private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
 	@JsonManagedReference("post-comments")
