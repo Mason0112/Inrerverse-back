@@ -53,7 +53,7 @@ public class ClubFavoriteController {
 			cfService.deleteClubFavoriteFromUser(userId,clubId);
 			return ResponseEntity.ok("社團收藏已成功刪除");
 		} catch (IllegalArgumentException e) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("錯誤");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 	

@@ -34,7 +34,7 @@ public class ClubPhotoController {
 
 	// 建立照片
 	@PostMapping
-	public ResponseEntity<ClubPhotoDTO> createClubPhoto(@RequestBody ClubPhotoDTO clubPhotoDTO) {
+	public ResponseEntity<?> createClubPhoto(@RequestBody ClubPhotoDTO clubPhotoDTO) {
 		try {
 			ClubPhoto clubPhoto = convertToEntity(clubPhotoDTO);
 			ClubPhoto savedClubPhoto = cpService.saveClubPhoto(clubPhoto);
@@ -42,7 +42,7 @@ public class ClubPhotoController {
 
 		} catch (Exception e) {
 
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
 
