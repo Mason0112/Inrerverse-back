@@ -268,7 +268,13 @@ public class UserController {
 		if (user != null) {
 
 			String photoDir = userService.updatePhoto(id, file).getUserDetail().getPhoto();
-			return new ResponseEntity<String>(photoDir, HttpStatus.CREATED);
+			
+			File fileDB = new File(photoDir);
+	        byte[] photoFile = Files.readAllBytes(fileDB.toPath());
+	        
+	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
+			
+			return new ResponseEntity<String>(base64Photo, HttpStatus.CREATED);
 		}
 
 		return ResponseEntity.notFound().build();
@@ -281,9 +287,9 @@ public class UserController {
 
 		if (user != null) {
 			UserDetail userDetail = user.getUserDetail();
-			String photo = userDetail.getPhoto();
+			String photoDir = userDetail.getPhoto();
 	
-			File file = new File(photo);
+			File file = new File(photoDir);
 	        byte[] photoFile = Files.readAllBytes(file.toPath());
 	        
 	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
