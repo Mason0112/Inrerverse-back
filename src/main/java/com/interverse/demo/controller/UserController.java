@@ -30,6 +30,7 @@ import com.interverse.demo.dto.UserDto;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserDetail;
 import com.interverse.demo.service.UserService;
+import com.interverse.demo.util.AgeCalculator;
 import com.interverse.demo.util.JwtUtil;
 import com.interverse.demo.util.NullOrEmptyUtil;
 
@@ -40,6 +41,9 @@ public class UserController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
+	
+	@Autowired
+	private AgeCalculator ageCalculator;
 
 	@Autowired
 	private NullOrEmptyUtil noeUtil;
@@ -238,6 +242,7 @@ public class UserController {
 
 		if (user != null) {
 			UserDetail userDetail = user.getUserDetail();
+			Integer age = ageCalculator.calculateAge(userDetail.getBirthday());
 
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
@@ -250,7 +255,7 @@ public class UserController {
 			responseJson.put("phoneNumber", userDetail.getPhoneNumber());
 			responseJson.put("country", userDetail.getCountry());
 			responseJson.put("city", userDetail.getCity());
-			responseJson.put("birthday", userDetail.getBirthday().toString());
+			responseJson.put("age", age);
 			responseJson.put("gender", userDetail.getGender());
 			responseJson.put("bio", userDetail.getBio());
 
