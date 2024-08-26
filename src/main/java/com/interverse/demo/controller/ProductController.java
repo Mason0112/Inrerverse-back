@@ -3,6 +3,7 @@ package com.interverse.demo.controller;
 import java.net.MalformedURLException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Comparator;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,35 @@ public class ProductController {
                     .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + resource.getFilename() + "\"")
                     .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
                     .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }@GetMapping("/{productId}/latestphoto")
+    public ResponseEntity<Resource> getLatestProductPhoto(@PathVariable Integer productId) throws MalformedURLException {
+        List<ProductPhotos> photos = productPhotoService.getAllProductPhotos(productId);
+
+        if (photos.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        ProductPhotos latestPhoto = photos.stream()
+                .max(Comparator.comparing(ProductPhotos::getAdded))
+                .orElse(null);
+
+        if (latestPhoto == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String photoPath = latestPhoto.getPhotoPath();
+
+        Path path = Paths.get(photoPath);
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + latestPhoto.getPhotoName() + "\"")
+                .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
+                .body(resource);
         } else {
             return ResponseEntity.notFound().build();
         }

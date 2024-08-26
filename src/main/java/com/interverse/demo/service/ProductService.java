@@ -45,6 +45,7 @@ public class ProductService {
         product.setName(productDetails.getName());
         product.setDescription(productDetails.getDescription());
         product.setPrice(productDetails.getPrice());
+        product.setColor(productDetails.getColor());
         // 更新其他屬性...
         return productRepo.save(product);
     }
