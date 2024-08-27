@@ -13,6 +13,8 @@ public class CartResponseDTO {
 	 	private Integer userId;
 	    private Integer productId;
 	    private Integer vol;
+	    private Integer price;
 	    private String productName;
+	    
 	    
 }
