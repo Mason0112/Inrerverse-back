@@ -35,8 +35,7 @@ public class ClubController {
 
 		dto.setId(club.getId());
 		dto.setClubName(club.getClubName());
-		dto.setDescription(club.getDescription());//目前不可空值
-		dto.setPhoto(club.getPhoto());//目前不可空值
+		dto.setDescription(club.getDescription());
 		dto.setIsPublic(club.getIsPublic());
 		dto.setIsAllowed(club.getIsAllowed());
 		dto.setAdded(club.getAdded());

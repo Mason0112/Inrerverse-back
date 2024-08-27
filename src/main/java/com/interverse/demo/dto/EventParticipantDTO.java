@@ -7,13 +7,12 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class EventPhotoDTO {
+public class EventParticipantDTO {
 	
-	private Integer id;
-
-//	private String photo;
-
 	private Integer eventId;
 	
-	private Integer uploaderId;
+	private Integer userId;
+	
+	private Integer status;
+
 }

@@ -17,8 +17,6 @@ public class ClubDTO {
 
 	private String description;
 
-	private String photo; 
-
 	private Integer isPublic;
 
 	private Integer isAllowed;
