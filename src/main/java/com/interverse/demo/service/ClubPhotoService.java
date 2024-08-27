@@ -24,7 +24,7 @@ import com.interverse.demo.model.UserRepository;
 @Service
 public class ClubPhotoService {
 	
-	@Value("${upload.dir}")
+	@Value("${upload.clubphoto.dir}")
 	private String uploadDir;
 	
 	@Autowired
