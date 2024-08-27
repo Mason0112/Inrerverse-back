@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class AgeCalculator {
 	
-	public static int calculateAge(LocalDate birthDate) {
+	public Integer calculateAge(LocalDate birthDate) {
 		LocalDate currentDate = LocalDate.now();
 		
         return Period.between(birthDate, currentDate).getYears();

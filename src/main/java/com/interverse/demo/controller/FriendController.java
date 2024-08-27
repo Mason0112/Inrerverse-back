@@ -22,8 +22,8 @@ public class FriendController {
 	@Autowired
 	private FriendService friendService;
 	
-	@GetMapping("/switch-status/{user1Id}")
-	public ResponseEntity<?> switchFriendStatus(@PathVariable Integer user1Id, @RequestParam Integer user2Id) {
+	@GetMapping("/switch-status/{user1Id}/{user2Id}")
+	public ResponseEntity<?> switchFriendStatus(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
 		friendService.switchFriendStatus(user1Id, user2Id);
 		return ResponseEntity.ok().build();
 	}
