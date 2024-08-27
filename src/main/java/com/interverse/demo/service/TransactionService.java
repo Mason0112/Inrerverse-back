@@ -44,6 +44,17 @@ public class TransactionService {
 		
 		return transactionDtoList;
 	}
+	
+	public List<TransactionDto> findAllTransaction(){
+		
+		 List<Transaction> transactionList = transRepo.findAll();
+		 List<TransactionDto> transactionDtoList = transactionList.stream()
+			        .map(this::convert)
+			        .collect(Collectors.toList());
+			
+			return transactionDtoList;
+	}
+	
 
 	
 

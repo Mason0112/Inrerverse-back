@@ -41,7 +41,7 @@ public class UserController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
-	
+
 	@Autowired
 	private AgeCalculator ageCalculator;
 
@@ -146,10 +146,8 @@ public class UserController {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");
 
-			JSONObject loggedInUser = new JSONObject()
-					.put("id", user.getId())
-					.put("accountNumber", user.getAccountNumber())
-					.put("nickname", user.getNickname());
+			JSONObject loggedInUser = new JSONObject().put("id", user.getId())
+					.put("accountNumber", user.getAccountNumber()).put("nickname", user.getNickname());
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
 
@@ -274,12 +272,12 @@ public class UserController {
 		if (user != null) {
 
 			String photoDir = userService.updatePhoto(id, file).getUserDetail().getPhoto();
-			
+
 			File fileDB = new File(photoDir);
-	        byte[] photoFile = Files.readAllBytes(fileDB.toPath());
-	        
-	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
-			
+			byte[] photoFile = Files.readAllBytes(fileDB.toPath());
+
+			String base64Photo = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(photoFile);
+
 			return new ResponseEntity<String>(base64Photo, HttpStatus.CREATED);
 		}
 
@@ -294,15 +292,17 @@ public class UserController {
 		if (user != null) {
 			UserDetail userDetail = user.getUserDetail();
 			String photoDir = userDetail.getPhoto();
-	
-			File file = new File(photoDir);
-	        byte[] photoFile = Files.readAllBytes(file.toPath());
-	        
-	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
-	        
-	        return new ResponseEntity<String>(base64Photo, HttpStatus.OK);
-		}
 
-		return ResponseEntity.notFound().build();
+			if (photoDir != null && !photoDir.isEmpty()) {
+				File file = new File(photoDir);
+				if (file.exists()) {
+					byte[] photoFile = Files.readAllBytes(file.toPath());
+					String base64Photo = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(photoFile);
+					return new ResponseEntity<>(base64Photo, HttpStatus.OK);
+				}
+			}
+		}
+		// 如果照片不存在或會員沒有大頭照，返回null
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 }
