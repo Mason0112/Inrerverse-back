@@ -1,13 +1,19 @@
 package com.interverse.demo.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
-import com.interverse.demo.dto.ClubPhotoDTO;
 import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubPhoto;
 import com.interverse.demo.model.ClubPhotoRepository;
@@ -15,10 +21,11 @@ import com.interverse.demo.model.ClubRepository;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserRepository;
 
-import jakarta.persistence.EntityNotFoundException;
-
 @Service
 public class ClubPhotoService {
+	
+	@Value("${upload.dir}")
+	private String uploadDir;
 	
 	@Autowired
 	private ClubPhotoRepository cpRepo;
@@ -44,7 +51,7 @@ public class ClubPhotoService {
 	    }
 	
 	//user從club中刪除自己上傳的照片
-	 public void deletePhotoIfOwner(Integer id, Integer uploaderId) {
+	 public void deletePhotoIfOwner(Integer id, Integer uploaderId)throws IOException {
 	        ClubPhoto photo = cpRepo.findById(id)
 	            .orElseThrow(() -> new IllegalArgumentException("Photo not found with ID: " + id));
 
@@ -52,10 +59,50 @@ public class ClubPhotoService {
 	        if (!photo.getUploaderId().getId().equals(uploaderId)) {
 	            throw new SecurityException("You do not have permission to delete this photo.");
 	        }
+	        Path filePath = Paths.get(photo.getPhoto());
+	        Files.deleteIfExists(filePath);
 
 	        cpRepo.deleteById(id);
 	    }
+	 
 	
+	 @Transactional
+	    public ClubPhoto createClubPhoto(MultipartFile file, Integer clubId) throws IOException {
+	        // 获取 Club 对象
+	        Club club = cRepo.findById(clubId)
+	            .orElseThrow(() -> new RuntimeException("Club not found with id: " + clubId));
+
+	        // 获取上传文件的名字并去除路径中的不安全字符
+	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+
+	        // 生成唯一文件名，防止名字冲突
+	        String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
+
+	        // 将路径转换为 Path 类的对象
+	        Path uploadPath = Paths.get(uploadDir);
+
+	        // 判断目录是否存在，不存在的话创建目录
+	        if (!Files.exists(uploadPath)) {
+	            Files.createDirectories(uploadPath);
+	        }
+
+	        // 生成完整的路径
+	        Path filePath = uploadPath.resolve(uniqueFileName);
+
+	        // 将文件写入指定位置
+	        file.transferTo(filePath.toFile());
+
+	        // 存入 ClubPhoto 实体
+	        ClubPhoto clubPhoto = new ClubPhoto();
+	        clubPhoto.setPhoto(filePath.toString());
+	        clubPhoto.setClub(club);
+
+	        return cpRepo.save(clubPhoto);
+	    }
+
+	   
+
+	   
 //	public List<ClubPhoto> findAllClubPhoto(){
 //		return cpRepo.findAll();
 //	}
