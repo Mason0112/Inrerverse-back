@@ -67,10 +67,14 @@ public class ClubPhotoService {
 	 
 	
 	 @Transactional
-	    public ClubPhoto createClubPhoto(MultipartFile file, Integer clubId) throws IOException {
+	    public ClubPhoto createClubPhoto(MultipartFile file, Integer clubId, Integer uploaderId) throws IOException {
 	        // 获取 Club 对象
 	        Club club = cRepo.findById(clubId)
 	            .orElseThrow(() -> new RuntimeException("Club not found with id: " + clubId));
+	        
+	        // 获取上传者 User 对象
+	        User uploader = uRepo.findById(uploaderId)
+	            .orElseThrow(() -> new RuntimeException("Uploader not found with id: " + uploaderId));
 
 	        // 获取上传文件的名字并去除路径中的不安全字符
 	        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
@@ -96,7 +100,8 @@ public class ClubPhotoService {
 	        ClubPhoto clubPhoto = new ClubPhoto();
 	        clubPhoto.setPhoto(filePath.toString());
 	        clubPhoto.setClub(club);
-
+	        clubPhoto.setUploaderId(uploader); // 设置上传者 ID
+	        
 	        return cpRepo.save(clubPhoto);
 	    }
 
