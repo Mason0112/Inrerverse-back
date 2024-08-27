@@ -37,12 +37,18 @@ public class ClubPhotoController {
 
 	// 建立照片
 	@PostMapping
-	public ResponseEntity<ClubPhoto> createClubPhoto(@RequestParam("file") MultipartFile file,
-            @RequestParam("clubId") Integer clubId) throws IOException {
-		ClubPhoto createdPhoto = cpService.createClubPhoto(file, clubId);
-	        return new ResponseEntity<>(createdPhoto, HttpStatus.CREATED);
+	public ResponseEntity<?> uploadClubPhoto(@RequestParam("file") MultipartFile file,
+			@RequestParam("clubId") Integer clubId, @RequestParam("uploaderId") Integer uploaderId) {
+		try {
+			ClubPhoto savedPhoto = cpService.createClubPhoto(file, clubId, uploaderId);
+			return ResponseEntity.status(HttpStatus.CREATED).body(savedPhoto);
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("File upload failed.");
+		} catch (RuntimeException e) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+		}
 	}
-	
+
 //	public ResponseEntity<?> createClubPhoto(@RequestBody ClubPhotoDTO clubPhotoDTO) {
 //	try {
 //		ClubPhoto clubPhoto = convertToEntity(clubPhotoDTO);
@@ -74,19 +80,19 @@ public class ClubPhotoController {
 	// Controller method for handling the delete request
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteClubPhoto(@PathVariable Integer id, @RequestParam Integer uploaderId) {
-	    if (uploaderId == null) {
-	        return ResponseEntity.badRequest().body("Uploader ID is required.");
-	    }
-	    try {
-	        cpService.deletePhotoIfOwner(id, uploaderId);
-	        return ResponseEntity.ok("Photo deleted successfully.");
-	    } catch (SecurityException | IllegalArgumentException e) {
-	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
-	    } catch (IOException e) {
-	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the file.");
-	    }
+		if (uploaderId == null) {
+			return ResponseEntity.badRequest().body("Uploader ID is required.");
+		}
+		try {
+			cpService.deletePhotoIfOwner(id, uploaderId);
+			return ResponseEntity.ok("Photo deleted successfully.");
+		} catch (SecurityException | IllegalArgumentException e) {
+			return ResponseEntity.status(HttpStatus.FORBIDDEN).body(e.getMessage());
+		} catch (IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error deleting the file.");
+		}
 	}
-	
+
 	// 轉換DTO
 	private ClubPhotoDTO convertToDTO(ClubPhoto clubPhoto) {
 		ClubPhotoDTO dto = new ClubPhotoDTO();
@@ -108,7 +114,7 @@ public class ClubPhotoController {
 		return clubPhoto;
 
 	}
-	
+
 //	@GetMapping("/{id}")
 //	public ResponseEntity<?> getClubPhoto(@PathVariable Integer id) {
 //
