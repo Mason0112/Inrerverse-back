@@ -146,8 +146,10 @@ public class UserController {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");
 
-			JSONObject loggedInUser = new JSONObject().put("id", user.getId())
-					.put("accountNumber", user.getAccountNumber()).put("nickname", user.getNickname());
+			JSONObject loggedInUser = new JSONObject()
+					.put("id", user.getId())
+					.put("accountNumber", user.getAccountNumber())
+					.put("nickname", user.getNickname());
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
 
