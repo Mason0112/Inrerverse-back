@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,7 +31,7 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-	@JsonBackReference("user-comments")
+    @JsonIgnoreProperties({"postComment", "userPosts"}) // 忽略不需要序列化的屬性
 	private User user;
 	
 	@Column(name = "comment")
@@ -41,7 +42,7 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "post_id")
-	@JsonBackReference("post-comments")
+    @JsonIgnoreProperties({"postComment"}) // 忽略不需要序列化的屬性
 	private UserPost userPost;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法

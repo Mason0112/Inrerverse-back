@@ -82,12 +82,12 @@ public class User {
 	
 	//勁甫的
     @OneToMany(mappedBy = "user")
-    @JsonIgnoreProperties("user") // 忽略 user 屬性
+    @JsonIgnoreProperties({"user", "postComment"}) // 忽略 user 屬性
     private List<UserPost> userPosts;
 
 
 	
-	@JsonManagedReference("user-comments")
+    @JsonIgnoreProperties({"user", "userPosts"}) // 忽略 user 屬性
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "user")
 	private List<PostComment> postComment;
 	
