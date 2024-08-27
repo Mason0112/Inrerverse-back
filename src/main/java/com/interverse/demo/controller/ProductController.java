@@ -1,13 +1,10 @@
 package com.interverse.demo.controller;
 
-import java.io.IOException;
 import java.net.MalformedURLException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -24,7 +21,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.interverse.demo.model.Product;
 import com.interverse.demo.model.ProductPhotos;
@@ -63,7 +59,10 @@ public class ProductController {
         } else {
             return ResponseEntity.notFound().build();
         }
-    }@GetMapping("/{productId}/latestphoto")
+    }
+	
+	
+	@GetMapping("/{productId}/latestphoto")
     public ResponseEntity<Resource> getLatestProductPhoto(@PathVariable Integer productId) throws MalformedURLException {
         List<ProductPhotos> photos = productPhotoService.getAllProductPhotos(productId);
 
@@ -125,25 +124,28 @@ public class ProductController {
         return ResponseEntity.noContent().build();
     }
     
-    
-    @GetMapping("/{productId}/photo-urls")
-    public ResponseEntity<List<String>> getProductPhotoUrls(@PathVariable Integer productId) {
-        List<ProductPhotos> photos = productPhotoService.getAllProductPhotos(productId);
-        
-        if (photos.isEmpty()) {
+    @GetMapping("/{productId}/{photoId}")
+    public ResponseEntity<Resource> getSpecificProductPhoto(@PathVariable Integer productId, @PathVariable Integer photoId) throws MalformedURLException {
+        // 使用 productId 和 photoId 來獲取特定的照片
+        ProductPhotos photo = productPhotoService.getProductPhoto(productId, photoId);
+
+        if (photo == null) {
             return ResponseEntity.notFound().build();
         }
-        
-        List<String> photoUrls = photos.stream()
-            .map(photo -> ServletUriComponentsBuilder.fromCurrentContextPath()
-                .path("/products/{productId}/photos/{photoId}")
-                .buildAndExpand(productId, photo.getId())
-                .toUriString())
-            .collect(Collectors.toList());
-        
-        return ResponseEntity.ok(photoUrls);
-    }
 
-    
+        String photoPath = photo.getPhotoPath();
+
+        Path path = Paths.get(photoPath);
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + photo.getPhotoName() + "\"")
+                .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
+                .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
 	
 }

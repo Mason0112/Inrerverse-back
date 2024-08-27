@@ -108,9 +108,12 @@ public class ProductPhotoService {
 	        return productPhotosRepo.save(photo);
 	    }
 	    
-	    public ProductPhotos getProductPhoto(Integer photoId) {
-	        return productPhotosRepo.findById(photoId)
-	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+	    public ProductPhotos getProductPhoto(Integer productId, Integer photoId) {
+	        Product product = productRepo.findById(productId)
+	            .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
+
+	        return productPhotosRepo.findByProductsAndId(product, photoId)
+	            .orElseThrow(() -> new RuntimeException("Product photo not found with productId: " + productId + " and photoId: " + photoId));
 	    }
 	    
 	    public List<ProductPhotos> getAllProductPhotos(Integer productId) {
@@ -118,7 +121,11 @@ public class ProductPhotoService {
 	            .orElseThrow(() -> new RuntimeException("Product not found with id: " + productId));
 	        return productPhotosRepo.findByProducts(product);
 	    }
-	
+	    
+	    public ProductPhotos getProductPhoto(Integer photoId) {
+	        return productPhotosRepo.findById(photoId)
+	            .orElseThrow(() -> new RuntimeException("Product photo not found with id: " + photoId));
+	    }
 	
 	
 }

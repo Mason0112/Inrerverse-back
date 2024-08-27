@@ -92,12 +92,13 @@ public class CartService {
     }
 
     public CartResponseDTO convertToResponseDTO(Cart cart) {
-    	CartResponseDTO dto = new CartResponseDTO();
+        CartResponseDTO dto = new CartResponseDTO();
         dto.setUserId(cart.getUsers().getId());
         dto.setProductId(cart.getProducts().getId());
         dto.setVol(cart.getVol());
         dto.setProductName(cart.getProducts().getName());
-        // 可以添加更多產品信息，如價格、描述等
+        dto.setPrice(cart.getProducts().getPrice()); // 添加價格信息
+        // 可以添加更多產品信息，如描述等
         return dto;
     }
 }
