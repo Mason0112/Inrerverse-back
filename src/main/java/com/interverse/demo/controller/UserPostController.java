@@ -3,6 +3,8 @@ package com.interverse.demo.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,10 +32,11 @@ public class UserPostController {
 	private UserService userService;
 	
 	@PostMapping("/userPost")
-	public UserPost addPost(@RequestBody UserPost post) {
+	public ResponseEntity<UserPost> addPost(@RequestBody UserPost post) {
 		String content = post.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
 		post.setContent(content);
-		return postService.savePost(post);
+		UserPost savePost = postService.savePost(post);
+		return new ResponseEntity<>(savePost, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/userPost/showUserAllPost/{userId}")

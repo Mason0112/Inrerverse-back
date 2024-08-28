@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
 import java.util.UUID;
 
@@ -46,12 +47,11 @@ public class PostPhotoService {
 		}
 		
 		Path filePath = uploadPath.resolve(uniqueFileName);
-		
-		file.transferTo(filePath.toFile());
+		Files.copy(file.getInputStream(), filePath, StandardCopyOption.REPLACE_EXISTING);
 		
 		PostPhoto postPhoto = new PostPhoto();
 		postPhoto.setName(fileName);
-		postPhoto.setUrl(filePath.toString());
+		postPhoto.setUrl("/uploads" + fileName);
 		postPhoto.setUserPost(post);
 		
 		return postPhotoRepo.save(postPhoto);
