@@ -22,13 +22,13 @@ public class FriendService {
 
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	public FriendDto convert(Friend friend) {
 		FriendDto friendDto = new FriendDto();
 		friendDto.setUser1Id(friend.getUser1().getId());
 		friendDto.setUser2Id(friend.getUser2().getId());
 		friendDto.setStatus(friend.getStatus());
-		
+
 		return friendDto;
 	}
 
@@ -112,23 +112,21 @@ public class FriendService {
 	public List<FriendDto> findMyFriend(Integer user1Id) {
 
 		List<Friend> friendList = friendRepo.findByUser1Id(user1Id);
-		
+
 		List<FriendDto> friendDtoList = friendList.stream()
-        .map(this::convert)
-        .collect(Collectors.toList());
-		
+				.map(this::convert)
+				.collect(Collectors.toList());
+
 		return friendDtoList;
 	}
 
 	public List<FriendDto> findMyFriendRequest(Integer user2Id) {
 
 		List<Friend> friendList = friendRepo.findByUser2Id(user2Id);
-		
-		List<FriendDto> friendDtoList = friendList.stream()
-		        .map(this::convert)
-		        .collect(Collectors.toList());
-		
+
+		List<FriendDto> friendDtoList = friendList.stream().map(this::convert).collect(Collectors.toList());
+
 		return friendDtoList;
 	}
-	
+
 }

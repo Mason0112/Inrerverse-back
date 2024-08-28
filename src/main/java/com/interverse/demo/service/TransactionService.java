@@ -32,7 +32,7 @@ public class TransactionService {
 	
 	public TransactionDto addTransaction(Transaction transaction) {
 		
-		return convert((transRepo.save(transaction)));
+		return convert(transRepo.save(transaction));
 	}
 	
 	public List<TransactionDto> findMyTransaction(Integer userId) {
@@ -54,8 +54,6 @@ public class TransactionService {
 			
 			return transactionDtoList;
 	}
-	
-
 	
 
 }

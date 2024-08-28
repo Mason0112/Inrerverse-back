@@ -44,6 +44,7 @@ public class TransactionController {
 		return ResponseEntity.ok(myTransactionList);
 	}
 	
+	@GetMapping("/all")
 	public ResponseEntity<List<TransactionDto>> findAllTransaction() {
 		
 		List<TransactionDto> allTransaction = transService.findAllTransaction();
