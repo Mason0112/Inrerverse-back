@@ -11,8 +11,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.interverse.demo.dto.OrderDTO;
+import com.interverse.demo.dto.OrderDetailDTO;
 import com.interverse.demo.model.Order;
 import com.interverse.demo.model.OrderRepository;
+import com.interverse.demo.model.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -24,6 +26,10 @@ public class OrderService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderDetailService orderDetailService;
+    @Autowired
+    private UserRepository userRepository;
 
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
@@ -31,9 +37,15 @@ public class OrderService {
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setStatus(orderDTO.getStatus());
         order.setUsers(userService.findUserById(orderDTO.getUserId()));
-        // 不需要設置 added，因為 @PrePersist 會自動設置
         order = orderRepository.save(order);
 
+        // 創建訂單詳情
+        for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
+            detailDTO.setOrderId(order.getId());
+            orderDetailService.createOrderDetail(detailDTO);
+        }
+
+        // 轉換為 DTO 並返回
         return convertToDTO(order);
     }
 
@@ -89,16 +101,6 @@ public class OrderService {
         orderRepository.deleteById(orderId);
     }
 
-    private OrderDTO convertToDTO(Order order) {
-        OrderDTO dto = new OrderDTO();
-        dto.setId(order.getId());
-        dto.setUserId(order.getUsers().getId());
-        dto.setStatus(order.getStatus());
-        dto.setPaymentMethod(order.getPaymentMethod());
-        dto.setAdded(order.getAdded());
-        return dto;
-    }
-    
     public List<OrderDTO> getOrdersByPaymentMethod(Integer paymentMethod) {
         return orderRepository.findByPaymentMethod(paymentMethod).stream()
                 .map(this::convertToDTO)
@@ -127,5 +129,45 @@ public class OrderService {
     }
     
     
+    private OrderDTO convertToDTO(Order order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+        dto.setUserId(order.getUsers().getId());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setAdded(order.getAdded());
+        
+        // 獲取訂單詳情
+        List<OrderDetailDTO> orderDetails = orderDetailService.getAllOrderDetailDTOs(order.getId());
+        dto.setOrderDetails(orderDetails);
+        
+        // 計算總金額
+        int totalAmount = orderDetails.stream()
+                .mapToInt(OrderDetailDTO::getSubtotal)
+                .sum();
+        dto.setTotalAmount(totalAmount);
+        
+        return dto;
+    }
+   
+    @Transactional
+    public OrderDTO createOrderWithDetails(OrderDTO orderDTO) {
+        // 創建訂單
+        Order order = new Order();
+        order.setPaymentMethod(orderDTO.getPaymentMethod());
+        order.setStatus(orderDTO.getStatus());
+        order.setUsers(userRepository.findById(orderDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found")));
+
+        order = orderRepository.save(order);
+
+        // 創建訂單詳情
+        for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
+            detailDTO.setOrderId(order.getId());
+            orderDetailService.createOrderDetail(detailDTO);
+        }
+
+        return convertToDTO(order);
+    }
+   
     
 }

@@ -70,9 +70,17 @@ public class CartController {
         return ResponseEntity.ok(allItems);
     }
 
+    @PostMapping("/clear-after-order/{userId}")
+    public ResponseEntity<String> clearCartAfterOrder(@PathVariable Integer userId) {
+        cartService.clearUserCart(userId);
+        return ResponseEntity.ok("User cart cleared successfully after order creation");
+    }
+    
     // 錯誤處理方法
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<String> handleRuntimeException(RuntimeException ex) {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
+    
+    
 }

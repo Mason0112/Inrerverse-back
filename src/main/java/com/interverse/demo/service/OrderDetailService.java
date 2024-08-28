@@ -2,10 +2,8 @@ package com.interverse.demo.service;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.interverse.demo.dto.OrderDetailDTO;
 import com.interverse.demo.model.Order;
 import com.interverse.demo.model.OrderDetail;
@@ -14,19 +12,15 @@ import com.interverse.demo.model.OrderDetailRepository;
 import com.interverse.demo.model.OrderRepository;
 import com.interverse.demo.model.Product;
 import com.interverse.demo.model.ProductRepository;
-
 import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class OrderDetailService {
-
-	
-	@Autowired
+    
+    @Autowired
     private OrderDetailRepository orderDetailRepository;
-
     @Autowired
     private ProductRepository productRepository;
-
     @Autowired
     private OrderRepository orderRepository;
 
@@ -36,14 +30,13 @@ public class OrderDetailService {
         
         Product product = productRepository.findById(orderDetailDTO.getProductId())
             .orElseThrow(() -> new EntityNotFoundException("Product not found"));
-
+        
         OrderDetail detail = new OrderDetail();
         OrderDetailId id = new OrderDetailId(orderDetailDTO.getOrderId(), orderDetailDTO.getProductId());
         detail.setOrderDetailId(id);
         detail.setQuantity(orderDetailDTO.getQuantity());
         detail.setOrders(order);
         detail.setProducts(product);
-
         OrderDetail savedDetail = orderDetailRepository.save(detail);
         return convertToDTO(savedDetail);
     }
@@ -72,7 +65,7 @@ public class OrderDetailService {
 
     public Integer calculateTotalAmount(Integer orderId) {
         return getAllOrderDetailDTOs(orderId).stream()
-                .mapToInt(dto -> dto.getQuantity() * dto.getPrice())
+                .mapToInt(OrderDetailDTO::getSubtotal)
                 .sum();
     }
 
@@ -82,6 +75,7 @@ public class OrderDetailService {
         dto.setProductId(detail.getOrderDetailId().getProductsId());
         dto.setQuantity(detail.getQuantity());
         dto.setPrice(detail.getProducts().getPrice());
+        // 不需要在這裡設置 subtotal，因為 OrderDetailDTO 中的 getSubtotal() 方法會自動計算
         return dto;
     }
 }

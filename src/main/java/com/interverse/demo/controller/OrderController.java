@@ -36,8 +36,15 @@ public class OrderController {
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable Integer id) {
-        OrderDTO order = orderService.getOrderById(id);
-        return ResponseEntity.ok(order);
+        OrderDTO orderDTO  = orderService.getOrderById(id);
+        if (!orderDTO.hasOrderDetails()) {
+            // 如果沒有訂單詳情，可以選擇在這裡加載
+            // 或者返回一個標記，表示詳情需要單獨加載
+            orderDTO.setOrderDetails(null);  // 明確設置為 null，表示詳情未加載
+        } else {
+            orderDTO.calculateTotalAmount();  // 只在有詳情時計算總額
+        }
+        return ResponseEntity.ok(orderDTO);
     }
 
     @GetMapping("/user/{userId}")
