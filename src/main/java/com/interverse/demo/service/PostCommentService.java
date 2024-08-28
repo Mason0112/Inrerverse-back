@@ -29,12 +29,11 @@ public class PostCommentService {
 	}
 	
 	@Transactional
-	public PostComment updateComment(Integer commentId, String newComment) {
+	public PostComment updateComment(Integer commentId, PostComment newComment) {
 		Optional<PostComment> optional = commentRepo.findById(commentId);
 		if(optional.isPresent()) {
 			PostComment comment = optional.get();
-			comment.setComment(newComment);
-			return comment;
+			return commentRepo.save(newComment);
 		}
 		return null;
 	}

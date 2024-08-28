@@ -25,13 +25,13 @@ public class PostCommentController {
 	private PostCommentService commentService;
 	
 	@PostMapping(
-			"/postComment/addComment")
+			"/postComment")
 	public PostComment addComment(@RequestBody PostComment postComment) {
 		return commentService.addComment(postComment);
 	}
 	
 	@PutMapping("/postComment/{commentId}")
-	public PostComment updateComment(@PathVariable Integer commentId, @RequestParam String newComment) {
+	public PostComment updateComment(@PathVariable Integer commentId, @RequestBody PostComment newComment) {
 		return commentService.updateComment(commentId, newComment);
 	}
 	
