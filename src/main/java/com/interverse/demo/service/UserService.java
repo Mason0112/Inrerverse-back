@@ -80,19 +80,50 @@ public class UserService {
 		return userRepo.save(user);
 	}
 
+	
 	public boolean existsByAccountNumber(String accountNumber) {
-		User user = userRepo.findByAccountNumber(accountNumber);
+		User user = userRepo.findByEmail(accountNumber);
 		return user != null; // 如果user存在，返回true，否則返回false
 	}
-
+	
+	public boolean existsByAccountNumber(Integer id, String accountNumber) {
+		//找資料庫有沒有此帳號
+		User user = userRepo.findByAccountNumber(accountNumber);
+		//已有此帳號的話
+		if(user !=null) {
+			//如果資料庫的帳號 也屬於該人的帳號 返回false
+			return user.getId() != id;
+		}
+		//沒有的話
+		return false;
+	}
+	
 	public boolean existsByEmail(String email) {
 		User user = userRepo.findByEmail(email);
 		return user != null; // 如果user存在，返回true，否則返回false
 	}
 
+	public boolean existsByEmail(Integer id, String email) {
+		User user = userRepo.findByEmail(email);
+		
+		if(user !=null) {
+			return user.getId() != id;
+		}
+		return false;
+	}
+	
 	public boolean existsByPhoneNumber(String phoneNumber) {
-		UserDetail user = uDetailRepo.findByPhoneNumber(phoneNumber);
-		return user != null; // 如果user存在，返回true，否則返回false
+		UserDetail userDetail = uDetailRepo.findByPhoneNumber(phoneNumber);
+		return userDetail != null; // 如果user存在，返回true，否則返回false
+	}
+	
+	public boolean existsByPhoneNumber(Integer id, String phoneNumber) {
+		UserDetail userDetail = uDetailRepo.findByPhoneNumber(phoneNumber);
+		
+		if(userDetail !=null) {
+			return userDetail.getUserId() != id;
+		}
+		return false;
 	}
 
 	public User updatePhoto(Integer id, MultipartFile file) throws IOException {

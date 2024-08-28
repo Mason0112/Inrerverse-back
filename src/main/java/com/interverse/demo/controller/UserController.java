@@ -178,7 +178,7 @@ public class UserController {
 		JSONObject responseJson = new JSONObject();
 
 		// 先檢查是否有輸入值
-		if (noeUtil.determineString(userDto.getAccountNumber()) || noeUtil.determineString(userDto.getEmail())
+		if (noeUtil.determineString(userDto.getEmail())
 				|| noeUtil.determineString(userDto.getNickname()) || noeUtil.determineString(userDto.getPhoneNumber())
 				|| noeUtil.determineString(userDto.getCountry()) || noeUtil.determineString(userDto.getCity())
 				|| noeUtil.determineLocalDate(userDto.getBirthday()) || noeUtil.determineString(userDto.getGender())) {
@@ -190,7 +190,6 @@ public class UserController {
 		}
 
 		user.setId(id);
-		user.setAccountNumber(userDto.getAccountNumber());
 		user.setEmail(userDto.getEmail());
 		user.setNickname(userDto.getNickname());
 
@@ -199,6 +198,7 @@ public class UserController {
 		userDetail.setCity(userDto.getCity());
 		userDetail.setBirthday(userDto.getBirthday());
 		userDetail.setGender(userDto.getGender());
+		userDetail.setBio(userDto.getBio());
 
 		user.setUserDetail(userDetail);
 
@@ -206,13 +206,13 @@ public class UserController {
 
 		try {
 			// 檢查unique欄位有沒有違反unique約束
-			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+			if (userService.existsByAccountNumber(id, userDto.getAccountNumber())) {
 				errorMessages.add("您輸入的帳號已被註冊; ");
 			}
-			if (userService.existsByEmail(userDto.getEmail())) {
+			if (userService.existsByEmail(id, userDto.getEmail())) {
 				errorMessages.add("您輸入的email已被使用");
 			}
-			if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+			if (userService.existsByPhoneNumber(id, userDto.getPhoneNumber())) {
 				errorMessages.add("您輸入的電話已被使用");
 			}
 			if (!errorMessages.isEmpty()) {
@@ -255,6 +255,7 @@ public class UserController {
 			responseJson.put("phoneNumber", userDetail.getPhoneNumber());
 			responseJson.put("country", userDetail.getCountry());
 			responseJson.put("city", userDetail.getCity());
+			responseJson.put("birthday", userDetail.getBirthday());
 			responseJson.put("age", age);
 			responseJson.put("gender", userDetail.getGender());
 			responseJson.put("bio", userDetail.getBio());

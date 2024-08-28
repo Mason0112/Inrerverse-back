@@ -19,5 +19,6 @@ public class UserDto {
 	private String city;
 	private LocalDate birthday;
 	private String gender;
+	private String bio;
 
 }
