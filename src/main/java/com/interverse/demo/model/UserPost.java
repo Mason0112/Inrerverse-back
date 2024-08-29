@@ -50,7 +50,7 @@ public class UserPost {
 	private List<PostComment> postComment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-	@JsonManagedReference("post-photos")
+    @JsonIgnoreProperties("userPosts") // 忽略 userPost 屬性
 	private List<PostPhoto> photos;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法

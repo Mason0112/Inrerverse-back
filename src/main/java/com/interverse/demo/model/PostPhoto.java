@@ -1,6 +1,7 @@
 package com.interverse.demo.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -27,7 +28,7 @@ public class PostPhoto {
 
 	@JoinColumn(name = "post_id")
 	@ManyToOne
-	@JsonBackReference("post-photos")
+    @JsonIgnoreProperties("photos") // 忽略不需要序列化的屬性
 	private UserPost userPost;
 	
 	@Column(name="name")

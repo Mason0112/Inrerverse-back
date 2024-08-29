@@ -2,6 +2,7 @@ package com.interverse.demo.controller;
 
 import java.util.List;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,7 +42,13 @@ public class UserPostController {
 	
 	@GetMapping("/userPost/showUserAllPost/{userId}")
 	public List<UserPost> showUserAllPost(@PathVariable Integer userId) {
-		return postService.showUserAllPost(userId);
+		List<UserPost> posts = postService.showUserAllPost(userId);
+        
+		// 確保延遲加載的關聯被初始化
+		for(UserPost post : posts) {
+			Hibernate.initialize(post.getPhotos());
+		}
+		return posts;
 	}
 	
 	@PutMapping("/userPost/{postId}")
