@@ -56,7 +56,7 @@ public class PostPhotoService {
 		PostPhoto postPhoto = new PostPhoto();
 		postPhoto.setName(fileName);
 		//設定照片的名稱和URL。URL 指向上傳目錄中的檔案（例如 /uploads + 檔名）。
-		postPhoto.setUrl(filePath.toString());
+        postPhoto.setUrl("/userPostPhotos/" + uniqueFileName);  // 使用相对URL
 		//將照片與 UserPost 關聯起來。
 		postPhoto.setUserPost(post);
 		

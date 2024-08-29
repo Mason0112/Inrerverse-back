@@ -45,9 +45,7 @@ public class UserPostController {
 		List<UserPost> posts = postService.showUserAllPost(userId);
         
 		// 確保延遲加載的關聯被初始化
-		for(UserPost post : posts) {
-			Hibernate.initialize(post.getPhotos());
-		}
+		posts.forEach(post -> Hibernate.initialize(post.getPhotos()));
 		return posts;
 	}
 	
