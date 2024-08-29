@@ -25,7 +25,7 @@ public class TransactionService {
 		transactionDto.setAmount(transaction.getAmount());
 		transactionDto.setStatus(transaction.getStatus());
 		transactionDto.setAdded(transaction.getAdded());
-		transactionDto.setUser(transaction.getUser());
+		transactionDto.setUserId(transaction.getUser().getId());
 		
 		return transactionDto;
 	}

@@ -259,6 +259,7 @@ public class UserController {
 			responseJson.put("age", age);
 			responseJson.put("gender", userDetail.getGender());
 			responseJson.put("bio", userDetail.getBio());
+			responseJson.put("walletBalance",user.getWalletBalance());
 
 			return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
 		}

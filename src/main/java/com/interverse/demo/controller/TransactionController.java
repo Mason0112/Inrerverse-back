@@ -38,7 +38,7 @@ public class TransactionController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<List<TransactionDto>> findMyTransaction(@PathVariable Integer id) {
+	public ResponseEntity<List<TransactionDto>> findMyTransactcion(@PathVariable Integer id) {
 		
 		List<TransactionDto> myTransactionList = transService.findMyTransaction(id);
 		return ResponseEntity.ok(myTransactionList);

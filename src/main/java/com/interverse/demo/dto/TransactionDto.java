@@ -2,8 +2,6 @@ package com.interverse.demo.dto;
 
 import java.time.LocalDateTime;
 
-import com.interverse.demo.model.User;
-
 import lombok.Getter;
 import lombok.Setter;
 
@@ -17,6 +15,6 @@ public class TransactionDto {
 	private Long amount;
 	private Boolean status;
 	private LocalDateTime added;
-	private User user;
+	private Integer userId;
 
 }
