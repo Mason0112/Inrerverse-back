@@ -24,6 +24,10 @@ public class PostPhotoService {
 	
     @Value("${upload.userPost.dir}")
     private String uploadDir;
+    
+
+    @Value("${upload.userPost.path}")
+    private String uploadPhotoPath;
 	
 	@Autowired
 	private PostPhotosRepository postPhotoRepo;
@@ -56,7 +60,7 @@ public class PostPhotoService {
 		PostPhoto postPhoto = new PostPhoto();
 		postPhoto.setName(fileName);
 		//設定照片的名稱和URL。URL 指向上傳目錄中的檔案（例如 /uploads + 檔名）。
-        postPhoto.setUrl("/userPostPhotos/" + uniqueFileName);  // 使用相对URL
+        postPhoto.setUrl(uploadDir + uniqueFileName);  // 使用相对URL
 		//將照片與 UserPost 關聯起來。
 		postPhoto.setUserPost(post);
 		

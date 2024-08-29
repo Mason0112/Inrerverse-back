@@ -16,6 +16,10 @@ public class WebConfig implements WebMvcConfigurer {
 	@Value("${upload.userPost.dir}")
 	private String uploadPostPhotoDir;
 	
+
+    @Value("${upload.userPost.path}")
+    private String uploadPostPhotoPath;
+	
 	@Autowired
 	private JwtInterceptor jwtInterceptor;
 
@@ -28,7 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 	
 	 @Override
 	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-	        registry.addResourceHandler("/userPostPhotos/**")
+	        registry.addResourceHandler(uploadPostPhotoPath + "/**")
 	                .addResourceLocations("file:" + uploadPostPhotoDir + "/");
 	    }
 	
