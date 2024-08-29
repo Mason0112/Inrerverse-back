@@ -1,5 +1,9 @@
 package com.interverse.demo.controller;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 
 import org.hibernate.Hibernate;
@@ -10,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.model.PostPhoto;
 import com.interverse.demo.model.UserPost;
 import com.interverse.demo.service.UserPostService;
 import com.interverse.demo.service.UserService;
@@ -41,12 +46,25 @@ public class UserPostController {
 	}
 	
 	@GetMapping("/userPost/showUserAllPost/{userId}")
-	public List<UserPost> showUserAllPost(@PathVariable Integer userId) {
+	public ResponseEntity<List<UserPost>> showUserAllPost(@PathVariable Integer userId) throws IOException {
+		try {
 		List<UserPost> posts = postService.showUserAllPost(userId);
         
-		// 確保延遲加載的關聯被初始化
-		posts.forEach(post -> Hibernate.initialize(post.getPhotos()));
-		return posts;
+		for (UserPost userPost : posts) {
+			List<PostPhoto> photos = userPost.getPhotos();
+			for (PostPhoto photo : photos) {
+				File file=new File(photo.getUrl());
+				byte[] photoFile = Files.readAllBytes(file.toPath());
+				String base64Photo = "data:image/png;base64," +Base64.getEncoder().encodeToString(photoFile); 
+				photo.setBase64Photo(base64Photo);
+			}
+			
+		}
+		return ResponseEntity.ok(posts);
+		}catch(IOException e) {
+			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+		}
+
 	}
 	
 	@PutMapping("/userPost/{postId}")

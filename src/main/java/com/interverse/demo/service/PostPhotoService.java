@@ -24,10 +24,6 @@ public class PostPhotoService {
 	
     @Value("${upload.userPost.dir}")
     private String uploadDir;
-    
-
-    @Value("${upload.userPost.path}")
-    private String uploadPhotoPath;
 	
 	@Autowired
 	private PostPhotosRepository postPhotoRepo;

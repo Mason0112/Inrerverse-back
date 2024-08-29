@@ -13,10 +13,6 @@ import com.interverse.demo.util.JwtInterceptor;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 	
-//	@Value("${upload.userPost.dir}")
-//	private String uploadPostPhotoDir;
-	
-	
 	@Autowired
 	private JwtInterceptor jwtInterceptor;
 
@@ -26,13 +22,7 @@ public class WebConfig implements WebMvcConfigurer {
 		.addPathPatterns("/user/secure/**")
 		.addPathPatterns("/friend/**");
 	}
-	
-//	 @Override
-//	    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-//	        registry.addResourceHandler("/**")
-//	                .addResourceLocations("file:///" + uploadPostPhotoDir + "/");
-//	    }
-	
+		
 	@Override
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")

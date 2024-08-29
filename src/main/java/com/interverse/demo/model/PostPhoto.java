@@ -28,13 +28,22 @@ public class PostPhoto {
 
 	@JoinColumn(name = "post_id")
 	@ManyToOne
-    @JsonIgnoreProperties("photos") // 忽略不需要序列化的屬性
+	@JsonIgnoreProperties("photos") // 忽略不需要序列化的屬性
 	private UserPost userPost;
-	
-	@Column(name="name")
+
+	@Column(name = "name")
 	private String name;
 
 	@Column(name = "url")
 	private String url;
 
+	private String base64Photo;
+
+	public void setBase64Photo(String base64Photo) {
+		this.base64Photo = base64Photo;
+	}
+
+	public String getBase64Photo() {
+		return this.base64Photo;
+	}
 }
