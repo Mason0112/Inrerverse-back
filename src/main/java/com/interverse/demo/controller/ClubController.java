@@ -39,12 +39,12 @@ public class ClubController {
 		dto.setIsPublic(club.getIsPublic());
 		dto.setIsAllowed(club.getIsAllowed());
 		dto.setAdded(club.getAdded());
-		dto.setClubCreatorId(club.getClubCreator().getId());
+		dto.setClubCreator(club.getClubCreator().getId());
 				
 		// 如果需要，将 event 的名称列表填充到 DTO 中
-		dto.setEventNames(club.getEvent().stream().map(event -> event.getEventName()) // 假设 Event 类有 getEventName 方法
-				.collect(Collectors.toList()));
-		
+//		dto.setEventNames(club.getEvent().stream().map(event -> event.getEventName()) // 假设 Event 类有 getEventName 方法
+//				.collect(Collectors.toList()));
+//		
 		return dto;
 	}
 
@@ -53,6 +53,16 @@ public class ClubController {
 		Club saveClub = cService.saveClub(club);
 		return convertToDTO(saveClub);
 	}
+	
+//	@PostMapping
+//	public Club createClub(@RequestBody Club club) {
+//		if (club.getClubCreator() == null ) {
+//	        throw new IllegalArgumentException("Club creator must be provided");
+//	    }
+//
+//	    Club saveClub = cService.saveClub(club);
+//	    return saveClub;
+//	}
 
 	@GetMapping
 	public List<ClubDTO> getAllClub() {
@@ -88,19 +98,24 @@ public class ClubController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateClub(@PathVariable Integer id, @RequestBody Club club) {
+	    // 查找现有的Club对象
+	    Club existingClub = cService.findClubById(id);
 
-		Club existingclub = cService.findClubById(id);
+	    if (existingClub == null) {
+	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
+	    }
 
-		if (existingclub == null) {
-		
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
-		}
-		
-		club.setId(id);
-		club.setAdded(existingclub.getAdded());
-		
-		convertToDTO(cService.saveClub(club));
+	    // 保留原有的clubCreator，防止在更新时被修改
+	    club.setClubCreator(existingClub.getClubCreator());
 
-		return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
+	    // 保留原有的添加日期
+	    club.setId(id);
+	    club.setAdded(existingClub.getAdded());
+
+	    // 保存更新后的Club对象
+	    cService.saveClub(club);
+
+	    return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
 	}
+
 }
