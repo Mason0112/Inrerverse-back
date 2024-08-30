@@ -30,23 +30,30 @@ public class TransactionController {
 	@PostMapping("/add")
 	public ResponseEntity<TransactionDto> addTransaction(@RequestBody Transaction transaction) {
 
+		Long currentBalance = transaction.getUser().getWalletBalance();
+		Long transAmount = transaction.getAmount();
+
+		if ((currentBalance + transAmount) <= 0) {
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+		}
+
 		TransactionDto transactionDto = transService.addTransaction(transaction);
 
 		Integer userId = transaction.getUser().getId();
 		userService.updateUserWalletBalance(userId);
 		return ResponseEntity.status(HttpStatus.CREATED).body(transactionDto);
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<List<TransactionDto>> findMyTransactcion(@PathVariable Integer id) {
-		
+
 		List<TransactionDto> myTransactionList = transService.findMyTransaction(id);
 		return ResponseEntity.ok(myTransactionList);
 	}
-	
+
 	@GetMapping("/all")
 	public ResponseEntity<List<TransactionDto>> findAllTransaction() {
-		
+
 		List<TransactionDto> allTransaction = transService.findAllTransaction();
 		return ResponseEntity.ok(allTransaction);
 	}

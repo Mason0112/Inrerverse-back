@@ -6,6 +6,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.configurationprocessor.json.JSONArray;
@@ -142,21 +143,24 @@ public class UserController {
 		// 判斷登入結果
 		if (user == null) {
 			responseJson.put("success", false);
-			responseJson.put("message", "登入失敗");
+			responseJson.put("message", "您輸入的帳號密碼錯誤");
 		} else {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");
 
+			UUID randomUUID = UUID.randomUUID();
 			JSONObject loggedInUser = new JSONObject()
 					.put("id", user.getId())
 					.put("accountNumber", user.getAccountNumber())
-					.put("nickname", user.getNickname());
+					.put("nickname", user.getNickname())
+					.put("auth", randomUUID);
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
 
 			responseJson.put("token", token);
 			responseJson.put("id", user.getId());
 			responseJson.put("nickname", user.getNickname());
+			responseJson.put("uuid", randomUUID);
 		}
 
 		return responseJson.toString();
