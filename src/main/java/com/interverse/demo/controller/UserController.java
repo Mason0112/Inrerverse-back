@@ -91,7 +91,7 @@ public class UserController {
 		try {
 			// 檢查unique欄位有沒有違反unique約束
 			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
-				errorMessages.add("您輸入的帳號已被註冊; ");
+				errorMessages.add("您輸入的帳號已被註冊");
 			}
 			if (userService.existsByEmail(userDto.getEmail())) {
 				errorMessages.add("您輸入的email已被使用");
