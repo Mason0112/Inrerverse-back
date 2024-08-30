@@ -96,7 +96,7 @@ public class ClubController {
 		return ResponseEntity.status(HttpStatus.OK).body("Delete Successful");
 	}
 
-	@PutMapping("/{id}")
+	@PutMapping("/{id}/edit")
 	public ResponseEntity<String> updateClub(@PathVariable Integer id, @RequestBody Club club) {
 
 		Club existingclub = cService.findClubById(id);
