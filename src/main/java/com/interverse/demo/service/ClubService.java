@@ -7,16 +7,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.interverse.demo.model.Club;
-import com.interverse.demo.model.ClubPhoto;
 import com.interverse.demo.model.ClubRepository;
 
-import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 
 @Service
 public class ClubService {
 
 	@Autowired
 	private ClubRepository clubRepo;
+	
+	 @PersistenceContext
+	    private EntityManager entityManager;
 
 	public Club saveClub(Club club) {
 		return clubRepo.save(club);

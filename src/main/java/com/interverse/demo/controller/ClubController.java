@@ -48,7 +48,7 @@ public class ClubController {
 		return dto;
 	}
 
-	@PostMapping
+	@PostMapping("/new")
 	public ClubDTO createClub(@RequestBody Club club) {
 		Club saveClub = cService.saveClub(club);
 		return convertToDTO(saveClub);
@@ -64,7 +64,7 @@ public class ClubController {
 //	    return saveClub;
 //	}
 
-	@GetMapping
+	@GetMapping("/all")
 	public List<ClubDTO> getAllClub() {
 		List<Club> allClub = cService.findAllClub();
 		return allClub.stream()
@@ -98,24 +98,19 @@ public class ClubController {
 
 	@PutMapping("/{id}")
 	public ResponseEntity<String> updateClub(@PathVariable Integer id, @RequestBody Club club) {
-	    // 查找现有的Club对象
-	    Club existingClub = cService.findClubById(id);
 
-	    if (existingClub == null) {
-	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
-	    }
+		Club existingclub = cService.findClubById(id);
 
-	    // 保留原有的clubCreator，防止在更新时被修改
-	    club.setClubCreator(existingClub.getClubCreator());
+		if (existingclub == null) {
+		
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
+		}
+		
+		club.setId(id);
+		club.setAdded(existingclub.getAdded());
+		
+		convertToDTO(cService.saveClub(club));
 
-	    // 保留原有的添加日期
-	    club.setId(id);
-	    club.setAdded(existingClub.getAdded());
-
-	    // 保存更新后的Club对象
-	    cService.saveClub(club);
-
-	    return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
+		return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
 	}
-
 }
