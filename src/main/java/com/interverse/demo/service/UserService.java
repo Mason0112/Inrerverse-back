@@ -82,7 +82,7 @@ public class UserService {
 
 	
 	public boolean existsByAccountNumber(String accountNumber) {
-		User user = userRepo.findByEmail(accountNumber);
+		User user = userRepo.findByAccountNumber(accountNumber);
 		return user != null; // 如果user存在，返回true，否則返回false
 	}
 	

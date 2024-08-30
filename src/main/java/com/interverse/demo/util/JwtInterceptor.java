@@ -48,7 +48,7 @@ public class JwtInterceptor implements HandlerInterceptor {
 		    String auth = request.getHeader("Authorization");
 		    System.out.println(auth);
 		    JSONObject loggedInUser = processAuthorizationHeader(auth);
-		    System.out.println(loggedInUser);
+		    System.out.println("loggedInUser"+loggedInUser);
 		    if (loggedInUser == null || loggedInUser.length() == 0) {
 		    	
 		    	response.setStatus(HttpServletResponse.SC_FORBIDDEN);
@@ -56,10 +56,10 @@ public class JwtInterceptor implements HandlerInterceptor {
 		    	response.setHeader("Access-Control-Allow-Headers", "*");
 		    	response.setHeader("Access-Control-Allow-Credentials", "true");
 		        return false; // 中止請求處理
-		    } /* else {
+		    }  else {
 		    	// 身份驗證通過，繼續處理請求
 		    	
-		    } */
+		    } 
 	    }
 	    return true;
 	}

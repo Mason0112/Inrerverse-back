@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -100,7 +101,7 @@ public class UserController {
 			}
 			if (!errorMessages.isEmpty()) {
 				responseJson.put("success", false);
-				responseJson.put("messages", errorMessages);
+				responseJson.put("messages", new JSONArray(errorMessages));
 				return responseJson.toString();
 			}
 			// 註冊
@@ -217,7 +218,7 @@ public class UserController {
 			}
 			if (!errorMessages.isEmpty()) {
 				responseJson.put("success", false);
-				responseJson.put("messages", errorMessages);
+				responseJson.put("messages", new JSONArray(errorMessages));
 				return responseJson.toString();
 			}
 			// 更新會員資料
