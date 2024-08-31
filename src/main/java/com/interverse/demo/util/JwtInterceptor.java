@@ -44,8 +44,9 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 		// 處理其他請求
 		String auth = request.getHeader("Authorization");
-		String authhClient = request.getHeader("X-User-ID");
-		System.out.println("authhClient:"+ authhClient);
+		System.out.println(auth);
+		String clientId = request.getHeader("X-User-ID");
+		System.out.println("clientId:"+ clientId);
 
 		JSONObject loggedInUser = processAuthorizationHeader(auth);
 		
@@ -56,11 +57,10 @@ public class JwtInterceptor implements HandlerInterceptor {
 			return false;
 		}
 
-		String authh = loggedInUser.optString("auth", null);
-		System.out.println("auth:" +auth);
+		String id = loggedInUser.optString("id", null);
 
 		// 如果請求API的用戶id 和 JWT payload的用戶id 不一致，也中止請求處理
-		if (authh == null || !authh.equals(authhClient)) {
+		if (id == null || !id.equals(clientId)) {
 			setForbiddenResponse(response);
 			return false;
 		}

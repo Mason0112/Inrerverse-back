@@ -148,19 +148,16 @@ public class UserController {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");
 
-			UUID randomUUID = UUID.randomUUID();
 			JSONObject loggedInUser = new JSONObject()
 					.put("id", user.getId())
 					.put("accountNumber", user.getAccountNumber())
-					.put("nickname", user.getNickname())
-					.put("auth", randomUUID);
+					.put("nickname", user.getNickname());
 
 			String token = jwtUtil.generateEncryptedJwt(loggedInUser.toString());
 
 			responseJson.put("token", token);
 			responseJson.put("id", user.getId());
 			responseJson.put("nickname", user.getNickname());
-			responseJson.put("uuid", randomUUID);
 		}
 
 		return responseJson.toString();
