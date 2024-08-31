@@ -12,10 +12,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.ChargeRequest;
 import com.interverse.demo.dto.TransactionDto;
 import com.interverse.demo.model.Transaction;
 import com.interverse.demo.service.TransactionService;
 import com.interverse.demo.service.UserService;
+import com.stripe.exception.StripeException;
+import com.stripe.model.Charge;
+import com.stripe.param.ChargeCreateParams;
 
 @RestController
 @RequestMapping("/transaction")
@@ -57,5 +61,23 @@ public class TransactionController {
 		List<TransactionDto> allTransaction = transService.findAllTransaction();
 		return ResponseEntity.ok(allTransaction);
 	}
+	
+    @PostMapping("/charge")
+    public ResponseEntity<String> chargeCard(@RequestBody ChargeRequest chargeRequest) {
+        try {
+            ChargeCreateParams createParams = new ChargeCreateParams.Builder()
+                    .setAmount(chargeRequest.getAmount())
+                    .setCurrency("TWD")
+                    .setSource(chargeRequest.getToken())
+                    .build();
+
+            Charge charge = Charge.create(createParams);
+
+            
+            return ResponseEntity.ok("Payment successful: " + charge.getId()+ "currency"+charge.getCurrency() + "source"+charge.getSourceTransfer());
+        } catch (StripeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed: " + e.getMessage());
+        }
+    }
 
 }
