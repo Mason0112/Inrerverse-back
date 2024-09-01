@@ -11,7 +11,7 @@ import com.interverse.demo.model.Notification;
 import com.interverse.demo.model.NotificationRepository;
 
 @Service
-public class NotificationSerivce {
+public class NotificationService {
 
 	@Autowired
 	private NotificationRepository notifRepo;

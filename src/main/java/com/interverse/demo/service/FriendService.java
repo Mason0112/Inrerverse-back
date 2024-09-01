@@ -33,7 +33,9 @@ public class FriendService {
 	}
 
 	public void switchFriendStatus(Integer user1Id, Integer user2Id) {
+		//自己已加對方的可能性
 		Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
+		//對方已加自己的可能性
 		Friend possibility2 = friendRepo.findByUser1IdAndUser2Id(user2Id, user1Id);
 
 		Optional<User> optional1 = userRepo.findById(user1Id);

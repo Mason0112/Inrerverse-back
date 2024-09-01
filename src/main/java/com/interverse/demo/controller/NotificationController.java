@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.dto.NotificationDto;
 import com.interverse.demo.model.Notification;
-import com.interverse.demo.service.NotificationSerivce;
+import com.interverse.demo.service.NotificationService;
 
 @RestController
 @RequestMapping("/notification")
 public class NotificationController {
 	
 	@Autowired
-	private NotificationSerivce notifService;
+	private NotificationService notifService;
 	
 	@PostMapping("/add")
 	public ResponseEntity<NotificationDto> addNotification(@RequestBody Notification notification){
