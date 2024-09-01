@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.interverse.demo.model.Club;
@@ -17,9 +18,12 @@ public class ClubService {
 
 	@Autowired
 	private ClubRepository clubRepo;
-	
-	 @PersistenceContext
-	    private EntityManager entityManager;
+
+	@PersistenceContext
+	private EntityManager entityManager;
+
+//	 @Value("${upload.clubphoto0.dir}")
+//		private String uploadDir;
 
 	public Club saveClub(Club club) {
 		return clubRepo.save(club);
@@ -35,21 +39,15 @@ public class ClubService {
 	}
 
 	public void deleteClubById(Integer id) {
-//		Optional<Club> optional = clubRepo.findById(id);
-//
-//		if (optional.isPresent()) {
-			clubRepo.deleteById(id);
-//			return;
-//		}
-//		throw new EntityNotFoundException("Club with id " + id + " not found");
+		clubRepo.deleteById(id);
 	}
 
 	public List<Club> findAllClub() {
 		return clubRepo.findAll();
 	}
-
-//	public boolean existsById(Integer id) {
-//		return clubRepo.existsById(id);
-//	}
 	
+	//使用者創建的社團
+	public List<Club> findClubsByCreatorId(Integer creatorId) {
+		return clubRepo.findByClubCreator_Id(creatorId);
+	}
 }

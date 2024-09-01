@@ -108,7 +108,7 @@ public class ClubMemberController {
 		member.setClubMemberId(memberId); //設置複合主鍵
 		member.setClub(club);
 	    member.setUser(user);
-		member.setStatus(0); // 預設為0
+		member.setStatus(dto.getStatus()); // 預設為0
 		return member;
 	}
 

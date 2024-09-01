@@ -25,6 +25,8 @@ public class ClubDTO {
 
 	private Integer clubCreator;
 	
+	private String photo;
+	
 //	private List<String> eventNames; 
 
 }
