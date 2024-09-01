@@ -27,7 +27,7 @@ public class Transaction {
 	private String transactionNo;
 	private String paymentMethod;
 	private Long amount;
-	private Boolean status;
+	private Short status;
 	
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;

@@ -35,6 +35,13 @@ public class TransactionService {
 		return convert(transRepo.save(transaction));
 	}
 	
+	public TransactionDto updateStatusToCompleted(Transaction transaction) {
+		
+		transaction.setStatus((short) 1);
+		
+		return convert(transRepo.save(transaction));
+	}
+	
 	public List<TransactionDto> findMyTransaction(Integer userId) {
 		
 		List<Transaction> transactionList = transRepo.findByUserId(userId);

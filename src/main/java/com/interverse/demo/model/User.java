@@ -101,4 +101,13 @@ public class User {
             added = LocalDateTime.now(); // 設置當前的日期時間
         }
     }
+
+
+	@Override
+	public String toString() {
+		return "User [accountNumber=" + accountNumber + ", email=" + email + ", nickname=" + nickname
+				+ ", walletBalance=" + walletBalance + "]";
+	}
+	
+	
 }

@@ -5,7 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ChargeRequest {
+public class StripeChargeRequestDto {
 	private String token;
 	private Long amount;
 

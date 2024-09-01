@@ -13,7 +13,7 @@ public class TransactionDto {
 	private String transactionNo;
 	private String paymentMethod;
 	private Long amount;
-	private Boolean status;
+	private Short status;
 	private LocalDateTime added;
 	private Integer userId;
 

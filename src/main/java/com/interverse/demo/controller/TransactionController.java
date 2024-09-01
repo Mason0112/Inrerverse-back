@@ -8,13 +8,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interverse.demo.dto.ChargeRequest;
+import com.interverse.demo.dto.StripeChargeRequestDto;
 import com.interverse.demo.dto.TransactionDto;
 import com.interverse.demo.model.Transaction;
+import com.interverse.demo.model.User;
 import com.interverse.demo.service.TransactionService;
 import com.interverse.demo.service.UserService;
 import com.stripe.exception.StripeException;
@@ -33,8 +35,12 @@ public class TransactionController {
 
 	@PostMapping("/add")
 	public ResponseEntity<TransactionDto> addTransaction(@RequestBody Transaction transaction) {
+		
+		Integer userId = transaction.getUser().getId();
+		
+		User user = userService.findUserById(userId);
+		Long currentBalance = user.getWalletBalance();
 
-		Long currentBalance = transaction.getUser().getWalletBalance();
 		Long transAmount = transaction.getAmount();
 
 		if ((currentBalance + transAmount) <= 0) {
@@ -42,10 +48,19 @@ public class TransactionController {
 		}
 
 		TransactionDto transactionDto = transService.addTransaction(transaction);
-
+		userService.updateUserWalletBalance(userId);
+		
+		return ResponseEntity.status(HttpStatus.CREATED).body(transactionDto);
+	}
+	
+	@PutMapping("/switch-status")
+	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody Transaction transaction) {
+		TransactionDto transactionDto = transService.updateStatusToCompleted(transaction);
+		
 		Integer userId = transaction.getUser().getId();
 		userService.updateUserWalletBalance(userId);
-		return ResponseEntity.status(HttpStatus.CREATED).body(transactionDto);
+		
+		return ResponseEntity.ok(transactionDto);
 	}
 
 	@GetMapping("/{id}")
@@ -63,7 +78,7 @@ public class TransactionController {
 	}
 	
     @PostMapping("/charge")
-    public ResponseEntity<String> chargeCard(@RequestBody ChargeRequest chargeRequest) {
+    public ResponseEntity<String> chargeCard(@RequestBody StripeChargeRequestDto chargeRequest) {
         try {
             ChargeCreateParams createParams = new ChargeCreateParams.Builder()
                     .setAmount(chargeRequest.getAmount())
@@ -74,7 +89,7 @@ public class TransactionController {
             Charge charge = Charge.create(createParams);
 
             
-            return ResponseEntity.ok("Payment successful: " + charge.getId()+ "currency"+charge.getCurrency() + "source"+charge.getSourceTransfer());
+            return ResponseEntity.ok("Payment successful: " + charge.getId());
         } catch (StripeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Payment failed: " + e.getMessage());
         }
