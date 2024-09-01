@@ -75,6 +75,7 @@ public class ClubController {
 			Club savedClub = cService.saveClub(club);
 			return ResponseEntity.ok(convertToDTO(savedClub));
 		} catch (IOException e) {
+			 e.printStackTrace(); // 調試印出完整的
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
 					.body("Error creating club: " + e.getMessage());
 		}
