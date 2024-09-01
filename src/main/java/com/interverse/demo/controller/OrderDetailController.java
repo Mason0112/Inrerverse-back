@@ -1,5 +1,6 @@
 package com.interverse.demo.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,6 +20,15 @@ public class OrderDetailController {
     public ResponseEntity<OrderDetailDTO> createOrderDetail(@RequestBody OrderDetailDTO orderDetailDTO) {
         OrderDetailDTO createdOrderDetail = orderDetailService.createOrderDetail(orderDetailDTO);
         return new ResponseEntity<>(createdOrderDetail, HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/bulk")
+    public ResponseEntity<List<OrderDetailDTO>> createOrderDetails(@RequestBody List<OrderDetailDTO> orderDetailDTOs) {
+        List<OrderDetailDTO> createdOrderDetails = new ArrayList<>();
+        for (OrderDetailDTO dto : orderDetailDTOs) {
+            createdOrderDetails.add(orderDetailService.createOrderDetail(dto));
+        }
+        return new ResponseEntity<>(createdOrderDetails, HttpStatus.CREATED);
     }
 
     @GetMapping("/{orderId}/{productId}")

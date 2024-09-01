@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.OrderCreateDTO;
 import com.interverse.demo.dto.OrderDTO;
+import com.interverse.demo.dto.OrderDetailDTO;
 import com.interverse.demo.service.OrderService;
 
 @RestController
@@ -32,6 +34,16 @@ public class OrderController {
     public ResponseEntity<OrderDTO> createOrder(@RequestBody OrderDTO orderDTO) {
         OrderDTO createdOrder = orderService.createOrder(orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
+    }
+    
+    @PostMapping("/create-with-details")
+    public ResponseEntity<List<OrderDetailDTO>> createOrderWithDetails(@RequestBody OrderCreateDTO OrderCreateDTO) {
+        List<OrderDetailDTO> createdOrderDetails = orderService.createOrderWithDetails(
+        	OrderCreateDTO.getOrderId(), 
+        	OrderCreateDTO.getCartItems()
+        	
+        );
+        return new ResponseEntity<>(createdOrderDetails, HttpStatus.CREATED);
     }
 
     @GetMapping("/{id}")
