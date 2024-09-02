@@ -43,7 +43,7 @@ public class TransactionController {
 
 		Long transAmount = transaction.getAmount();
 
-		if ((currentBalance + transAmount) <= 0) {
+		if ((currentBalance + transAmount) < 0) {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
 		}
 

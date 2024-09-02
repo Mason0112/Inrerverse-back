@@ -155,12 +155,13 @@ public class UserService {
 	
 	public User updateUserWalletBalance(Integer id) {
 		Optional<User> optional = userRepo.findById(id);
-		Long balance = transRepo.sumAmountsByUserId(id);
-
+		
 		if (optional.isEmpty()) {
 			return null;
 		} 
 		
+		Long balance = transRepo.sumAmountsByUserId(id);
+
 		User user = optional.get();
 		user.setWalletBalance(balance);
 		
