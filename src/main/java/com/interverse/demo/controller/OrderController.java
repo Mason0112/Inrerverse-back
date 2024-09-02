@@ -124,7 +124,7 @@ public class OrderController {
             @PathVariable Integer id, @RequestParam Integer newStatus) {
         OrderDTO updatedOrder = orderService.updateOrderStatus(id, newStatus);
         return ResponseEntity.ok(updatedOrder);
-    }
+    }	
 
     @PutMapping("/{id}/paymentMethod")
     public ResponseEntity<OrderDTO> updateOrderPaymentMethod(
