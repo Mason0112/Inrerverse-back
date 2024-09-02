@@ -142,7 +142,7 @@ public class UserController {
 		// 判斷登入結果
 		if (user == null) {
 			responseJson.put("success", false);
-			responseJson.put("message", "您輸入的帳號密碼錯誤");
+			responseJson.put("message", "您輸入的帳號或密碼錯誤");
 		} else {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");

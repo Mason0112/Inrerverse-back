@@ -102,12 +102,5 @@ public class User {
         }
     }
 
-
-	@Override
-	public String toString() {
-		return "User [accountNumber=" + accountNumber + ", email=" + email + ", nickname=" + nickname
-				+ ", walletBalance=" + walletBalance + "]";
-	}
-	
 	
 }

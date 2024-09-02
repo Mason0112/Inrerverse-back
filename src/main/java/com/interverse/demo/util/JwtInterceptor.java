@@ -56,9 +56,13 @@ public class JwtInterceptor implements HandlerInterceptor {
 			setForbiddenResponse(response);
 			return false;
 		}
-
+		
+		//如果是後台的payload，給過
+		if("interverse".equals(clientId)) {
+			return true;
+		}
+		
 		String id = loggedInUser.optString("id", null);
-
 		// 如果請求API的用戶id 和 JWT payload的用戶id 不一致，也中止請求處理
 		if (id == null || !id.equals(clientId)) {
 			setForbiddenResponse(response);

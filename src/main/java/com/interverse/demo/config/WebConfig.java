@@ -18,8 +18,9 @@ public class WebConfig implements WebMvcConfigurer {
 	public void addInterceptors(InterceptorRegistry registry) {
 		registry.addInterceptor(jwtInterceptor)
 		.addPathPatterns("/user/secure/**")
-//		.addPathPatterns("/transaction/**")
-		.addPathPatterns("/friend/**");
+		.addPathPatterns("/transaction/**")
+		.addPathPatterns("/friend/**")
+		.addPathPatterns("/admin/**");
 	}
 	
 	@Override
