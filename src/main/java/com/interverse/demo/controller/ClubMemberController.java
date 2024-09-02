@@ -126,6 +126,7 @@ public class ClubMemberController {
 	    dto.setClubId(member.getClub().getId());
 	    dto.setStatus(member.getStatus());
 	    dto.setAdded(member.getAdded());
+	    dto.setUserName(member.getUser().getNickname());
 		return dto;
 	}
 
