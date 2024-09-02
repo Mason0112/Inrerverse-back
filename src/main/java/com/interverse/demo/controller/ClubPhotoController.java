@@ -36,7 +36,7 @@ public class ClubPhotoController {
 	private ClubRepository cRepo;
 
 	// 建立照片
-	@PostMapping
+	@PostMapping("/new")
 	public ResponseEntity<?> uploadClubPhoto(@RequestParam("file") MultipartFile file,
 			@RequestParam("clubId") Integer clubId, @RequestParam("uploaderId") Integer uploaderId) {
 		try {

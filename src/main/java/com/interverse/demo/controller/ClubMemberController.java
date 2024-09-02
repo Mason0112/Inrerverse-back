@@ -93,7 +93,14 @@ public class ClubMemberController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
-
+	
+	//使用者自己退出社團
+	@DeleteMapping("user/{userId}/delete/{clubId}")
+	public ResponseEntity<?> quitMyself(@PathVariable Integer clubId, @PathVariable Integer userId){
+		cmService.deleteClubFromUser(userId, clubId);
+		return ResponseEntity.ok("您已退出社團");
+	}
+	
 	// 將ClubMemberDTO轉為entity實體
 	private ClubMember convertToEntity(ClubMemberDTO dto) {
 		ClubMember member = new ClubMember();
@@ -127,6 +134,8 @@ public class ClubMemberController {
 		ClubDTO dto = new ClubDTO();
 		dto.setId(club.getId());
 		dto.setClubName(club.getClubName());
+		dto.setIsPublic(club.getIsPublic());
+		dto.setPhoto(club.getPhoto());
 		return dto;
 	}
 }
