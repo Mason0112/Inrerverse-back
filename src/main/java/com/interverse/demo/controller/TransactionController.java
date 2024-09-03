@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -52,16 +51,6 @@ public class TransactionController {
 		
 		return ResponseEntity.status(HttpStatus.CREATED).body(transactionDto);
 	}
-	
-	@PutMapping("/switch-status")
-	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody Transaction transaction) {
-		TransactionDto transactionDto = transService.updateStatusToCompleted(transaction);
-		
-		Integer userId = transaction.getUser().getId();
-		userService.updateUserWalletBalance(userId);
-		
-		return ResponseEntity.ok(transactionDto);
-	}
 
 	@GetMapping("/{id}")
 	public ResponseEntity<List<TransactionDto>> findMyTransactcion(@PathVariable Integer id) {
@@ -70,12 +59,6 @@ public class TransactionController {
 		return ResponseEntity.ok(myTransactionList);
 	}
 
-	@GetMapping("/all")
-	public ResponseEntity<List<TransactionDto>> findAllTransaction() {
-
-		List<TransactionDto> allTransaction = transService.findAllTransaction();
-		return ResponseEntity.ok(allTransaction);
-	}
 	
     @PostMapping("/charge")
     public ResponseEntity<String> chargeCard(@RequestBody StripeChargeRequestDto chargeRequest) {
