@@ -54,6 +54,7 @@ public class ClubController {
 		dto.setAdded(club.getAdded());
 		dto.setClubCreator(club.getClubCreator().getId());
 		dto.setPhoto(club.getPhoto());
+		dto.setUserName(club.getClubCreator().getNickname());
 		// 如果需要，将 event 的名称列表填充到 DTO 中
 //		dto.setEventNames(club.getEvent().stream().map(event -> event.getEventName()) // 假设 Event 类有 getEventName 方法
 //				.collect(Collectors.toList()));
