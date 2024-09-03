@@ -40,6 +40,7 @@ import lombok.Setter;
 
 	    @Column(name = "added", nullable = false, updatable = false)
 	    private LocalDateTime added;
+	    
 
 	    @PrePersist
 	    protected void onCreate() {

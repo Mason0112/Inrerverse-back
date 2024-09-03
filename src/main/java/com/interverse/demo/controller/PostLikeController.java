@@ -11,22 +11,22 @@ import org.springframework.web.bind.annotation.RestController;
 import com.interverse.demo.service.PostLikeService;
 
 @RestController
-@RequestMapping("/api/likes")
+@RequestMapping("/postLike")
 public class PostLikeController {
 
     @Autowired
     private PostLikeService postLikeService;
 
-    @PostMapping("/toggle")
+    @PostMapping
     public ResponseEntity<String> toggleLike(
             @RequestParam Integer userId,
             @RequestParam Integer postId,
             @RequestParam Integer type) {
-        postLikeService.toggleLike(userId, postId, type);
+        postLikeService.toggleLike(userId, postId);
         return ResponseEntity.ok("Like toggled successfully");
     }
 
-    @GetMapping("/status")
+    @GetMapping
     public ResponseEntity<Boolean> getLikeStatus(
             @RequestParam Integer userId,
             @RequestParam Integer postId) {

@@ -27,24 +27,32 @@ public class PostLikeService {
     private UserPostRepository userPostRepository;
 
     @Transactional
-    public void toggleLike(Integer userId, Integer postId, Integer type) {
-        if (postLikeRepository.existsByUserIdAndPostId(userId, postId)) {
+    public void toggleLike(Integer userId, Integer postId) {
+    	Optional<User> userOptional = userRepository.findById(userId);
+    	Optional<UserPost> postOptional = userPostRepository.findById(postId);
+    	if(userOptional.isPresent()&& postOptional.isPresent()) {
+    		User user = userOptional.get();
+    		UserPost post = postOptional.get();
+    		//檢查是否已經存在喜好記錄
+    		boolean liked = postLikeRepository.existsByUserIdAndPostId(userId, postId);
+    		PostLike postLike = new PostLike();
+    		//如果存在，則刪除喜好記錄
+    		if (liked) {
             postLikeRepository.deleteByUserIdAndPostId(userId, postId);
+            post.setLikeCount(post.getLikeCount() - 1);         //如果不存在，則創建新的喜好記錄
         } else {
-        	Optional<User> userOptional = userRepository.findById(userId);
-        	Optional<UserPost> postOptional = userPostRepository.findById(postId);
-        	if(userOptional.isPresent()&& postOptional.isPresent()) {
-
-        	}
-            PostLike postLike = new PostLike();
-            postLike.setUser(userOptional.get());
-            postLike.setPost(postOptional.get());
-            postLike.setType(type);
+            postLike.setUser(user);
+            postLike.setPost(post);
+//            postLike.setType(type);
+            post.setLikeCount(post.getLikeCount() + 1); 
             postLikeRepository.save(postLike);
+        }
         }
     }
 
     public boolean hasUserLikedPost(Integer userId, Integer postId) {
         return postLikeRepository.existsByUserIdAndPostId(userId, postId);
     }
+    
+
 }
