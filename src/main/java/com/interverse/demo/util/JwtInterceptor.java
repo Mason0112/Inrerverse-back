@@ -44,31 +44,36 @@ public class JwtInterceptor implements HandlerInterceptor {
 
 		// 處理其他請求
 		String auth = request.getHeader("Authorization");
-		System.out.println(auth);
+		System.out.println("Authorization Header: " + auth);
 		String clientId = request.getHeader("X-User-ID");
-		System.out.println("clientId:"+ clientId);
+		System.out.println("Client ID: " + clientId);
 
 		JSONObject loggedInUser = processAuthorizationHeader(auth);
-		
+
 		// 如果JWT payload為空，則中止請求處理
 		if (loggedInUser == null || loggedInUser.length() == 0) {
-			System.out.println("loggedInUser" + loggedInUser);
+			System.out.println("無效的JWT payload" + loggedInUser);
 			setForbiddenResponse(response);
 			return false;
 		}
-		
-		//如果是後台的payload，給過
-		if("interverse".equals(clientId)) {
-			return true;
-		}
-		
+
 		String id = loggedInUser.optString("id", null);
 		// 如果請求API的用戶id 和 JWT payload的用戶id 不一致，也中止請求處理
 		if (id == null || !id.equals(clientId)) {
+			System.out.println("用戶ID不一致");
 			setForbiddenResponse(response);
 			return false;
 		}
-		
+
+		// 要造訪/admin路徑的判斷
+		if (request.getRequestURI().startsWith("/interverse/admin/")) {
+			if (!loggedInUser.has("authority")) {
+				System.out.println("沒有authority");
+				setForbiddenResponse(response);
+				return false;
+			}
+		}
+
 		return true;
 	}
 

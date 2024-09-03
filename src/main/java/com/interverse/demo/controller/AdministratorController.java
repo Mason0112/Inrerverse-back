@@ -5,6 +5,7 @@ import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,6 +27,11 @@ public class AdministratorController {
 	@Autowired
 	private JwtUtil jwtUtil;
 	
+	@GetMapping("/admin/void")
+	public ResponseEntity<String> getVoid() {
+		return ResponseEntity.ok("已檢查權限");
+	}
+	
 	@PostMapping("/auth")
 	public ResponseEntity<String> getAuth(@RequestBody String auth) throws JSONException {
 		
@@ -33,9 +39,20 @@ public class AdministratorController {
 		String authString = authObj.getString("auth");
 		
 		if("123".equals(authString)) {
-			String token = jwtUtil.generateEncryptedJwt(auth);
 			
-			return ResponseEntity.ok(token);
+			//產生JWT
+			JSONObject tokenData = new JSONObject()
+					.put("id", "InterverseAdmin")
+					.put("authority", "InitialEntering");
+			
+			String token = jwtUtil.generateEncryptedJwt(tokenData.toString());
+			
+			//回應這些資料，讓前端可以塞到axios headers裡
+			JSONObject response = new JSONObject()
+					.put("token", token)
+					.put("id", "InterverseAdmin");
+			
+			return ResponseEntity.ok(response.toString());
 		}
 		
 		return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("驗證失敗");
