@@ -6,6 +6,7 @@ import java.util.UUID;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
+import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -17,7 +18,7 @@ import com.interverse.demo.model.linepay.ProductPackageForm;
 import com.interverse.demo.model.linepay.RedirectUrls;
 
 
-
+@Service
 public class LinePayService{
 	
 	

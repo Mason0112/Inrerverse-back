@@ -14,7 +14,6 @@ public class LinePayController {
 	private LinePayService linePayService;
 	
 	
-	public String
 	
 	
 	
