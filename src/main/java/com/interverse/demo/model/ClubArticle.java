@@ -52,6 +52,9 @@ public class ClubArticle {
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
 	private LocalDateTime added;
+	
+	@Column(name = "like_count")
+	private int likeCount;
 
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {

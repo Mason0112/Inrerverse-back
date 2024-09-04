@@ -50,9 +50,7 @@ public class PostLikeService {
 				postLikeRepository.save(postLike);
 			}
 			
-	        // 重新计算实际的点赞数量
-	        long actualLikeCount = postLikeRepository.countByPostId(postId);
-	        post.setLikeCount((int) actualLikeCount);
+
 			userPostRepository.save(post);
 		}
 	}
