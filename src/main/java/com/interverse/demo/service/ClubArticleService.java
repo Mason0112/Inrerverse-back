@@ -1,5 +1,6 @@
 package com.interverse.demo.service;
 
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,12 +20,8 @@ public class ClubArticleService {
 		return clubArticlesRepo.save(article);
 	}
 	
-	public ClubArticle findArticleById(Integer articleId) {
-		Optional<ClubArticle> optional = clubArticlesRepo.findById(articleId);
-		if(optional.isPresent()) {
-		return optional.get();
-		}
-		return null;
+	public List<ClubArticle> findAllArticleByClubId(Integer clubId) {
+		return clubArticlesRepo.findAllArticleByClubId(clubId);
 	}
 
 	@Transactional
