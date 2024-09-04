@@ -26,7 +26,7 @@ public class EventDetailController {
 	@Autowired
 	private EventService eService;
 	
-	@PostMapping
+	@PostMapping("{id}/new")
 	public ResponseEntity<EventDetail> createED(@RequestBody EventDetail eventDetail) {
 	    if (eventDetail == null || eventDetail.getEvent() == null || eventDetail.getEvent().getId() == null) {
 	        return ResponseEntity.badRequest().body(null); // 返回 400 错误
@@ -45,7 +45,7 @@ public class EventDetailController {
 	    return ResponseEntity.ok(savedEventDetail);
 	}
 	
-	@GetMapping("/{id}")
+	@GetMapping("/{id}/show")
 	public ResponseEntity<?> getEventDetailById(@PathVariable Integer id){
 		EventDetail result = edService.findEDById(id);
 		
@@ -56,7 +56,7 @@ public class EventDetailController {
 	
 	}
 	
-	@PutMapping("/{id}")
+	@PutMapping("/{id}/edit")
 	public ResponseEntity<String> updateED(@PathVariable Integer id, @RequestBody EventDetail eventDetail){
 		
 		EventDetail existED = edService.findEDById(id);

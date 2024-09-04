@@ -16,4 +16,6 @@ public class ClubPhotoDTO {
 	private Integer clubId;
 
 	private Integer uploaderId;
+	
+	private String UserName;
 }

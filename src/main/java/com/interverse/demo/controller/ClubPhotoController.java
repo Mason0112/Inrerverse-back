@@ -108,6 +108,7 @@ public class ClubPhotoController {
 //		dto.setPhoto(clubPhoto.getPhoto());
 		dto.setClubId(clubPhoto.getClub().getId());
 		dto.setUploaderId(clubPhoto.getUploaderId().getId());
+		dto.setUserName(clubPhoto.getUploaderId().getNickname());
 
 		return dto;
 	}
