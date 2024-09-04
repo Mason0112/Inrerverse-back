@@ -32,31 +32,57 @@ public class EventController {
 	private EventService eService;
 
 	@Autowired
-	private ClubService clubService;
+	private ClubService cService;
 
 	@Autowired
 	private UserService uService;
 
 	// 轉換DTO
 	private EventDTO convertToDTO(Event event) {
-		Club club = clubService.findClubById(event.getClub().getId());
-		String clubName = club.getClubName();
-		
-		User user = uService.findUserById(event.getEventCreator().getId());
-		String nickname = user.getNickname();
-
-		EventDTO dto = new EventDTO();
-
-		dto.setId(event.getId());
-		dto.setSource(event.getSource());
-		dto.setEventName(event.getEventName());
-		dto.setAdded(event.getAdded());
-		dto.setCreatorName(nickname);
-		dto.setClubName(clubName);
-		dto.setClubId(event.getClub().getId());
-		dto.setEventCreatorId(event.getEventCreator().getId());
-
-		return dto;
+	    EventDTO dto = new EventDTO();
+	    
+	    dto.setId(event.getId());
+	    dto.setSource(event.getSource());
+	    dto.setEventName(event.getEventName());
+	    dto.setAdded(event.getAdded());
+	    
+	    // 處理 Club 相關信息
+	    if (event.getClub() != null) {
+	        dto.setClubId(event.getClub().getId());
+	        try {
+	            Club club = cService.findClubById(event.getClub().getId());
+	            if (club != null) {
+	                dto.setClubName(club.getClubName());
+	            }
+	        } catch (Exception e) {
+	            // 記錄錯誤，但不中斷處理
+	            System.err.println("Error fetching club: " + e.getMessage());
+	        }
+	    } else {
+	        // 當 Club 為 null 時，設置 clubId 為 null，並可能設置一個默認的 clubName
+	        dto.setClubId(null);
+	        dto.setClubName("未分配俱樂部");
+	    }
+	    
+	    // 處理 EventCreator 相關信息
+	    if (event.getEventCreator() != null) {
+	        dto.setEventCreatorId(event.getEventCreator().getId());
+	        try {
+	            User user = uService.findUserById(event.getEventCreator().getId());
+	            if (user != null) {
+	                dto.setCreatorName(user.getNickname());
+	            }
+	        } catch (Exception e) {
+	            // 記錄錯誤，但不中斷處理
+	            System.err.println("Error fetching user: " + e.getMessage());
+	        }
+	    } else {
+	        // 當 EventCreator 為 null 時，設置相關字段為 null 或默認值
+	        dto.setEventCreatorId(null);
+	        dto.setCreatorName("未知創建者");
+	    }
+	    
+	    return dto;
 	}
 
 	// 建立社團活動
@@ -70,7 +96,7 @@ public class EventController {
 	// 建立工作坊
 	@PostMapping("/new/Class")
 	public EventDTO createClass(@RequestBody Event event) {
-		event.setSource(0);
+		event.setSource(2);
 		Event result = eService.saveEvent(event);
 		return convertToDTO(result);
 	}
