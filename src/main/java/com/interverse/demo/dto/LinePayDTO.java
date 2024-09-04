@@ -7,9 +7,14 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class LinePayDTO {
 
-	private String ChannelSecret;
+	private String channelSecret;
 	private String requestUri;
 	private String nonce;
 	private String signature;
+	private String body;
+	private String channelId;
+	private String requestHttpUri;
+	
+	
 	
 }

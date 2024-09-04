@@ -12,6 +12,7 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interverse.demo.dto.CartResponseDTO;
 import com.interverse.demo.dto.LinePayDTO;
+import com.interverse.demo.dto.OrderDTO;
 import com.interverse.demo.model.linepay.CheckoutPaymentRequestForm;
 import com.interverse.demo.model.linepay.ProductForm;
 import com.interverse.demo.model.linepay.ProductPackageForm;
@@ -32,7 +33,7 @@ public class LinePayService{
     }
 	
 	
-	public LinePayDTO LinePayPost(CartResponseDTO DTO) {
+	public LinePayDTO LinePayPost(OrderDTO dto) {
 		
 		CheckoutPaymentRequestForm form = new CheckoutPaymentRequestForm();
 		
@@ -63,7 +64,7 @@ public class LinePayService{
 		form.setPackages(ProductPackageFormList);
 		RedirectUrls redirectUrls = new RedirectUrls();
 		redirectUrls.setAppPackageName("");
-		redirectUrls.setConfirmUrl("");
+		redirectUrls.setConfirmUrl("https://www.google.com");
 		redirectUrls.setCancelUrl("");
 		form.setRedirectUrls(redirectUrls);
 		
@@ -71,17 +72,24 @@ public class LinePayService{
 		
 		LinePayDTO linePayDTO = new LinePayDTO();
 		
+		String channelId = "2005966585";
+		String channelSecret = "6ae54e020168ccb8f6af8f34e21e2efe";
+		String requestUri = "/v3/payments/request";
+		String requestHttpUri = "https://sandbox-api-line.me/v3/payments/request";
+		String nonce = UUID.randomUUID().toString();
 		try {
-			String ChannelSecret = "6ae54e020168ccb8f6af8f34e21e2efe";
-			String requestUri = "/v3/payments/request";
-			String nonce = UUID.randomUUID().toString();
-			String signature = encrypt(ChannelSecret, ChannelSecret + requestUri + mapper.writeValueAsString(form) + nonce);
+			System.out.println("body=>" +mapper.writeValueAsString(form));
+			System.out.println("nonce=>" + nonce);
+			String signature = encrypt(channelSecret, channelSecret + requestUri + mapper.writeValueAsString(form) + nonce);
+			System.out.println("signature=>"+ signature );
 			
-			linePayDTO.setChannelSecret(ChannelSecret);
+			linePayDTO.setChannelId(channelId);
+			linePayDTO.setChannelSecret(channelSecret);
 			linePayDTO.setRequestUri(requestUri);
 			linePayDTO.setNonce(nonce);
 			linePayDTO.setSignature(signature);
-			
+			linePayDTO.setBody(mapper.writeValueAsString(form));
+			linePayDTO.setRequestHttpUri(requestHttpUri);
 			return linePayDTO;
 			
 		} catch (JsonProcessingException e) {
