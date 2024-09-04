@@ -23,8 +23,12 @@ public class ClubDTO {
 	
 	private LocalDateTime added;
 
-	private Integer clubCreatorId;
+	private Integer clubCreator;
 	
-	private List<String> eventNames; 
+	private String userName;
+	
+	private String photo;
+	
+//	private List<String> eventNames; 
 
 }

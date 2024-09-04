@@ -11,9 +11,11 @@ public class ClubPhotoDTO {
 	
 	private Integer id;
 
-//	private String photo;
+	private String photo;
 
 	private Integer clubId;
 
 	private Integer uploaderId;
+	
+	private String UserName;
 }

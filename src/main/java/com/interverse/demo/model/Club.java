@@ -42,7 +42,7 @@ public class Club {
 
 	private String photo;
 	
-	@ManyToOne @JsonIgnore
+	@ManyToOne
 	@JoinColumn(name = "creatorId")
 	private User clubCreator;
 

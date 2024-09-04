@@ -93,7 +93,14 @@ public class ClubMemberController {
 			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
 		}
 	}
-
+	
+	//使用者自己退出社團
+	@DeleteMapping("user/{userId}/delete/{clubId}")
+	public ResponseEntity<?> quitMyself(@PathVariable Integer clubId, @PathVariable Integer userId){
+		cmService.deleteClubFromUser(userId, clubId);
+		return ResponseEntity.ok("您已退出社團");
+	}
+	
 	// 將ClubMemberDTO轉為entity實體
 	private ClubMember convertToEntity(ClubMemberDTO dto) {
 		ClubMember member = new ClubMember();
@@ -108,7 +115,7 @@ public class ClubMemberController {
 		member.setClubMemberId(memberId); //設置複合主鍵
 		member.setClub(club);
 	    member.setUser(user);
-		member.setStatus(0); // 預設為0
+		member.setStatus(dto.getStatus()); // 預設為0
 		return member;
 	}
 
@@ -119,6 +126,7 @@ public class ClubMemberController {
 	    dto.setClubId(member.getClub().getId());
 	    dto.setStatus(member.getStatus());
 	    dto.setAdded(member.getAdded());
+	    dto.setUserName(member.getUser().getNickname());
 		return dto;
 	}
 
@@ -127,6 +135,8 @@ public class ClubMemberController {
 		ClubDTO dto = new ClubDTO();
 		dto.setId(club.getId());
 		dto.setClubName(club.getClubName());
+		dto.setIsPublic(club.getIsPublic());
+		dto.setPhoto(club.getPhoto());
 		return dto;
 	}
 }
