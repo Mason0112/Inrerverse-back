@@ -50,5 +50,11 @@ public class NotificationService {
 
 		return notificationDtoList;
 	}
+	
+	public Integer countMyUnreadNotification(Integer id) {
+		
+		return notifRepo.countUnreadNotificationsByReceiverId(id);
+
+	}
 
 }

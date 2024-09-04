@@ -31,9 +31,18 @@ public class NotificationController {
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<List<NotificationDto>> findMyNotification(@PathVariable Integer id) {
+	public ResponseEntity<List<NotificationDto>> getMyNotification(@PathVariable Integer id) {
 		
 		List<NotificationDto> myNotificationList = notifService.findMyNotification(id);
 		return ResponseEntity.ok(myNotificationList);
 	}
+	
+	@GetMapping("/count/{id}")
+	public ResponseEntity<Integer> countMyUnreadNotification(@PathVariable Integer id) {
+		Integer count = notifService.countMyUnreadNotification(id);
+		return ResponseEntity.ok(count);
+	}
+	
+	
+	
 }
