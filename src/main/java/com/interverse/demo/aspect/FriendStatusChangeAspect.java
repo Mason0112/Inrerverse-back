@@ -78,7 +78,7 @@ public class FriendStatusChangeAspect {
 			return "對你發送好友邀請!";
 			// 自己接受對方加好友的邀請(因為這是friend表格操作後的判斷)
 		} else if (possibility1 != null && possibility2 != null) {
-			return "接受你的好友邀請!";
+			return "接受你的好友邀請!!";
 		}
 		return null;
 	}
