@@ -94,7 +94,7 @@ public class EventController {
 	}
 
 	// 建立工作坊
-	@PostMapping("/new/Class")
+	@PostMapping("/new/Workshop")
 	public EventDTO createClass(@RequestBody Event event) {
 		event.setSource(2);
 		Event result = eService.saveEvent(event);
@@ -133,8 +133,8 @@ public class EventController {
 	}
 
 	@PutMapping("/{id}/edit")
-	public ResponseEntity<String> updateEvent(@PathVariable Integer id, @RequestBody Event event) {
-
+	public ResponseEntity<?> updateEvent(@PathVariable Integer id, @RequestBody Event event) {
+		System.out.println("-----------"+event.getEventCreator());
 		Event existEvent = eService.findEventById(id);
 
 		if (existEvent == null) {
@@ -143,8 +143,6 @@ public class EventController {
 		event.setId(id);
 		event.setAdded(existEvent.getAdded());
 
-		convertToDTO(eService.saveEvent(event));
-
-		return ResponseEntity.status(HttpStatus.OK).body("Update Successful");
+		return ResponseEntity.ok(convertToDTO(eService.saveEvent(event)));
 	}
 }
