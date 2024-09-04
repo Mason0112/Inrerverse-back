@@ -63,5 +63,7 @@ public class UserPost {
 			added =LocalDateTime.now();
 		}
 	}
+	
+
 
 }
