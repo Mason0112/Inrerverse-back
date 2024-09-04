@@ -10,6 +10,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import jakarta.persistence.CascadeType;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -50,8 +51,11 @@ public class UserPost {
 	private List<PostComment> postComment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-	@JsonManagedReference("post-photos")
+    @JsonIgnoreProperties("userPosts") // 忽略 userPost 屬性
 	private List<PostPhoto> photos;
+	
+	@Column(name="like_count")
+	private int likeCount=0;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
@@ -59,5 +63,7 @@ public class UserPost {
 			added =LocalDateTime.now();
 		}
 	}
+	
+
 
 }
