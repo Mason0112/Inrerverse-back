@@ -1,6 +1,7 @@
 package com.interverse.demo.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -10,9 +11,16 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.interverse.demo.dto.CartResponseDTO;
 import com.interverse.demo.dto.OrderDTO;
+import com.interverse.demo.dto.OrderDetailDTO;
 import com.interverse.demo.model.Order;
+import com.interverse.demo.model.OrderDetail;
+import com.interverse.demo.model.OrderDetailId;
+import com.interverse.demo.model.OrderDetailRepository;
 import com.interverse.demo.model.OrderRepository;
+import com.interverse.demo.model.Product;
+import com.interverse.demo.model.ProductRepository;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -24,6 +32,37 @@ public class OrderService {
 
     @Autowired
     private UserService userService;
+    @Autowired
+    private OrderDetailService orderDetailService;
+    @Autowired
+    private ProductRepository productRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
+    
+    @Transactional
+    public List<OrderDetailDTO> createOrderWithDetails(Integer orderId, List<CartResponseDTO> cartItems) {
+        Order order = orderRepository.findById(orderId)
+            .orElseThrow(() -> new EntityNotFoundException("Order not found"));
+
+        List<OrderDetailDTO> createdOrderDetails = new ArrayList<>();
+
+        for (CartResponseDTO cartItem : cartItems) {
+            Product product = productRepository.findById(cartItem.getProductId())
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+            OrderDetail detail = new OrderDetail();
+            OrderDetailId id = new OrderDetailId(orderId, cartItem.getProductId());
+            detail.setOrderDetailId(id);
+            detail.setQuantity(cartItem.getVol());
+            detail.setOrders(order);
+            detail.setProducts(product);
+
+            OrderDetail savedDetail = orderDetailRepository.save(detail);
+            createdOrderDetails.add(convertToDTO(savedDetail, cartItem.getPrice()));
+        }
+
+        return createdOrderDetails;
+    }
 
     @Transactional
     public OrderDTO createOrder(OrderDTO orderDTO) {
@@ -31,9 +70,15 @@ public class OrderService {
         order.setPaymentMethod(orderDTO.getPaymentMethod());
         order.setStatus(orderDTO.getStatus());
         order.setUsers(userService.findUserById(orderDTO.getUserId()));
-        // 不需要設置 added，因為 @PrePersist 會自動設置
         order = orderRepository.save(order);
 
+        // 創建訂單詳情
+        for (OrderDetailDTO detailDTO : orderDTO.getOrderDetails()) {
+            detailDTO.setOrderId(order.getId());
+            orderDetailService.createOrderDetail(detailDTO);
+        }
+
+        // 轉換為 DTO 並返回
         return convertToDTO(order);
     }
 
@@ -89,16 +134,6 @@ public class OrderService {
         orderRepository.deleteById(orderId);
     }
 
-    private OrderDTO convertToDTO(Order order) {
-        OrderDTO dto = new OrderDTO();
-        dto.setId(order.getId());
-        dto.setUserId(order.getUsers().getId());
-        dto.setStatus(order.getStatus());
-        dto.setPaymentMethod(order.getPaymentMethod());
-        dto.setAdded(order.getAdded());
-        return dto;
-    }
-    
     public List<OrderDTO> getOrdersByPaymentMethod(Integer paymentMethod) {
         return orderRepository.findByPaymentMethod(paymentMethod).stream()
                 .map(this::convertToDTO)
@@ -127,5 +162,37 @@ public class OrderService {
     }
     
     
+    private OrderDTO convertToDTO(Order order) {
+        OrderDTO dto = new OrderDTO();
+        dto.setId(order.getId());
+        dto.setUserId(order.getUsers().getId());
+        dto.setStatus(order.getStatus());
+        dto.setPaymentMethod(order.getPaymentMethod());
+        dto.setAdded(order.getAdded());
+        
+        // 獲取訂單詳情
+        List<OrderDetailDTO> orderDetails = orderDetailService.getAllOrderDetailDTOs(order.getId());
+        dto.setOrderDetails(orderDetails);
+        
+        // 計算總金額
+        int totalAmount = orderDetails.stream()
+                .mapToInt(OrderDetailDTO::getSubtotal)
+                .sum();
+        dto.setTotalAmount(totalAmount);
+        
+        return dto;
+    }
+   
+ 
+   
+    
+    private OrderDetailDTO convertToDTO(OrderDetail orderDetail, Integer price) {
+        OrderDetailDTO dto = new OrderDetailDTO();
+        dto.setOrderId(orderDetail.getOrderDetailId().getOrdersId().intValue());
+        dto.setProductId(orderDetail.getOrderDetailId().getProductsId().intValue());
+        dto.setQuantity(orderDetail.getQuantity());
+        dto.setPrice(price);  // 使用 CartResponseDTO 中的价格
+        return dto;
+    }
     
 }

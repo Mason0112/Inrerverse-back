@@ -18,7 +18,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.OrderCreateDTO;
 import com.interverse.demo.dto.OrderDTO;
+import com.interverse.demo.dto.OrderDetailDTO;
 import com.interverse.demo.service.OrderService;
 
 @RestController
@@ -33,11 +35,28 @@ public class OrderController {
         OrderDTO createdOrder = orderService.createOrder(orderDTO);
         return new ResponseEntity<>(createdOrder, HttpStatus.CREATED);
     }
+    
+    @PostMapping("/create-with-details")
+    public ResponseEntity<List<OrderDetailDTO>> createOrderWithDetails(@RequestBody OrderCreateDTO OrderCreateDTO) {
+        List<OrderDetailDTO> createdOrderDetails = orderService.createOrderWithDetails(
+        	OrderCreateDTO.getOrderId(), 
+        	OrderCreateDTO.getCartItems()
+        	
+        );
+        return new ResponseEntity<>(createdOrderDetails, HttpStatus.CREATED);
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<OrderDTO> getOrder(@PathVariable Integer id) {
-        OrderDTO order = orderService.getOrderById(id);
-        return ResponseEntity.ok(order);
+        OrderDTO orderDTO  = orderService.getOrderById(id);
+        if (!orderDTO.hasOrderDetails()) {
+            // 如果沒有訂單詳情，可以選擇在這裡加載
+            // 或者返回一個標記，表示詳情需要單獨加載
+            orderDTO.setOrderDetails(null);  // 明確設置為 null，表示詳情未加載
+        } else {
+            orderDTO.calculateTotalAmount();  // 只在有詳情時計算總額
+        }
+        return ResponseEntity.ok(orderDTO);
     }
 
     @GetMapping("/user/{userId}")
@@ -105,7 +124,7 @@ public class OrderController {
             @PathVariable Integer id, @RequestParam Integer newStatus) {
         OrderDTO updatedOrder = orderService.updateOrderStatus(id, newStatus);
         return ResponseEntity.ok(updatedOrder);
-    }
+    }	
 
     @PutMapping("/{id}/paymentMethod")
     public ResponseEntity<OrderDTO> updateOrderPaymentMethod(
