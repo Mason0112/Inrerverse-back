@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.interverse.demo.dto.LinePayDTO;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.interverse.demo.dto.OrderDTO;
 import com.interverse.demo.service.LinePayService;
 
@@ -19,7 +19,7 @@ public class LinePayController {
 	
 	
 	@PostMapping("/pay")
-    public LinePayDTO linpay(@RequestBody OrderDTO dto) {
+    public JsonNode linpay(@RequestBody OrderDTO dto) {
 		return linePayService.LinePayPost(dto);
 		
     }
