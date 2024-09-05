@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.ClubArticleDTO;
 import com.interverse.demo.model.ArticlePhoto;
 import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.UserPost;
@@ -36,10 +37,16 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
 	@PostMapping
-	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
-		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		article.setContent(content);
-		ClubArticle saveArticle = articleService.saveArticle(article);
+	public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO){
+		
+		if(articleDTO.getUserId() == null) {
+			return ResponseEntity.badRequest().body(null);
+		}
+		
+		String content = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		articleDTO.setContent(content);
+		
+		ClubArticleDTO saveArticle = articleService.saveArticle(articleDTO);
 		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
 	}
 	
