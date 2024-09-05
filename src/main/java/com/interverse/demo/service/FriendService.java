@@ -126,7 +126,7 @@ public class FriendService {
 
 	public List<FriendDto> findMyFriendRequest(Integer user2Id) {
 
-		List<Friend> friendList = friendRepo.findByUser2Id(user2Id);
+		List<Friend> friendList = friendRepo.findByUser2IdAndStatusFalse(user2Id);
 
 		List<FriendDto> friendDtoList = friendList.stream().map(this::convert).collect(Collectors.toList());
 
