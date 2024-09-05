@@ -214,6 +214,7 @@ public class UserController {
 				errorMessages.add("您輸入的email已被使用");
 			}
 			if (userService.existsByPhoneNumber(id, userDto.getPhoneNumber())) {
+				System.out.println("error這邊的"+id);
 				errorMessages.add("您輸入的電話已被使用");
 			}
 			if (!errorMessages.isEmpty()) {

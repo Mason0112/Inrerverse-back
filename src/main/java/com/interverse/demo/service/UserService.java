@@ -121,7 +121,7 @@ public class UserService {
 		UserDetail userDetail = uDetailRepo.findByPhoneNumber(phoneNumber);
 		
 		if(userDetail !=null) {
-			return userDetail.getUserId() != id;
+			return !userDetail.getUserId().equals(id);
 		}
 		return false;
 	}
