@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.interverse.demo.annotation.ActionType;
+import com.interverse.demo.annotation.NotifyPostCommentAction;
 import com.interverse.demo.model.PostComment;
 import com.interverse.demo.model.PostCommentRepository;
 
@@ -16,6 +18,7 @@ public class PostCommentService {
 	@Autowired
 	private PostCommentRepository commentRepo;
 	
+	@NotifyPostCommentAction(action = ActionType.ADD)
 	public PostComment addComment(PostComment comment) {
 		return commentRepo.save(comment);
 	}

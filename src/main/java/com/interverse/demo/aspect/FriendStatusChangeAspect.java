@@ -27,8 +27,9 @@ public class FriendStatusChangeAspect {
 	@AfterReturning("@annotation(com.interverse.demo.annotation.NotifyFriendStatusChange)")
 	public void notifyFriendStatusChange(JoinPoint joinPoint) {
 		System.out.println("FriendStatusChangeAspect triggered!");
-
+		// 獲取方法的所有參數
 		Object[] args = joinPoint.getArgs();
+		
 		Integer user1Id = (Integer) args[0];
 		Integer user2Id = (Integer) args[1];
 
