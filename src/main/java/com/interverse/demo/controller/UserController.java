@@ -249,8 +249,9 @@ public class UserController {
 			HttpHeaders httpHeaders = new HttpHeaders();
 			httpHeaders.setContentType(MediaType.APPLICATION_JSON);
 
-			JSONObject responseJson = new JSONObject();
+			JSONObject responseJson = new JSONObject();		
 
+			responseJson.put("id", user.getId());
 			responseJson.put("accountNumber", user.getAccountNumber());
 			responseJson.put("email", user.getEmail());
 			responseJson.put("nickname", user.getNickname());
