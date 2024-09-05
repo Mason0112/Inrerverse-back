@@ -43,11 +43,11 @@ public class UserPost {
 	
     @ManyToOne
     @JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"userPosts", "postComment"}) // 忽略不需要序列化的屬性
+    @JsonIgnoreProperties({"userPosts", "postComment","sentNotification", "receivedNotification","transaction","orders","club","event","clubPhoto"}) // 忽略不需要序列化的屬性
     private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-    @JsonIgnoreProperties({"userPosts", "user"}) // 忽略 userPost 屬性
+    @JsonIgnoreProperties({"userPosts", "user"}) // 忽略 userPost 屬性	
 	private List<PostComment> postComment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
