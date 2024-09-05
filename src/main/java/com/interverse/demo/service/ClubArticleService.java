@@ -20,6 +20,14 @@ public class ClubArticleService {
 		return clubArticlesRepo.save(article);
 	}
 	
+	public ClubArticle findArticleById(Integer articleId) {
+		Optional<ClubArticle> optional = clubArticlesRepo.findById(articleId);
+		if(optional.isPresent()){
+			return  optional.get();
+		}
+		return null;
+	}
+	
 	public List<ClubArticle> findAllArticleByClubId(Integer clubId) {
 		return clubArticlesRepo.findAllArticleByClubId(clubId);
 	}

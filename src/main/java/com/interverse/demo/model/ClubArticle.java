@@ -56,7 +56,7 @@ public class ClubArticle {
 	private LocalDateTime added;
 	
 	@Column(name = "like_count")
-	private int likeCount;
+	private int likeCount=0;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
     @JsonIgnoreProperties("clubArticle") // 忽略 clubArticle 屬性

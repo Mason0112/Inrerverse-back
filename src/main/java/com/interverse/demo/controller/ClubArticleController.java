@@ -3,6 +3,7 @@ package com.interverse.demo.controller;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,9 +19,12 @@ import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.UserPost;
 import com.interverse.demo.service.ClubArticleService;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.PutMapping;
+
 
 
 
@@ -47,13 +51,29 @@ public class ClubArticleController {
 				List<ArticlePhoto> photos = clubArticle.getPhotos();
 				for(ArticlePhoto articlePhoto : photos) {
 					File file=new File(articlePhoto.getUrl());
-					Files.readAllBytes(file.toPath());
+					byte[] photoFile = Files.readAllBytes(file.toPath());
+					String base64Photo = "data:image/png;base64," + Base64.getEncoder().encodeToString(photoFile);
+					articlePhoto.setBase64Photo(base64Photo);
 				}
 			}
+			return ResponseEntity.ok(articles);
 		}catch(IOException e){
 			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
 			
 		}
+	}
+	
+	@PutMapping("/{articleId}")
+	public ClubArticle updateArticle(@PathVariable Integer articleId,
+									@RequestParam String content) {
+		ClubArticle article = articleService.findArticleById(articleId);
+		article.setContent(content);
+		return articleService.saveArticle(article);
+	}
+	
+	@DeleteMapping("/{articleId}")
+	public void deleteArticle(@PathVariable Integer articleId) {
+		articleService.deleteArticleById(articleId);
 	}
 	
 	
