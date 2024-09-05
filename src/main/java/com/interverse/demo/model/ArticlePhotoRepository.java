@@ -6,8 +6,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
-public interface ClubArticlesRepository extends JpaRepository<ClubArticle, Integer> {
-	
-	@Query("from ClubArticle where club.id = :id order by added desc")
-	List<ClubArticle> findAllArticleByClubId(@Param("id") Integer clubId);
+public interface ArticlePhotoRepository extends JpaRepository<ArticlePhoto, Integer>{
+
+	@Query("from ArticlePhoto where clubArticle.id =:id ")
+	List<ArticlePhoto> findPhotoListByArticleId(@Param("id") Integer articleId);
 }

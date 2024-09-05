@@ -6,6 +6,8 @@ import java.util.List;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -54,7 +56,11 @@ public class ClubArticle {
 	private LocalDateTime added;
 	
 	@Column(name = "like_count")
-	private int likeCount;
+	private int likeCount=0;
+	
+	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
+    @JsonIgnoreProperties("clubArticle") // 忽略 clubArticle 屬性
+	private List<ArticlePhoto> photos;
 
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {
