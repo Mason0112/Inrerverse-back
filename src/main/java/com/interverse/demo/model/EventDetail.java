@@ -2,6 +2,7 @@ package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 import jakarta.persistence.Column;
@@ -26,7 +27,8 @@ public class EventDetail {
 	@Id
 	@Column(name = "id", nullable = false)
 	private Integer id;
-
+	
+	@JsonBackReference
 	@OneToOne(fetch = FetchType.LAZY)
 	@MapsId
 	@JoinColumn(name = "id")

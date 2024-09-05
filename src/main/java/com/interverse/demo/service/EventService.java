@@ -11,34 +11,34 @@ import com.interverse.demo.model.EventRepository;
 
 @Service
 public class EventService {
-	
+
 	@Autowired
 	private EventRepository eRepo;
-	
+
 	public Event saveEvent(Event eve) {
 		return eRepo.save(eve);
 	}
-	
+
 	public Event findEventById(Integer id) {
 		Optional<Event> optional = eRepo.findById(id);
-		
-		if(optional.isPresent()) {
-			
+
+		if (optional.isPresent()) {
+
 			return optional.get();
-			
+
 		}
 		return null;
 	}
-	
+
 	public void deleteEventById(Integer id) {
 		eRepo.deleteById(id);
 	}
-	
-	public List<Event> findAllEvent(){
+
+	public List<Event> findAllEvent() {
 		return eRepo.findAll();
 	}
-	
-	 public boolean existsById(Integer id) {
-	        return eRepo.existsById(id);
-	    }
+
+	public boolean existsById(Integer id) {
+		return eRepo.existsById(id);
+	}
 }
