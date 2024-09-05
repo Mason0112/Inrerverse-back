@@ -8,10 +8,11 @@ import org.springframework.stereotype.Service;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @NoArgsConstructor
 @Getter
-@Service
+@Setter
 @Embeddable
 public class ClubMemberId implements Serializable{
 	

@@ -15,17 +15,17 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Autowired
 	private JwtUtil jwtUtil;
 
-	private JSONObject processAuthorizationHeader(String auth) throws JSONException{
+	private JSONObject processAuthorizationHeader(String auth) throws JSONException {
 
 		if (auth != null && auth.length() != 0) {
 			// 取得token淨值
-			String token = auth.substring(7);  //'Bearer '
+			String token = auth.substring(7); // 'Bearer '
 			// 呼叫驗證token方法來取得加密資訊
 			String loggedInUserData = jwtUtil.validateJWT(token);
-			System.out.println("data=" +loggedInUserData);
+			System.out.println("data=" + loggedInUserData);
 
 			if (loggedInUserData != null && loggedInUserData.length() != 0) {
-				
+
 				// 方法直接回傳JSONObject 因為login Controller 塞入JSONObject型別資料
 				return new JSONObject(loggedInUserData);
 			}
@@ -36,31 +36,51 @@ public class JwtInterceptor implements HandlerInterceptor {
 	@Override
 	public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler)
 			throws Exception {
-		
-		// 獲取請求方式
-		String method = request.getMethod();
-	    // 處理 OPTIONS 請求
-	    if ("OPTIONS".equals(method)) {
-	        return true; // OPTIONS 請求不需要進一步處理
-	    } else {
-	    	
-	    	// 處理其他請求
-		    String auth = request.getHeader("Authorization");
-		    System.out.println(auth);
-		    JSONObject loggedInUser = processAuthorizationHeader(auth);
-		    System.out.println(loggedInUser);
-		    if (loggedInUser == null || loggedInUser.length() == 0) {
-		    	
-		    	response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-		    	response.setHeader("Access-Control-Allow-Origin", "*");
-		    	response.setHeader("Access-Control-Allow-Headers", "*");
-		    	response.setHeader("Access-Control-Allow-Credentials", "true");
-		        return false; // 中止請求處理
-		    } /* else {
-		    	// 身份驗證通過，繼續處理請求
-		    	
-		    } */
-	    }
-	    return true;
+
+		// OPTIONS 請求不需要進一步處理
+		if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
+			return true;
+		}
+
+		// 處理其他請求
+		String auth = request.getHeader("Authorization");
+		System.out.println("Authorization Header: " + auth);
+		String clientId = request.getHeader("X-User-ID");
+		System.out.println("Client ID: " + clientId);
+
+		JSONObject loggedInUser = processAuthorizationHeader(auth);
+
+		// 如果JWT payload為空，則中止請求處理
+		if (loggedInUser == null || loggedInUser.length() == 0) {
+			System.out.println("無效的JWT payload" + loggedInUser);
+			setForbiddenResponse(response);
+			return false;
+		}
+
+		String id = loggedInUser.optString("id", null);
+		// 如果請求API的用戶id 和 JWT payload的用戶id 不一致，也中止請求處理
+		if (id == null || !id.equals(clientId)) {
+			System.out.println("用戶ID不一致");
+			setForbiddenResponse(response);
+			return false;
+		}
+
+		// 要造訪/admin路徑的判斷
+		if (request.getRequestURI().startsWith("/interverse/admin/")) {
+			if (!loggedInUser.has("authority")) {
+				System.out.println("沒有authority");
+				setForbiddenResponse(response);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	private void setForbiddenResponse(HttpServletResponse response) throws Exception {
+		response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+		response.setHeader("Access-Control-Allow-Origin", "*");
+		response.setHeader("Access-Control-Allow-Headers", "*");
+		response.setHeader("Access-Control-Allow-Credentials", "true");
 	}
 }

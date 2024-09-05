@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.annotation.NotifyFriendStatusChange;
 import com.interverse.demo.dto.FriendDto;
 import com.interverse.demo.model.Friend;
 import com.interverse.demo.model.FriendId;
@@ -22,18 +23,21 @@ public class FriendService {
 
 	@Autowired
 	private UserRepository userRepo;
-	
+
 	public FriendDto convert(Friend friend) {
 		FriendDto friendDto = new FriendDto();
 		friendDto.setUser1Id(friend.getUser1().getId());
 		friendDto.setUser2Id(friend.getUser2().getId());
 		friendDto.setStatus(friend.getStatus());
-		
+
 		return friendDto;
 	}
-
+	
+	@NotifyFriendStatusChange
 	public void switchFriendStatus(Integer user1Id, Integer user2Id) {
+		//自己已加對方的可能性
 		Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
+		//對方已加自己的可能性
 		Friend possibility2 = friendRepo.findByUser1IdAndUser2Id(user2Id, user1Id);
 
 		Optional<User> optional1 = userRepo.findById(user1Id);
@@ -112,23 +116,25 @@ public class FriendService {
 	public List<FriendDto> findMyFriend(Integer user1Id) {
 
 		List<Friend> friendList = friendRepo.findByUser1Id(user1Id);
-		
+
 		List<FriendDto> friendDtoList = friendList.stream()
-        .map(this::convert)
-        .collect(Collectors.toList());
-		
+				.map(this::convert)
+				.collect(Collectors.toList());
+
 		return friendDtoList;
 	}
 
 	public List<FriendDto> findMyFriendRequest(Integer user2Id) {
 
 		List<Friend> friendList = friendRepo.findByUser2Id(user2Id);
-		
-		List<FriendDto> friendDtoList = friendList.stream()
-		        .map(this::convert)
-		        .collect(Collectors.toList());
-		
+
+		List<FriendDto> friendDtoList = friendList.stream().map(this::convert).collect(Collectors.toList());
+
 		return friendDtoList;
 	}
+
 	
+	public Friend getFriendStatus(Integer user1Id, Integer user2Id) {
+        return friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
+    }
 }

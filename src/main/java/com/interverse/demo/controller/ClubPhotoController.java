@@ -1,11 +1,18 @@
 package com.interverse.demo.controller;
 
 import java.io.IOException;
+import java.net.MalformedURLException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -36,7 +43,7 @@ public class ClubPhotoController {
 	private ClubRepository cRepo;
 
 	// 建立照片
-	@PostMapping
+	@PostMapping("/new")
 	public ResponseEntity<?> uploadClubPhoto(@RequestParam("file") MultipartFile file,
 			@RequestParam("clubId") Integer clubId, @RequestParam("uploaderId") Integer uploaderId) {
 		try {
@@ -101,6 +108,7 @@ public class ClubPhotoController {
 //		dto.setPhoto(clubPhoto.getPhoto());
 		dto.setClubId(clubPhoto.getClub().getId());
 		dto.setUploaderId(clubPhoto.getUploaderId().getId());
+		dto.setUserName(clubPhoto.getUploaderId().getNickname());
 
 		return dto;
 	}
@@ -114,7 +122,32 @@ public class ClubPhotoController {
 		return clubPhoto;
 
 	}
+	
+	
+	@GetMapping("/{clubId}/{photoId}")
+    public ResponseEntity<Resource> getSpecificClubPhoto(@PathVariable Integer clubId, @PathVariable Integer photoId) throws MalformedURLException {
+        // 使用 productId 和 photoId 來獲取特定的照片
+       ClubPhoto photo = cpService.getClubPhoto(clubId, photoId);
 
+        if (photo == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        String photoPath = photo.getPhoto();
+
+        Path path = Paths.get(photoPath);
+        Resource resource = new UrlResource(path.toUri());
+
+        if (resource.exists() || resource.isReadable()) {
+            return ResponseEntity.ok()
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + photo.getPhoto() + "\"")
+                .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
+                .body(resource);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
+    }
+}
 //	@GetMapping("/{id}")
 //	public ResponseEntity<?> getClubPhoto(@PathVariable Integer id) {
 //
@@ -142,4 +175,3 @@ public class ClubPhotoController {
 //
 //		return ResponseEntity.status(HttpStatus.OK).body("更新成功");
 //	}
-}

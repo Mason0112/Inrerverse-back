@@ -18,5 +18,6 @@ public class ClubMemberDTO {
     private Integer status;
     
     private LocalDateTime added;
-
+    
+    private String userName;
 }

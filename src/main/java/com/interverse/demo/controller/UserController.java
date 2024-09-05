@@ -8,6 +8,7 @@ import java.util.Base64;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.configurationprocessor.json.JSONArray;
 import org.springframework.boot.configurationprocessor.json.JSONException;
 import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpHeaders;
@@ -41,7 +42,7 @@ public class UserController {
 
 	@Autowired
 	private JwtUtil jwtUtil;
-	
+
 	@Autowired
 	private AgeCalculator ageCalculator;
 
@@ -90,7 +91,7 @@ public class UserController {
 		try {
 			// 檢查unique欄位有沒有違反unique約束
 			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
-				errorMessages.add("您輸入的帳號已被註冊; ");
+				errorMessages.add("您輸入的帳號已被註冊");
 			}
 			if (userService.existsByEmail(userDto.getEmail())) {
 				errorMessages.add("您輸入的email已被使用");
@@ -100,7 +101,7 @@ public class UserController {
 			}
 			if (!errorMessages.isEmpty()) {
 				responseJson.put("success", false);
-				responseJson.put("messages", errorMessages);
+				responseJson.put("messages", new JSONArray(errorMessages));
 				return responseJson.toString();
 			}
 			// 註冊
@@ -141,7 +142,7 @@ public class UserController {
 		// 判斷登入結果
 		if (user == null) {
 			responseJson.put("success", false);
-			responseJson.put("message", "登入失敗");
+			responseJson.put("message", "您輸入的帳號或密碼錯誤");
 		} else {
 			responseJson.put("success", true);
 			responseJson.put("message", "登入成功");
@@ -178,7 +179,7 @@ public class UserController {
 		JSONObject responseJson = new JSONObject();
 
 		// 先檢查是否有輸入值
-		if (noeUtil.determineString(userDto.getAccountNumber()) || noeUtil.determineString(userDto.getEmail())
+		if (noeUtil.determineString(userDto.getEmail())
 				|| noeUtil.determineString(userDto.getNickname()) || noeUtil.determineString(userDto.getPhoneNumber())
 				|| noeUtil.determineString(userDto.getCountry()) || noeUtil.determineString(userDto.getCity())
 				|| noeUtil.determineLocalDate(userDto.getBirthday()) || noeUtil.determineString(userDto.getGender())) {
@@ -190,7 +191,6 @@ public class UserController {
 		}
 
 		user.setId(id);
-		user.setAccountNumber(userDto.getAccountNumber());
 		user.setEmail(userDto.getEmail());
 		user.setNickname(userDto.getNickname());
 
@@ -199,6 +199,7 @@ public class UserController {
 		userDetail.setCity(userDto.getCity());
 		userDetail.setBirthday(userDto.getBirthday());
 		userDetail.setGender(userDto.getGender());
+		userDetail.setBio(userDto.getBio());
 
 		user.setUserDetail(userDetail);
 
@@ -206,18 +207,18 @@ public class UserController {
 
 		try {
 			// 檢查unique欄位有沒有違反unique約束
-			if (userService.existsByAccountNumber(userDto.getAccountNumber())) {
+			if (userService.existsByAccountNumber(id, userDto.getAccountNumber())) {
 				errorMessages.add("您輸入的帳號已被註冊; ");
 			}
-			if (userService.existsByEmail(userDto.getEmail())) {
+			if (userService.existsByEmail(id, userDto.getEmail())) {
 				errorMessages.add("您輸入的email已被使用");
 			}
-			if (userService.existsByPhoneNumber(userDto.getPhoneNumber())) {
+			if (userService.existsByPhoneNumber(id, userDto.getPhoneNumber())) {
 				errorMessages.add("您輸入的電話已被使用");
 			}
 			if (!errorMessages.isEmpty()) {
 				responseJson.put("success", false);
-				responseJson.put("messages", errorMessages);
+				responseJson.put("messages", new JSONArray(errorMessages));
 				return responseJson.toString();
 			}
 			// 更新會員資料
@@ -255,9 +256,11 @@ public class UserController {
 			responseJson.put("phoneNumber", userDetail.getPhoneNumber());
 			responseJson.put("country", userDetail.getCountry());
 			responseJson.put("city", userDetail.getCity());
+			responseJson.put("birthday", userDetail.getBirthday());
 			responseJson.put("age", age);
 			responseJson.put("gender", userDetail.getGender());
 			responseJson.put("bio", userDetail.getBio());
+			responseJson.put("walletBalance",user.getWalletBalance());
 
 			return new ResponseEntity<String>(responseJson.toString(), httpHeaders, HttpStatus.OK);
 		}
@@ -274,12 +277,12 @@ public class UserController {
 		if (user != null) {
 
 			String photoDir = userService.updatePhoto(id, file).getUserDetail().getPhoto();
-			
+
 			File fileDB = new File(photoDir);
-	        byte[] photoFile = Files.readAllBytes(fileDB.toPath());
-	        
-	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
-			
+			byte[] photoFile = Files.readAllBytes(fileDB.toPath());
+
+			String base64Photo = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(photoFile);
+
 			return new ResponseEntity<String>(base64Photo, HttpStatus.CREATED);
 		}
 
@@ -294,15 +297,17 @@ public class UserController {
 		if (user != null) {
 			UserDetail userDetail = user.getUserDetail();
 			String photoDir = userDetail.getPhoto();
-	
-			File file = new File(photoDir);
-	        byte[] photoFile = Files.readAllBytes(file.toPath());
-	        
-	        String base64Photo = "data:image/jpg;base64,"+Base64.getEncoder().encodeToString(photoFile);
-	        
-	        return new ResponseEntity<String>(base64Photo, HttpStatus.OK);
-		}
 
-		return ResponseEntity.notFound().build();
+			if (photoDir != null && !photoDir.isEmpty()) {
+				File file = new File(photoDir);
+				if (file.exists()) {
+					byte[] photoFile = Files.readAllBytes(file.toPath());
+					String base64Photo = "data:image/jpg;base64," + Base64.getEncoder().encodeToString(photoFile);
+					return new ResponseEntity<>(base64Photo, HttpStatus.OK);
+				}
+			}
+		}
+		// 如果照片不存在或會員沒有大頭照，返回null
+		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
 }

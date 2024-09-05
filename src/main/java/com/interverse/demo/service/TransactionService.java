@@ -12,39 +12,61 @@ import com.interverse.demo.model.TransactionRepository;
 
 @Service
 public class TransactionService {
-	
+
 	@Autowired
 	private TransactionRepository transRepo;
-	
+
 	public TransactionDto convert(Transaction transaction) {
 		TransactionDto transactionDto = new TransactionDto();
-		
+
 		transactionDto.setId(transaction.getId());
 		transactionDto.setTransactionNo(transaction.getTransactionNo());
 		transactionDto.setPaymentMethod(transaction.getPaymentMethod());
 		transactionDto.setAmount(transaction.getAmount());
 		transactionDto.setStatus(transaction.getStatus());
 		transactionDto.setAdded(transaction.getAdded());
-		transactionDto.setUser(transaction.getUser());
-		
+		transactionDto.setUserId(transaction.getUser().getId());
+
 		return transactionDto;
 	}
-	
+
 	public TransactionDto addTransaction(Transaction transaction) {
-		
-		return convert((transRepo.save(transaction)));
+
+		return convert(transRepo.save(transaction));
 	}
-	
+
+	public TransactionDto updateStatusToCompleted(Transaction transaction) {
+
+		transaction.setStatus((short) 1);
+
+		return convert(transRepo.save(transaction));
+	}
+
 	public List<TransactionDto> findMyTransaction(Integer userId) {
-		
+
 		List<Transaction> transactionList = transRepo.findByUserId(userId);
-		List<TransactionDto> transactionDtoList = transactionList.stream()
-		        .map(this::convert)
-		        .collect(Collectors.toList());
-		
+		List<TransactionDto> transactionDtoList = transactionList.stream().map(this::convert)
+				.collect(Collectors.toList());
+
 		return transactionDtoList;
 	}
 
-	
+	public List<TransactionDto> findAllTransaction() {
+
+		List<Transaction> transactionList = transRepo.findAll();
+		List<TransactionDto> transactionDtoList = transactionList.stream().map(this::convert)
+				.collect(Collectors.toList());
+
+		return transactionDtoList;
+	}
+
+	public List<TransactionDto> findHandlingTransaction() {
+		
+		List<Transaction> transactionList = transRepo.findTransactionStatus2();
+		List<TransactionDto> transactionDtoList = transactionList.stream().map(this::convert)
+				.collect(Collectors.toList());
+		
+		return transactionDtoList;
+	}
 
 }
