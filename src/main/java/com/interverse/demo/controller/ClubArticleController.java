@@ -37,45 +37,31 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
 	@PostMapping
-	public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO){
+	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
 		
-		if(articleDTO.getUserId() == null) {
-			return ResponseEntity.badRequest().body(null);
-		}
 		
-		String content = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		articleDTO.setContent(content);
-		
-		ClubArticleDTO saveArticle = articleService.saveArticle(articleDTO);
+		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		article.setContent(content);
+		ClubArticle saveArticle = articleService.createArticle(article);
 		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/{clubId}")
-	public ResponseEntity<List<ClubArticle>> showClubAllArticle(@PathVariable Integer clubId)throws IOException {
-		try {
-			List<ClubArticle> articles = articleService.findAllArticleByClubId(clubId);
-			for (ClubArticle clubArticle : articles) {
-				List<ArticlePhoto> photos = clubArticle.getPhotos();
-				for(ArticlePhoto articlePhoto : photos) {
-					File file=new File(articlePhoto.getUrl());
-					byte[] photoFile = Files.readAllBytes(file.toPath());
-					String base64Photo = "data:image/png;base64," + Base64.getEncoder().encodeToString(photoFile);
-					articlePhoto.setBase64Photo(base64Photo);
-				}
-			}
-			return ResponseEntity.ok(articles);
-		}catch(IOException e){
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-			
-		}
-	}
+    public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
+        try {
+            List<ClubArticleDTO> articleDTOs = articleService.findAllArticleByClubId(clubId);
+            articleService.loadBase64Photos(articleDTOs);
+            return ResponseEntity.ok(articleDTOs);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
 	
 	@PutMapping("/{articleId}")
-	public ClubArticle updateArticle(@PathVariable Integer articleId,
-									@RequestParam String content) {
-		ClubArticle article = articleService.findArticleById(articleId);
-		article.setContent(content);
-		return articleService.saveArticle(article);
+	public ResponseEntity<ClubArticle> updateArticle(@PathVariable Integer articleId,
+									@RequestBody ClubArticle clubArticle) {
+		 ClubArticle updatedArticle = articleService.updateArticle(articleId, clubArticle);
+	        return ResponseEntity.ok(updatedArticle);
 	}
 	
 	@DeleteMapping("/{articleId}")
