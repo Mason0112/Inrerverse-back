@@ -65,6 +65,7 @@ public class ClubArticleController {
 	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId){
 		ClubArticleDTO articleDTO = articleService.findArticleById(articleId);
 		if(articleDTO != null) {
+			System.out.println(articleDTO);
 			return ResponseEntity.ok(articleDTO);
 		}else {
 			return ResponseEntity.notFound().build();

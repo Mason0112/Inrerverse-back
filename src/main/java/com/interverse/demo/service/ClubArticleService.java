@@ -41,7 +41,7 @@ public class ClubArticleService {
 		article.setTitle(articleDTO.getTitle());
 		article.setContent(articleDTO.getContent());
 		
-		User user = userRepo.findById(articleDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+		User user = userRepo.findById(articleDTO.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
 		article.setUser(user);
 		
 		if(articleDTO.getPhotos() != null && articleDTO.getPhotos().isEmpty()) {

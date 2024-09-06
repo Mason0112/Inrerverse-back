@@ -18,7 +18,7 @@ public class ClubArticleDTO {
     private LocalDateTime added;
     private int likeCount;
     private List<ArticlePhotoDTO> photos;
-    private Integer userId;
+    private UserDto user;
 
 
     public static ClubArticleDTO fromEntity(ClubArticle entity) {
@@ -31,7 +31,7 @@ public class ClubArticleDTO {
         
         // 檢查 user 是否為 null
         if (entity.getUser() != null) {
-            dto.setUserId(entity.getUser().getId());
+            dto.setUser(UserDto.fromEntity(entity.getUser()));
         }
         
         // 檢查 photos 是否為 null
