@@ -14,9 +14,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
+import com.interverse.demo.model.ArticlePhoto;
 import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.ClubArticlesRepository;
 import com.interverse.demo.model.ClubRepository;
+import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserRepository;
 
 @Service
@@ -33,16 +35,37 @@ public class ClubArticleService {
 	
   
 	
-	public ClubArticle createArticle(ClubArticle article) {
+	public ClubArticle createArticle(ClubArticleDTO articleDTO) {
+		
+		ClubArticle article = new ClubArticle();
+		article.setTitle(articleDTO.getTitle());
+		article.setContent(articleDTO.getContent());
+		
+		User user = userRepo.findById(articleDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
+		article.setUser(user);
+		
+		if(articleDTO.getPhotos() != null && articleDTO.getPhotos().isEmpty()) {
+			List<ArticlePhoto> photos = articleDTO.getPhotos().stream()
+					.map(ArticlephotoDTO -> {
+						ArticlePhoto photo = new ArticlePhoto();
+	                    photo.setName(ArticlephotoDTO.getName());
+	                    photo.setBase64Photo(ArticlephotoDTO.getBase64Photo());
+	                    photo.setClubArticle(article);
+	                    return photo;
+					})
+					.collect(Collectors.toList());
+			article.setPhotos(photos);
+		}
+		
+		
 		return clubArticlesRepo.save(article);
 	}
 	
-	public ClubArticle findArticleById(Integer articleId) {
+	public ClubArticleDTO findArticleById(Integer articleId) {
 		Optional<ClubArticle> optional = clubArticlesRepo.findById(articleId);
-		if(optional.isPresent()){
-			return  optional.get();
-		}
-		return null;
+        return optional.map(ClubArticleDTO::fromEntity).orElse(null);
+		
+
 	}
 	
     public List<ClubArticleDTO> findAllArticleByClubId(Integer clubId) {

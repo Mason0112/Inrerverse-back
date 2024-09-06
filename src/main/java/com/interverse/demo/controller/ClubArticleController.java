@@ -37,16 +37,20 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
 	@PostMapping
-	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
-		
-		
-		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		article.setContent(content);
-		ClubArticle saveArticle = articleService.createArticle(article);
-		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
+	public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO){
+		try {
+			
+		String content = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		articleDTO.setContent(content);
+		ClubArticle saveArticle = articleService.createArticle(articleDTO);
+		ClubArticleDTO saveArticleDTO = ClubArticleDTO.fromEntity(saveArticle);
+		return new ResponseEntity<>(saveArticleDTO, HttpStatus.CREATED);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
-	@GetMapping("/{clubId}")
+	@GetMapping("/all/{clubId}")
     public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
         try {
             List<ClubArticleDTO> articleDTOs = articleService.findAllArticleByClubId(clubId);
@@ -56,6 +60,16 @@ public class ClubArticleController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
     }
+	
+	@GetMapping("/oneArticle/{articleId}")
+	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId){
+		ClubArticleDTO articleDTO = articleService.findArticleById(articleId);
+		if(articleDTO != null) {
+			return ResponseEntity.ok(articleDTO);
+		}else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 	
 	@PutMapping("/{articleId}")
 	public ResponseEntity<ClubArticle> updateArticle(@PathVariable Integer articleId,
