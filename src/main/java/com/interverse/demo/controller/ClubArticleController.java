@@ -44,6 +44,8 @@ public class ClubArticleController {
 		articleDTO.setContent(content);
 		ClubArticle saveArticle = articleService.createArticle(articleDTO);
 		ClubArticleDTO saveArticleDTO = ClubArticleDTO.fromEntity(saveArticle);
+	    System.out.println("Received saveArticleDTO: " + articleDTO);
+
 		return new ResponseEntity<>(saveArticleDTO, HttpStatus.CREATED);
 		}catch (Exception e) {
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
