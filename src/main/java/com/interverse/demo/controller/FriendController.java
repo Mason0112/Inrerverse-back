@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +38,12 @@ public class FriendController {
 	public ResponseEntity<List<FriendDto>> showFriendRequest(@PathVariable Integer user1Id) {
 		List<FriendDto> requestList = friendService.findMyFriendRequest(user1Id);
 		return ResponseEntity.ok(requestList);
+	}
+	
+	@GetMapping("/decline-request/{user1Id}/{user2Id}")
+	public ResponseEntity<?> declineRequest(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
+		friendService.declineRequest(user1Id, user2Id);
+		return ResponseEntity.ok().build();
 	}
 
 }

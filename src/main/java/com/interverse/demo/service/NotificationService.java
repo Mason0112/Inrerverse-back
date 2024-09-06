@@ -24,6 +24,7 @@ public class NotificationService {
 		notifDto.setStatus(notif.getStatus());
 		notifDto.setSenderId(notif.getSender().getId());
 		notifDto.setReceiverId(notif.getReceiver().getId());
+		notifDto.setAdded(notif.getAdded());
 
 		return notifDto;
 	}
