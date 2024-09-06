@@ -13,5 +13,4 @@ public interface NotificationRepository extends JpaRepository<Notification, Inte
 	
 	@Query("SELECT COUNT(n) FROM Notification n WHERE n.receiver.id = :id AND n.status = false")
     Integer countUnreadNotificationsByReceiverId(@Param("id") Integer userId);
-
 }
