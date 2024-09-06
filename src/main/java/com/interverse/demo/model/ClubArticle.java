@@ -1,6 +1,7 @@
 package com.interverse.demo.model;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -60,7 +61,7 @@ public class ClubArticle {
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
     @JsonIgnoreProperties("clubArticle") // 忽略 clubArticle 屬性
-	private List<ArticlePhoto> photos;
+	private List<ArticlePhoto> photos= new ArrayList<>();
 
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {

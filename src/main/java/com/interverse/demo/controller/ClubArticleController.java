@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.ClubArticleDTO;
 import com.interverse.demo.model.ArticlePhoto;
 import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.UserPost;
@@ -36,39 +37,45 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
 	@PostMapping
-	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
-		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		article.setContent(content);
-		ClubArticle saveArticle = articleService.saveArticle(article);
-		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
+	public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO){
+		try {
+			
+		String content = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		articleDTO.setContent(content);
+		ClubArticle saveArticle = articleService.createArticle(articleDTO);
+		ClubArticleDTO saveArticleDTO = ClubArticleDTO.fromEntity(saveArticle);
+		return new ResponseEntity<>(saveArticleDTO, HttpStatus.CREATED);
+		}catch (Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 	
-	@GetMapping("/{clubId}")
-	public ResponseEntity<List<ClubArticle>> showClubAllArticle(@PathVariable Integer clubId)throws IOException {
-		try {
-			List<ClubArticle> articles = articleService.findAllArticleByClubId(clubId);
-			for (ClubArticle clubArticle : articles) {
-				List<ArticlePhoto> photos = clubArticle.getPhotos();
-				for(ArticlePhoto articlePhoto : photos) {
-					File file=new File(articlePhoto.getUrl());
-					byte[] photoFile = Files.readAllBytes(file.toPath());
-					String base64Photo = "data:image/png;base64," + Base64.getEncoder().encodeToString(photoFile);
-					articlePhoto.setBase64Photo(base64Photo);
-				}
-			}
-			return ResponseEntity.ok(articles);
-		}catch(IOException e){
-			return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-			
+	@GetMapping("/all/{clubId}")
+    public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
+        try {
+            List<ClubArticleDTO> articleDTOs = articleService.findAllArticleByClubId(clubId);
+            articleService.loadBase64Photos(articleDTOs);
+            return ResponseEntity.ok(articleDTOs);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+	
+	@GetMapping("/oneArticle/{articleId}")
+	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId){
+		ClubArticleDTO articleDTO = articleService.findArticleById(articleId);
+		if(articleDTO != null) {
+			return ResponseEntity.ok(articleDTO);
+		}else {
+			return ResponseEntity.notFound().build();
 		}
 	}
 	
 	@PutMapping("/{articleId}")
-	public ClubArticle updateArticle(@PathVariable Integer articleId,
-									@RequestParam String content) {
-		ClubArticle article = articleService.findArticleById(articleId);
-		article.setContent(content);
-		return articleService.saveArticle(article);
+	public ResponseEntity<ClubArticle> updateArticle(@PathVariable Integer articleId,
+									@RequestBody ClubArticle clubArticle) {
+		 ClubArticle updatedArticle = articleService.updateArticle(articleId, clubArticle);
+	        return ResponseEntity.ok(updatedArticle);
 	}
 	
 	@DeleteMapping("/{articleId}")
