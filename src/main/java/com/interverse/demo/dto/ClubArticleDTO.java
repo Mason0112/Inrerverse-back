@@ -7,18 +7,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.interverse.demo.model.ClubArticle;
+import com.interverse.demo.model.User;
 
 import lombok.Data;
 
 @Data
 public class ClubArticleDTO {
     private Integer id;
+    private Integer userId;
+    private String userName;
+    private Integer clubId;
+    private String clubName;
     private String title;
     private String content;
     private LocalDateTime added;
     private int likeCount;
     private List<ArticlePhotoDTO> photos;
-    private UserDto user;
+//    private List<ClubArticleCommentDTO> comments;
 
 
     public static ClubArticleDTO fromEntity(ClubArticle entity) {
@@ -31,7 +36,7 @@ public class ClubArticleDTO {
         
         // 檢查 user 是否為 null
         if (entity.getUser() != null) {
-            dto.setUser(UserDto.fromEntity(entity.getUser()));
+            dto.setUserId(entity.getUser().getId());
         }
         
         // 檢查 photos 是否為 null

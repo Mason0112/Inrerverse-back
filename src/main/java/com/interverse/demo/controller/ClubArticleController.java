@@ -36,13 +36,11 @@ public class ClubArticleController {
 	@Autowired
 	private ClubArticleService articleService;
 	
-	@PostMapping
-	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
-		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		article.setContent(content);
-		ClubArticle saveArticle = articleService.createArticle(article);
-		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
-	}
+    @PostMapping
+    public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO) {
+        ClubArticleDTO savedArticle = articleService.createArticle(articleDTO);
+        return new ResponseEntity<>(savedArticle, HttpStatus.CREATED);
+    }
 	
 	@GetMapping("/all/{clubId}")
     public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
@@ -66,12 +64,12 @@ public class ClubArticleController {
 		}
 	}
 	
-	@PutMapping("/{articleId}")
-	public ResponseEntity<ClubArticle> updateArticle(@PathVariable Integer articleId,
-									@RequestBody ClubArticle clubArticle) {
-		 ClubArticle updatedArticle = articleService.updateArticle(articleId, clubArticle);
-	        return ResponseEntity.ok(updatedArticle);
-	}
+    @PutMapping("/{articleId}")
+    public ResponseEntity<ClubArticleDTO> updateArticle(@PathVariable Integer articleId,
+                                    @RequestBody ClubArticleDTO clubArticleDTO) {
+        ClubArticleDTO updatedArticle = articleService.updateArticle(articleId, clubArticleDTO);
+        return ResponseEntity.ok(updatedArticle);
+    }
 	
 	@DeleteMapping("/{articleId}")
 	public void deleteArticle(@PathVariable Integer articleId) {
