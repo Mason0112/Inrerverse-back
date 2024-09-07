@@ -43,15 +43,28 @@ public class ClubArticleController {
     }
 	
 	@GetMapping("/all/{clubId}")
-    public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
-        try {
-            List<ClubArticleDTO> articleDTOs = articleService.findAllArticleByClubId(clubId);
-            articleService.loadBase64Photos(articleDTOs);
-            return ResponseEntity.ok(articleDTOs);
-        } catch (IOException e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
-        }
-    }
+	public ResponseEntity<List<ClubArticleDTO>> showClubAllArticle(@PathVariable Integer clubId) {
+	    try {
+	        System.out.println("Controller: Fetching articles for clubId: " + clubId);
+	        List<ClubArticleDTO> articleDTOs = articleService.findAllArticleByClubId(clubId);
+	        System.out.println("Controller: Articles fetched, size: " + articleDTOs.size());
+	        
+	        System.out.println("Controller: Loading base64 photos");
+	        articleService.loadBase64Photos(articleDTOs);
+	        
+	        System.out.println("Controller: Photos loaded");
+	        System.out.println("Controller: " + articleDTOs);
+	        return ResponseEntity.ok(articleDTOs);
+	    } catch (IOException e) {
+	        System.err.println("Controller: Error loading photos: " + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    } catch (Exception e) {
+	        System.err.println("Controller: Unexpected error: " + e.getMessage());
+	        e.printStackTrace();
+	        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+	    }
+	}
 	
 	@GetMapping("/oneArticle/{articleId}")
 	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId){

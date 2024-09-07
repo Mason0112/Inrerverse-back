@@ -56,9 +56,11 @@ public class ClubArticleService {
         List<ClubArticle> articles = clubArticlesRepo.findAllArticleByClubId(clubId);
         
         //
-        return articles.stream()
-                .map(ClubArticleDTO::fromEntity)
-                .collect(Collectors.toList());
+         List<ClubArticleDTO> collect = articles.stream()
+        		 						.map(ClubArticleDTO::fromEntity)
+        		 						.collect(Collectors.toList());
+         System.out.println("Service:" + collect);
+         return collect;
     }
     
     public void loadBase64Photos(List<ClubArticleDTO> articleDTOs) throws IOException {
