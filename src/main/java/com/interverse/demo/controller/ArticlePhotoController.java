@@ -30,7 +30,6 @@ public class ArticlePhotoController {
 			return new ResponseEntity<>(photo, HttpStatus.CREATED);
 			
 		}catch(Exception e) {
-//			System.out.println("Error uploading photo", e);
 			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		

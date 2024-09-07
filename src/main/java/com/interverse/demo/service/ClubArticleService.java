@@ -35,29 +35,7 @@ public class ClubArticleService {
 	
   
 	
-	public ClubArticle createArticle(ClubArticleDTO articleDTO) {
-		
-		ClubArticle article = new ClubArticle();
-		article.setTitle(articleDTO.getTitle());
-		article.setContent(articleDTO.getContent());
-		
-		User user = userRepo.findById(articleDTO.getUser().getId()).orElseThrow(() -> new RuntimeException("User not found"));
-		article.setUser(user);
-		
-		if(articleDTO.getPhotos() != null && articleDTO.getPhotos().isEmpty()) {
-			List<ArticlePhoto> photos = articleDTO.getPhotos().stream()
-					.map(ArticlephotoDTO -> {
-						ArticlePhoto photo = new ArticlePhoto();
-	                    photo.setName(ArticlephotoDTO.getName());
-	                    photo.setBase64Photo(ArticlephotoDTO.getBase64Photo());
-	                    photo.setClubArticle(article);
-	                    return photo;
-					})
-					.collect(Collectors.toList());
-			article.setPhotos(photos);
-		}
-		
-		
+	public ClubArticle createArticle(ClubArticle article) {
 		return clubArticlesRepo.save(article);
 	}
 	

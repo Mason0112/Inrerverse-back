@@ -37,19 +37,11 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
 	@PostMapping
-	public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO){
-		try {
-			
-		String content = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
-		articleDTO.setContent(content);
-		ClubArticle saveArticle = articleService.createArticle(articleDTO);
-		ClubArticleDTO saveArticleDTO = ClubArticleDTO.fromEntity(saveArticle);
-	    System.out.println("Received saveArticleDTO: " + articleDTO);
-
-		return new ResponseEntity<>(saveArticleDTO, HttpStatus.CREATED);
-		}catch (Exception e) {
-			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-		}
+	public ResponseEntity<ClubArticle> addArticle(@RequestBody ClubArticle article){
+		String content = article.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		article.setContent(content);
+		ClubArticle saveArticle = articleService.createArticle(article);
+		return new ResponseEntity<>(saveArticle, HttpStatus.CREATED);
 	}
 	
 	@GetMapping("/all/{clubId}")
