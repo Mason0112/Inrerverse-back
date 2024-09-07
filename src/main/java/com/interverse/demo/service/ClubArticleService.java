@@ -59,7 +59,7 @@ public class ClubArticleService {
          List<ClubArticleDTO> collect = articles.stream()
         		 						.map(ClubArticleDTO::fromEntity)
         		 						.collect(Collectors.toList());
-         System.out.println("Service:" + collect);
+//         System.out.println("Service:" + collect);
          return collect;
     }
     
