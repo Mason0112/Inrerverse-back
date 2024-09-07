@@ -24,8 +24,10 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.interverse.demo.dto.EventPhotoDTO;
+import com.interverse.demo.model.Event;
 import com.interverse.demo.model.EventPhoto;
 import com.interverse.demo.service.EventPhotoService;
+import com.interverse.demo.service.EventService;
 
 @RestController
 @RequestMapping("/eventPhoto")
@@ -33,11 +35,18 @@ public class EventPhotoController {
 
 	@Autowired
 	private EventPhotoService epService;
+	
+	@Autowired
+	private EventService eService;
 
 	// 建立
 	@PostMapping("/new")
 	public ResponseEntity<?> createEventPhoto(@RequestParam("file") MultipartFile file,
 			@RequestParam("eventId") Integer eventId, @RequestParam("uploaderId") Integer uploaderId) {
+		Event event = eService.findEventById(eventId);
+	    if (event == null || !event.getEventCreator().getId().equals(uploaderId)) {
+	        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Only the event creator can upload photos.");
+	    }
 		try {
 			EventPhoto savedPhoto = epService.createEventPhoto(file, eventId, uploaderId);
 			return ResponseEntity.status(HttpStatus.CREATED).body(savedPhoto);
