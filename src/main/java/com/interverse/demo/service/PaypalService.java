@@ -1,12 +1,9 @@
 package com.interverse.demo.service;
 
-import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.boot.configurationprocessor.json.JSONException;
-import org.springframework.boot.configurationprocessor.json.JSONObject;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -14,8 +11,10 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestClient;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.interverse.demo.dto.PaypalDTO;
+import com.interverse.demo.dto.PaypalUrlDTO;
 
 
 @Service
@@ -25,6 +24,33 @@ public class PaypalService {
     String clientSecret = "EAmCFzhc0B8NlDZnjsqY8IQdwXfkAAUNTVS4qFAvPHPmwmaA8xJyBNPFJF9cfERnO6ZYzBeQxNkzdIgg";
 	
     String atoken ;
+    
+    
+    public static PaypalUrlDTO extractUrls(String jsonResponse) {
+        PaypalUrlDTO urlDto = new PaypalUrlDTO();
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode rootNode = objectMapper.readTree(jsonResponse);
+            
+            JsonNode linksNode = rootNode.get("links");
+            if (linksNode != null && linksNode.isArray()) {
+                for (JsonNode linkNode : linksNode) {
+                    String rel = linkNode.get("rel").asText();
+                    String href = linkNode.get("href").asText();
+                    
+                    if ("payer-action".equals(rel)) {
+                        urlDto.setPayerAction(href);
+                    } else if ("self".equals(rel)) {
+                        urlDto.setSelf(href);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("解析 JSON 時出錯：" + e.getMessage());
+        }
+        return urlDto;
+    }
+    
 	
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -61,7 +87,7 @@ public class PaypalService {
 	}
 	
 
-	public String sendRequest(PaypalDTO dto) {
+	public PaypalUrlDTO sendRequest(PaypalDTO dto) {
         RestClient restClient = RestClient.create();
 
         try {
@@ -107,8 +133,12 @@ public class PaypalService {
                 .body(jsonBody)
                 .retrieve()
                 .body(String.class);
-
-            return response;
+            
+            PaypalService paypalService = new PaypalService();
+            PaypalUrlDTO urls = paypalService.extractUrls(response);
+            
+            
+            return urls;
 
         } catch (Exception e) {
             System.err.println("Error in sendRequest: " + e.getMessage());
@@ -117,6 +147,23 @@ public class PaypalService {
         }
     }
 	
+	
+	public String comfirm(String url) {
+		
+		RestClient restClient = RestClient.create();
+		
+		PaypalService paypalService = new PaypalService();
+		PaypalDTO token = paypalService.getToken();
+		String Access_token = "Bearer " +token.getAccess_token();
+		
+		String response = restClient.get()
+                .uri(url)
+                .header(HttpHeaders.AUTHORIZATION,Access_token)
+                .retrieve()
+                .body(String.class);
+		
+		return response;
+	}
 	
 	
 }
