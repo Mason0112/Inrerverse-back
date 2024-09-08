@@ -147,13 +147,13 @@ public class EventController {
 	}
 	
 	@GetMapping("/creator")
-	public ResponseEntity<List<EventDTO>> getEventsByCreator(@RequestParam(required = false) Integer creatorId) {
-	    if (creatorId != null) {
-	        List<Event> events = eService.findEventsByCreatorId(creatorId);
-	        List<EventDTO> eventDTOs = events.stream().map(this::convertToDTO).collect(Collectors.toList());
-	        return ResponseEntity.ok(eventDTOs);
-	    } else {
-	        return ResponseEntity.ok(getAllEvent());
-	    }
+	public ResponseEntity<?> getEventsByCreator(@RequestParam(required = false) Integer creatorId) {
+		if (creatorId == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("請先登入");
+        }
+        
+        List<Event> events = eService.findEventsByCreatorId(creatorId);
+        List<EventDTO> eventDTOs = events.stream().map(this::convertToDTO).collect(Collectors.toList());
+        return ResponseEntity.ok(eventDTOs);
 	}
 }
