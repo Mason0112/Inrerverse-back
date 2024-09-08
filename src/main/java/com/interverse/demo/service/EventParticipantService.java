@@ -67,4 +67,9 @@ public class EventParticipantService {
         }
         epRepo.deleteUserFromEvent(eventId, userId);
     }
+    
+    //品琇加的
+    public void removeParticipant(Integer eventId, Integer userId) {
+    	epRepo.deleteByEventIdAndUserId(eventId, userId);
+    }
 }

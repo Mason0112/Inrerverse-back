@@ -93,6 +93,13 @@ public class EventParticipantController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
         }
     }
+    
+    // 品琇加的
+    @DeleteMapping("/{eventId}/{userId}")
+    public ResponseEntity<String> deleteParticipant(@PathVariable Integer eventId, @PathVariable Integer userId) {
+    	epService.removeParticipant(eventId, userId);
+        return ResponseEntity.ok("參與者已成功從活動中刪除");
+    }
 
     // 將EventParticipantDTO轉為entity實體
     private EventParticipant convertToEntity(EventParticipantDTO dto) {
