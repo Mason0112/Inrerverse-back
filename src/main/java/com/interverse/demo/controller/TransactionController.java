@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,6 +22,9 @@ import com.interverse.demo.service.UserService;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.param.ChargeCreateParams;
+
+import lombok.Getter;
+import lombok.Setter;
 
 @RestController
 @RequestMapping("/transaction")
@@ -58,6 +62,19 @@ public class TransactionController {
 		List<TransactionDto> myTransactionList = transService.findMyTransaction(id);
 		return ResponseEntity.ok(myTransactionList);
 	}
+	
+	@PutMapping("/to-completed")
+	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody TransactionUpdateRequest request) {
+		TransactionDto transactionDto = transService.updateStatusToCompleted(request.getTransactionNo(), request.getUserId());
+		
+		return ResponseEntity.ok(transactionDto);
+	}
+	
+	@PutMapping("/to-failed")
+    public ResponseEntity<TransactionDto> switchStatusToFailed(@RequestBody TransactionUpdateRequest request) {
+        TransactionDto transactionDto = transService.updateStatusToFailed(request.getTransactionNo(), request.getUserId());
+        return ResponseEntity.ok(transactionDto);
+    }
 
 	
     @PostMapping("/charge")
@@ -78,4 +95,11 @@ public class TransactionController {
         }
     }
 
+}
+
+@Getter
+@Setter
+class TransactionUpdateRequest {
+    private String transactionNo;
+    private Integer userId;
 }

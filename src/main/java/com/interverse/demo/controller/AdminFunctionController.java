@@ -22,9 +22,6 @@ public class AdminFunctionController {
 	@Autowired
 	private TransactionService transService;
 	
-	@Autowired
-	private UserService userService;
-	
 	@GetMapping("/transaction/all")
 	public ResponseEntity<List<TransactionDto>> findAllTransaction() {
 
@@ -42,9 +39,6 @@ public class AdminFunctionController {
 	@PutMapping("/transaction/switch-status")
 	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody Transaction transaction) {
 		TransactionDto transactionDto = transService.updateStatusToCompleted(transaction);
-		
-		Integer userId = transaction.getUser().getId();
-		userService.updateUserWalletBalance(userId);
 		
 		return ResponseEntity.ok(transactionDto);
 	}
