@@ -11,9 +11,11 @@ public class EventPhotoDTO {
 	
 	private Integer id;
 
-//	private String photo;
+	private String photo;
 
 	private Integer eventId;
 	
 	private Integer uploaderId;
+	
+	private String UserName;
 }

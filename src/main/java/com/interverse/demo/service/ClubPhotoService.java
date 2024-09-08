@@ -69,38 +69,38 @@ public class ClubPhotoService {
 
 	@Transactional
 	public ClubPhoto createClubPhoto(MultipartFile file, Integer clubId, Integer uploaderId) throws IOException {
-		// 获取 Club 对象
+		// 獲得 Club 對象
 		Club club = cRepo.findById(clubId).orElseThrow(() -> new RuntimeException("Club not found with id: " + clubId));
 
-		// 获取上传者 User 对象
+		// 獲得上傳者user
 		User uploader = uRepo.findById(uploaderId)
 				.orElseThrow(() -> new RuntimeException("Uploader not found with id: " + uploaderId));
 
-		// 获取上传文件的名字并去除路径中的不安全字符
+		// 獲得上傳文件的名字並去除路徑中的不安全字符
 		String fileName = StringUtils.cleanPath(file.getOriginalFilename());
 
-		// 生成唯一文件名，防止名字冲突
+		// 生成唯一文件名，防止名字衝突
 		String uniqueFileName = UUID.randomUUID().toString() + "_" + fileName;
 
-		// 将路径转换为 Path 类的对象
+		// 將路徑轉換為Path類的對象
 		Path uploadPath = Paths.get(uploadDir);
 
-		// 判断目录是否存在，不存在的话创建目录
+		// 目錄不存在則創建
 		if (!Files.exists(uploadPath)) {
 			Files.createDirectories(uploadPath);
 		}
 
-		// 生成完整的路径
+		// 生成完整路徑
 		Path filePath = uploadPath.resolve(uniqueFileName);
 
-		// 将文件写入指定位置
+		// 將文件寫入指定位置
 		file.transferTo(filePath.toFile());
 
-		// 存入 ClubPhoto 实体
+		// 存入 ClubPhoto 實體
 		ClubPhoto clubPhoto = new ClubPhoto();
 		clubPhoto.setPhoto(filePath.toString());
 		clubPhoto.setClub(club);
-		clubPhoto.setUploaderId(uploader); // 设置上传者 ID
+		clubPhoto.setUploaderId(uploader); // 設置上傳者ID
 
 		return cpRepo.save(clubPhoto);
 	}
@@ -109,6 +109,6 @@ public class ClubPhotoService {
 		Club club = cRepo.findById(clubId).orElseThrow(() -> new RuntimeException("Club not found with id: " + clubId));
 
 		return cpRepo.findByClubAndId(club, photoId).orElseThrow(
-				() -> new RuntimeException("ClubPhoto not found with clubtId: " + clubId + " and photoId: " + photoId));
+				() -> new RuntimeException("ClubPhoto not found with clubId: " + clubId + " and photoId: " + photoId));
 	}
 }
