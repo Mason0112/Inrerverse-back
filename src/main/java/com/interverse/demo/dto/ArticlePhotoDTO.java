@@ -1,6 +1,7 @@
 package com.interverse.demo.dto;
 
 import com.interverse.demo.model.ArticlePhoto;
+import com.interverse.demo.model.ClubArticle;
 
 import lombok.Data;
 
@@ -10,6 +11,7 @@ public class ArticlePhotoDTO {
     private String url;
     private String base64Photo;
     private String name;
+    private Integer clubArticleId;
 
 
     public static ArticlePhotoDTO fromEntity(ArticlePhoto entity) {
@@ -17,6 +19,7 @@ public class ArticlePhotoDTO {
         dto.setId(entity.getId());
         dto.setUrl(entity.getUrl());
         dto.setName(entity.getName());
+        dto.setClubArticleId(entity.getClubArticle().getId());
         return dto;
     }
 }

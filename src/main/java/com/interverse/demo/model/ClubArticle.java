@@ -38,6 +38,8 @@ public class ClubArticle {
 
 	@ManyToOne
 	@JoinColumn(name = "user_id")
+	@JsonIgnoreProperties({"userPosts", "postComment","sentNotification", "receivedNotification","transaction","orders","club","event","clubPhoto","userDetail","clubArticle","accountNumber",
+	    	"password","email","walletBalance","added","clubArticle","clubArticleComment"}) // 忽略不需要序列化的屬性
 	private User user;
 
 	@ManyToOne
@@ -51,6 +53,7 @@ public class ClubArticle {
 	private String content;
 
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "clubArticle")
+    @JsonIgnoreProperties("clubArticle") // 忽略 clubArticle 屬性
 	private List<ClubArticleComment> comment;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss EEEE")
