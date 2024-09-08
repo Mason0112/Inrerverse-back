@@ -72,6 +72,8 @@ public class EventParticipantService {
     //品琇加的
     public void removeParticipant(Integer eventId, Integer userId) {
     	epRepo.deleteByEventIdAndUserId(eventId, userId);
+    }
+    
     public EventParticipantDTO checkParticipationStatus(Integer eventId, Integer userId) {
         EventParticipantId id = new EventParticipantId(eventId, userId);
         EventParticipant ep = epRepo.findById(id).orElse(null);
