@@ -63,9 +63,6 @@ public class ClubFavoriteController {
 		List<ClubFavorite> existingCf = cfService.findByClubFavoriteIdUserId(userId);
 		List<ClubFavoriteDTO> clubFavoriteDTO = existingCf.stream().map(this::convertToDTO).collect(Collectors.toList());
 		
-		if (clubFavoriteDTO.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-		}
 		return ResponseEntity.ok(clubFavoriteDTO);
 	}
 	
@@ -95,34 +92,4 @@ public class ClubFavoriteController {
          
          return dto;
     }
-//	 ClubFavoriteId clubFavoriteId = new ClubFavoriteId(userId,clubId);
-//	 ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
-//
-//	 if (existingCf == null) {
-//	        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-//	    }
-//
-//	    // 验证登录用户是否与请求的 userId 匹配
-//	    // 如果你有登录用户信息，可以在这里进行进一步的身份验证
-//	    // 如：if (!loggedInUserId.equals(userId)) return ResponseEntity.status(HttpStatus.FORBIDDEN).body("無權限");
-//
-//	    cfService.deleteClubFavoriteFromUser(userId,clubId);
-//	    return ResponseEntity.status(HttpStatus.OK).body("刪除成功");
-//}
-//	@GetMapping
-//	public List<ClubFavorite> getAllClubFavorite() {
-//		return cfService.findAllClubFavorite();
-//	}
-//	
-//	有誰收藏這個俱樂部(X) 
-//	@GetMapping("/{clubFavoriteId}")
-//	public ResponseEntity<?> getClubFavorite(@PathVariable ClubFavoriteId clubFavoriteId) {
-//		ClubFavorite existingCf = cfService.findClubFavoriteById(clubFavoriteId);
-//
-//		if (existingCf != null) {
-//			return ResponseEntity.ok(existingCf);
-//		}
-//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-//
-//	}
 }

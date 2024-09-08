@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.dto.EventParticipantDTO;
 import com.interverse.demo.model.Event;
 import com.interverse.demo.model.EventParticipant;
 import com.interverse.demo.model.EventParticipantId;
@@ -71,5 +72,20 @@ public class EventParticipantService {
     //品琇加的
     public void removeParticipant(Integer eventId, Integer userId) {
     	epRepo.deleteByEventIdAndUserId(eventId, userId);
+    public EventParticipantDTO checkParticipationStatus(Integer eventId, Integer userId) {
+        EventParticipantId id = new EventParticipantId(eventId, userId);
+        EventParticipant ep = epRepo.findById(id).orElse(null);
+        
+        EventParticipantDTO dto = new EventParticipantDTO();
+        dto.setEventId(eventId);
+        dto.setUserId(userId);
+        
+        if (ep == null) {
+            dto.setStatus(-1); // 表示用戶尚未參加
+        } else {
+            dto.setStatus(ep.getStatus());
+        }
+        
+        return dto;
     }
 }

@@ -35,46 +35,32 @@ public class ClubArticleService {
 	
   
 	
-	public ClubArticle createArticle(ClubArticleDTO articleDTO) {
-		
-		ClubArticle article = new ClubArticle();
-		article.setTitle(articleDTO.getTitle());
-		article.setContent(articleDTO.getContent());
-		
-		User user = userRepo.findById(articleDTO.getUserId()).orElseThrow(() -> new RuntimeException("User not found"));
-		article.setUser(user);
-		
-		if(articleDTO.getPhotos() != null && articleDTO.getPhotos().isEmpty()) {
-			List<ArticlePhoto> photos = articleDTO.getPhotos().stream()
-					.map(ArticlephotoDTO -> {
-						ArticlePhoto photo = new ArticlePhoto();
-	                    photo.setName(ArticlephotoDTO.getName());
-	                    photo.setBase64Photo(ArticlephotoDTO.getBase64Photo());
-	                    photo.setClubArticle(article);
-	                    return photo;
-					})
-					.collect(Collectors.toList());
-			article.setPhotos(photos);
-		}
-		
-		
-		return clubArticlesRepo.save(article);
-	}
+    public ClubArticleDTO createArticle(ClubArticleDTO articleDTO) {
+        ClubArticle article = new ClubArticle();
+        article.setTitle(articleDTO.getTitle());
+        article.setContent(articleDTO.getContent());
+        article.setUser(userRepo.findById(articleDTO.getUserId()).orElseThrow());
+        article.setClub(clubRepo.findById(articleDTO.getClubId()).orElseThrow());
+        
+        ClubArticle savedArticle = clubArticlesRepo.save(article);
+        return ClubArticleDTO.fromEntity(savedArticle);
+    }
 	
-	public ClubArticleDTO findArticleById(Integer articleId) {
-		Optional<ClubArticle> optional = clubArticlesRepo.findById(articleId);
-        return optional.map(ClubArticleDTO::fromEntity).orElse(null);
-		
-
-	}
+    public ClubArticleDTO findArticleById(Integer articleId) {
+        return clubArticlesRepo.findById(articleId)
+                .map(ClubArticleDTO::fromEntity)
+                .orElse(null);
+    }
 	
     public List<ClubArticleDTO> findAllArticleByClubId(Integer clubId) {
         List<ClubArticle> articles = clubArticlesRepo.findAllArticleByClubId(clubId);
         
         //
-        return articles.stream()
-                .map(ClubArticleDTO::fromEntity)
-                .collect(Collectors.toList());
+         List<ClubArticleDTO> collect = articles.stream()
+        		 						.map(ClubArticleDTO::fromEntity)
+        		 						.collect(Collectors.toList());
+//         System.out.println("Service:" + collect);
+         return collect;
     }
     
     public void loadBase64Photos(List<ClubArticleDTO> articleDTOs) throws IOException {
@@ -88,18 +74,16 @@ public class ClubArticleService {
         }
     }
 
-	@Transactional
-	public ClubArticle updateArticle(Integer articleId,
-										ClubArticle clubArticle) {
-		Optional<ClubArticle> optional = clubArticlesRepo.findById(articleId);
-		if(optional.isPresent()) {
-			ClubArticle article = optional.get();
-			article.setTitle(clubArticle.getTitle());
-			article.setContent(clubArticle.getContent());
-			return article;
-		}
-		return null;
-	}
+    @Transactional
+    public ClubArticleDTO updateArticle(Integer articleId, ClubArticleDTO clubArticleDTO) {
+        return clubArticlesRepo.findById(articleId)
+                .map(article -> {
+                    article.setTitle(clubArticleDTO.getTitle());
+                    article.setContent(clubArticleDTO.getContent());
+                    return ClubArticleDTO.fromEntity(article);
+                })
+                .orElse(null);
+    }
 	
 	public void deleteArticleById(Integer articleId) {
 		clubArticlesRepo.deleteById(articleId);

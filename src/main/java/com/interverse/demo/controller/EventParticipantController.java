@@ -7,12 +7,14 @@ import org.springframework.web.bind.annotation.*;
 
 import com.interverse.demo.dto.EventDTO;
 import com.interverse.demo.dto.EventParticipantDTO;
+import com.interverse.demo.model.Club;
 import com.interverse.demo.model.Event;
 import com.interverse.demo.model.EventParticipant;
 import com.interverse.demo.model.EventParticipantId;
 import com.interverse.demo.model.EventRepository;
 import com.interverse.demo.model.User;
 import com.interverse.demo.model.UserRepository;
+import com.interverse.demo.service.ClubService;
 import com.interverse.demo.service.EventParticipantService;
 
 import java.util.List;
@@ -30,6 +32,9 @@ public class EventParticipantController {
 
     @Autowired
     private UserRepository uRepo;
+    
+    @Autowired
+    private ClubService cService;
 
     // 單一成員參加活動(user新增event; status預設0)
     @PostMapping
@@ -48,7 +53,7 @@ public class EventParticipantController {
         List<Event> events = epService.findApprovedEventsByUserId(userId);
         List<EventDTO> eventDTOs = events.stream().map(this::convertToDTO).collect(Collectors.toList());
         if (eventDTOs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         }
         return ResponseEntity.ok(eventDTOs);
     }
@@ -59,7 +64,7 @@ public class EventParticipantController {
         List<EventParticipant> approvedParticipants = epService.findApprovedParticipantsByEventId(eventId);
         List<EventParticipantDTO> eventParticipantDTOs = approvedParticipants.stream().map(this::convertToDTO).collect(Collectors.toList());
         if (eventParticipantDTOs.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.OK).body(null);
         }
         return ResponseEntity.ok(eventParticipantDTOs);
     }
@@ -99,6 +104,11 @@ public class EventParticipantController {
     public ResponseEntity<String> deleteParticipant(@PathVariable Integer eventId, @PathVariable Integer userId) {
     	epService.removeParticipant(eventId, userId);
         return ResponseEntity.ok("參與者已成功從活動中刪除");
+    // 新增方法: 檢查用戶參與狀態
+    @GetMapping("/event/{eventId}/user/{userId}/status")
+    public ResponseEntity<?> checkParticipationStatus(@PathVariable Integer eventId, @PathVariable Integer userId) {
+        EventParticipantDTO status = epService.checkParticipationStatus(eventId, userId);
+        return ResponseEntity.ok(status);
     }
 
     // 將EventParticipantDTO轉為entity實體
@@ -125,6 +135,7 @@ public class EventParticipantController {
         dto.setUserId(participant.getUser().getId());
         dto.setEventId(participant.getEvent().getId());
         dto.setStatus(participant.getStatus());
+        dto.setUserName(participant.getUser().getNickname());
         return dto;
     }
 
@@ -133,6 +144,24 @@ public class EventParticipantController {
         EventDTO dto = new EventDTO();
         dto.setId(event.getId());
         dto.setEventName(event.getEventName());
+        
+     // 處理 Club 相關信息
+	    if (event.getClub() != null) {
+	        dto.setClubId(event.getClub().getId());
+	        try {
+	            Club club = cService.findClubById(event.getClub().getId());
+	            if (club != null) {
+	                dto.setClubName(club.getClubName());
+	            }
+	        } catch (Exception e) {
+	            // 記錄錯誤，但不中斷處理
+	            System.err.println("Error fetching club: " + e.getMessage());
+	        }
+	    } else {
+	        // 當 Club 為 null 時，設置 clubId 為 null，並可能設置一個默認的 clubName
+	        dto.setClubId(null);
+	        dto.setClubName(null);
+	    }
         return dto;
     }
 }

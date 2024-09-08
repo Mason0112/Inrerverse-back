@@ -41,4 +41,8 @@ public class EventService {
 	public boolean existsById(Integer id) {
 		return eRepo.existsById(id);
 	}
+	
+	public List<Event> findEventsByCreatorId(Integer creatorId) {
+	    return eRepo.findByEventCreatorId(creatorId);
+	}
 }

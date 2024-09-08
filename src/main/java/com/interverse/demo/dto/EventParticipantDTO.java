@@ -14,5 +14,7 @@ public class EventParticipantDTO {
 	private Integer userId;
 	
 	private Integer status;
+	
+	private String UserName;
 
 }
