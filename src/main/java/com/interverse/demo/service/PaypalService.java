@@ -13,6 +13,7 @@ import org.springframework.web.client.RestClient;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.interverse.demo.dto.OrderDTO;
 import com.interverse.demo.dto.PaypalDTO;
 import com.interverse.demo.dto.PaypalUrlDTO;
 
@@ -87,14 +88,14 @@ public class PaypalService {
 	}
 	
 
-	public PaypalUrlDTO sendRequest(PaypalDTO dto) {
+	public PaypalUrlDTO sendRequest(OrderDTO dto) {
         RestClient restClient = RestClient.create();
 
         try {
         	
         	 Map<String, Object> experience_context = Map.of(
-                     "return_url", "https://www.youtube.com/",
-                     "cancel_url", "https://www.youtube.com/watch?v=-NMfs3w_iNs"
+                     "return_url", "http://localhost:5173/order/userOrders",
+                     "cancel_url", "http://localhost:5173/product/Cart"
                   );
 
         	 Map<String, Object> paypal = Map.of(
@@ -107,8 +108,8 @@ public class PaypalService {
         	 
         	 
             Map<String, Object> amount = Map.of(
-                "currency_code", "USD",
-                "value", "10"
+                "currency_code", "TWD",
+                "value", dto.getTotalAmount().toString()
             );
 
             Map<String, Object> purchaseUnit = Map.of(
@@ -121,20 +122,23 @@ public class PaypalService {
                 "payment_source", payment_source
                 
             );
+            
+            PaypalService paypalService = new PaypalService();
+    		PaypalDTO token = paypalService.getToken();
+    		String Access_token = "Bearer " +token.getAccess_token();
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
-            System.out.println("token"+dto.getAccess_token());
-            atoken = "Bearer " +dto.getAccess_token();
+            System.out.println("token"+Access_token);
+            atoken = Access_token;
             System.out.println("AAAtoken "+atoken);
             String response = restClient.post()
                 .uri("https://api-m.sandbox.paypal.com/v2/checkout/orders")
                 .contentType(MediaType.APPLICATION_JSON)
-                .header(HttpHeaders.AUTHORIZATION, "Bearer " + dto.getAccess_token())
+                .header(HttpHeaders.AUTHORIZATION, Access_token)
                 .body(jsonBody)
                 .retrieve()
                 .body(String.class);
             
-            PaypalService paypalService = new PaypalService();
             PaypalUrlDTO urls = paypalService.extractUrls(response);
             
             
