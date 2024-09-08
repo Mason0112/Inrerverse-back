@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
 import com.interverse.demo.model.ArticlePhoto;
 import com.interverse.demo.model.ClubArticle;
@@ -61,10 +62,17 @@ public class ClubArticleController {
 	}
 	
 	@GetMapping("/oneArticle/{articleId}")
-	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId){
+	public ResponseEntity<ClubArticleDTO> findArticleById(@PathVariable Integer articleId) throws IOException{
 		ClubArticleDTO articleDTO = articleService.findArticleById(articleId);
 		if(articleDTO != null) {
-			System.out.println(articleDTO);
+			List<ArticlePhotoDTO> photos = articleDTO.getPhotos();
+			for(ArticlePhotoDTO photo : photos) {
+				File file = new File(photo.getUrl());
+				byte[] photoFile = Files.readAllBytes(file.toPath());
+				String base64Photo = "data:image/png;base64," + Base64.getEncoder().encodeToString(photoFile);
+				photo.setBase64Photo(base64Photo);
+			}
+			
 			return ResponseEntity.ok(articleDTO);
 		}else {
 			return ResponseEntity.notFound().build();

@@ -37,6 +37,7 @@ public class ClubArticleDTO {
         // 檢查 user 是否為 null
         if (entity.getUser() != null) {
             dto.setUserId(entity.getUser().getId());
+            dto.setUserName(entity.getUser().getNickname());
         }
         
         // 檢查 photos 是否為 null
