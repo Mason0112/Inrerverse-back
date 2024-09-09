@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import com.interverse.demo.model.ClubArticle;
+import com.interverse.demo.model.ClubArticleComment;
 import com.interverse.demo.model.User;
 
 import lombok.Data;
@@ -23,7 +24,7 @@ public class ClubArticleDTO {
     private LocalDateTime added;
     private int likeCount;
     private List<ArticlePhotoDTO> photos;
-//    private List<ClubArticleCommentDTO> comments;
+    private List<ArticleCommentDTO> comments;
 
 
     public static ClubArticleDTO fromEntity(ClubArticle entity) {

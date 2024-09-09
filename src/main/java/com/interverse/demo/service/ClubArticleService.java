@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.interverse.demo.dto.ArticleCommentDTO;
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
 import com.interverse.demo.model.ArticlePhoto;
@@ -31,6 +32,9 @@ public class ClubArticleService {
 	private ClubRepository clubRepo;
 	
 	@Autowired
+	private ClubArticlesCommentsService commentService;
+	
+	@Autowired
 	private UserRepository userRepo;
 	
   
@@ -47,9 +51,15 @@ public class ClubArticleService {
     }
 	
     public ClubArticleDTO findArticleById(Integer articleId) {
-        return clubArticlesRepo.findById(articleId)
+        ClubArticleDTO articleDTO = clubArticlesRepo.findById(articleId)
                 .map(ClubArticleDTO::fromEntity)
                 .orElse(null);
+        
+        if(articleDTO != null) {
+        	List<ArticleCommentDTO> comments = commentService.findAllCommentByArticleIdd(articleId);
+        	articleDTO.setComments(comments);
+        }
+        return articleDTO;
     }
 	
     public List<ClubArticleDTO> findAllArticleByClubId(Integer clubId) {
