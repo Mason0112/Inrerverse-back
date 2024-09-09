@@ -49,6 +49,12 @@ public class ClubArticleComment {
 			added =LocalDateTime.now();
 		}
 	}
+	
+	@Column(name="photo")
+	private String photo;
+	
+	@Column(name="like_count")
+	private int likeCount;
 
 	public ClubArticleComment() {
 	}
