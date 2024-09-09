@@ -55,9 +55,10 @@ public class ClubArticlesCommentsService {
 	public ArticleCommentDTO updateCommentById(Integer commentId, ArticleCommentDTO commentDTO) {
 		return commentRepo.findById(commentId)
 				.map(comment ->{
-					
+					comment.setContent(commentDTO.getContent());
+					return ArticleCommentDTO.fromEntity(comment);
 				})
-	
+				.orElse(null);
 	
 	
 	}
@@ -66,9 +67,7 @@ public class ClubArticlesCommentsService {
 		commentRepo.deleteById(id);
 	}
 	
-//	public List<ClubArticleComment> findCommentByArticle(Integer articleId){
-//		
-//	}
+
 	
 	
 }
