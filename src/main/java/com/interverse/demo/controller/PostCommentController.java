@@ -24,8 +24,7 @@ public class PostCommentController {
 	@Autowired
 	private PostCommentService commentService;
 	
-	@PostMapping(
-			"/postComment")
+	@PostMapping("/postComment")
 	public PostComment addComment(@RequestBody PostComment postComment) {
 		return commentService.addComment(postComment);
 	}

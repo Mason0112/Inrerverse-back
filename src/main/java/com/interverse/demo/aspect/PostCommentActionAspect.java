@@ -14,8 +14,8 @@ import com.interverse.demo.model.User;
 import com.interverse.demo.service.NotificationService;
 import com.interverse.demo.service.UserService;
 
-@Aspect
-@Component
+//@Aspect
+//@Component
 public class PostCommentActionAspect {
 	
 	@Autowired
