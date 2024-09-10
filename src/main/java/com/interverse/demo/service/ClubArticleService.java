@@ -16,6 +16,7 @@ import com.interverse.demo.dto.ArticleCommentDTO;
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
 import com.interverse.demo.model.ArticlePhoto;
+import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.ClubArticlesRepository;
 import com.interverse.demo.model.ClubRepository;
@@ -43,8 +44,13 @@ public class ClubArticleService {
         ClubArticle article = new ClubArticle();
         article.setTitle(articleDTO.getTitle());
         article.setContent(articleDTO.getContent());
-        article.setUser(userRepo.findById(articleDTO.getUserId()).orElseThrow());
-        article.setClub(clubRepo.findById(articleDTO.getClubId()).orElseThrow());
+        User user = userRepo.findById(articleDTO.getUserId())
+                .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getUserId() + " 的用戶"));
+            article.setUser(user);
+            
+            Club club = clubRepo.findById(articleDTO.getClubId())
+                .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getClubId() + " 的俱樂部"));
+            article.setClub(club);
         
         ClubArticle savedArticle = clubArticlesRepo.save(article);
         return ClubArticleDTO.fromEntity(savedArticle);

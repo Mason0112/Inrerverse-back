@@ -38,9 +38,15 @@ public class ClubArticleController {
 	private ClubArticleService articleService;
 	
     @PostMapping
-    public ResponseEntity<ClubArticleDTO> addArticle(@RequestBody ClubArticleDTO articleDTO) {
-        ClubArticleDTO savedArticle = articleService.createArticle(articleDTO);
-        return new ResponseEntity<>(savedArticle, HttpStatus.CREATED);
+    public ResponseEntity<?> addArticle(@RequestBody ClubArticleDTO articleDTO) {
+        try {
+            ClubArticleDTO savedArticle = articleService.createArticle(articleDTO);
+            return new ResponseEntity<>(savedArticle, HttpStatus.CREATED);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("創建文章時發生錯誤");
+        }
     }
 	
 	@GetMapping("/all/{clubId}")
