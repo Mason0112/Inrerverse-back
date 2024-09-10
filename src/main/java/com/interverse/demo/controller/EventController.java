@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.dto.EventDTO;
@@ -61,7 +62,7 @@ public class EventController {
 	    } else {
 	        // 當 Club 為 null 時，設置 clubId 為 null，並可能設置一個默認的 clubName
 	        dto.setClubId(null);
-	        dto.setClubName("未分配俱樂部");
+	        dto.setClubName(null);
 	    }
 	    
 	    // 處理 EventCreator 相關信息
@@ -134,7 +135,6 @@ public class EventController {
 
 	@PutMapping("/{id}/edit")
 	public ResponseEntity<?> updateEvent(@PathVariable Integer id, @RequestBody Event event) {
-		System.out.println("-----------"+event.getEventCreator());
 		Event existEvent = eService.findEventById(id);
 
 		if (existEvent == null) {
@@ -144,5 +144,16 @@ public class EventController {
 		event.setAdded(existEvent.getAdded());
 
 		return ResponseEntity.ok(convertToDTO(eService.saveEvent(event)));
+	}
+	
+	@GetMapping("/creator")
+	public ResponseEntity<List<EventDTO>> getEventsByCreator(@RequestParam(required = false) Integer creatorId) {
+	    if (creatorId != null) {
+	        List<Event> events = eService.findEventsByCreatorId(creatorId);
+	        List<EventDTO> eventDTOs = events.stream().map(this::convertToDTO).collect(Collectors.toList());
+	        return ResponseEntity.ok(eventDTOs);
+	    } else {
+	        return ResponseEntity.ok(getAllEvent());
+	    }
 	}
 }

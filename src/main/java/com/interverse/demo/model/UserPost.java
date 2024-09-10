@@ -48,7 +48,7 @@ public class UserPost {
     private User user;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")
-    @JsonIgnoreProperties({"userPosts", "user"}) // 忽略 userPost 屬性	
+    @JsonIgnoreProperties({"userPost", "user"}) // 忽略 userPost 屬性	
 	private List<PostComment> postComment;
 	
 	@OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "userPost")

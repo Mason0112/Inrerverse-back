@@ -48,7 +48,7 @@ public class ClubMemberController {
 		List<Club> clubs = cmService.findClubsByUserId(userId);
 		List<ClubDTO> clubDTOs = clubs.stream().map(this::convertToDTO).collect(Collectors.toList());
 		if (clubDTOs.isEmpty()) {
-			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+			return ResponseEntity.ok(null);
 		}
 		return ResponseEntity.ok(clubDTOs);
 	}

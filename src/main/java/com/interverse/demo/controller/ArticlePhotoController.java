@@ -25,10 +25,14 @@ public class ArticlePhotoController {
 	@PostMapping("/club/articlePhoto")
 	public ResponseEntity<ArticlePhoto> createArticlePhoto(@RequestParam MultipartFile file,
 							@RequestParam("articleId") Integer articleId) throws IOException {
+		try {
+			ArticlePhoto photo = photoService.createArticlePhoto(file, articleId);
+			return new ResponseEntity<>(photo, HttpStatus.CREATED);
+			
+		}catch(Exception e) {
+			return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 		
-		ArticlePhoto photo = photoService.createArticlePhoto(file, articleId);
-		
-		return new ResponseEntity<>(photo, HttpStatus.CREATED);
 	}
 	
 	

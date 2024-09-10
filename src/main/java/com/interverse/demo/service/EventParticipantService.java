@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.dto.EventParticipantDTO;
 import com.interverse.demo.model.Event;
 import com.interverse.demo.model.EventParticipant;
 import com.interverse.demo.model.EventParticipantId;
@@ -66,5 +67,22 @@ public class EventParticipantService {
             throw new IllegalArgumentException("EventParticipant not found with userId " + userId + " and eventId " + eventId);
         }
         epRepo.deleteUserFromEvent(eventId, userId);
+    }
+    
+    public EventParticipantDTO checkParticipationStatus(Integer eventId, Integer userId) {
+        EventParticipantId id = new EventParticipantId(eventId, userId);
+        EventParticipant ep = epRepo.findById(id).orElse(null);
+        
+        EventParticipantDTO dto = new EventParticipantDTO();
+        dto.setEventId(eventId);
+        dto.setUserId(userId);
+        
+        if (ep == null) {
+            dto.setStatus(-1); // 表示用戶尚未參加
+        } else {
+            dto.setStatus(ep.getStatus());
+        }
+        
+        return dto;
     }
 }

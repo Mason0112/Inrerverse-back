@@ -31,7 +31,8 @@ public class PostComment {
 	
 	@ManyToOne
 	@JoinColumn(name = "user_id")
-    @JsonIgnoreProperties({"postComment", "userPosts"}) // 忽略不需要序列化的屬性
+    @JsonIgnoreProperties({"userPosts", "postComment","sentNotification", "receivedNotification","transaction","orders","club","event","clubPhoto","userDetail","clubArticle","accountNumber",
+    	"password","email","walletBalance","added","clubArticle","clubArticleComment"}) // 忽略不需要序列化的屬性
 	private User user;
 	
 	@Column(name = "comment")
@@ -44,6 +45,9 @@ public class PostComment {
 	@JoinColumn(name = "post_id")
     @JsonIgnoreProperties({"postComment"}) // 忽略不需要序列化的屬性
 	private UserPost userPost;
+	
+	@Column(name="like_count")
+	private Integer likeCount=0;
 	
 	@PrePersist // 當物件要進入persistent狀態前，先執行以下方法
 	public void onCreate() {

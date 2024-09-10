@@ -27,7 +27,7 @@ public class ArticlePhoto {
 	
 	@JoinColumn(name = "article_id")
 	@ManyToOne
-	@JsonIgnoreProperties("photos")
+	@JsonIgnoreProperties({"photos", "user","club","comment"})
 	private ClubArticle clubArticle;
 	
 	@Column(name="name")

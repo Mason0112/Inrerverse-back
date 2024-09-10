@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -26,9 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.interverse.demo.dto.ClubPhotoDTO;
 import com.interverse.demo.model.ClubPhoto;
-import com.interverse.demo.model.ClubRepository;
-import com.interverse.demo.model.ProductPhotos;
-import com.interverse.demo.model.UserRepository;
 import com.interverse.demo.service.ClubPhotoService;
 
 @RestController
@@ -37,10 +33,6 @@ public class ClubPhotoController {
 
 	@Autowired
 	private ClubPhotoService cpService;
-	@Autowired
-	private UserRepository uRepo;
-	@Autowired
-	private ClubRepository cRepo;
 
 	// 建立照片
 	@PostMapping("/new")
@@ -55,18 +47,6 @@ public class ClubPhotoController {
 			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
 		}
 	}
-
-//	public ResponseEntity<?> createClubPhoto(@RequestBody ClubPhotoDTO clubPhotoDTO) {
-//	try {
-//		ClubPhoto clubPhoto = convertToEntity(clubPhotoDTO);
-//		ClubPhoto savedClubPhoto = cpService.saveClubPhoto(clubPhoto);
-//		return ResponseEntity.ok(convertToDTO(savedClubPhoto));
-//
-//	} catch (Exception e) {
-//
-//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(e.getMessage());
-//	}
-//}
 
 	// 尋找club中所有照片
 	@GetMapping("/club/{clubId}")
@@ -84,7 +64,6 @@ public class ClubPhotoController {
 	}
 
 	// user可以在club中刪除自己上傳的照片
-	// Controller method for handling the delete request
 	@DeleteMapping("/delete/{id}")
 	public ResponseEntity<?> deleteClubPhoto(@PathVariable Integer id, @RequestParam Integer uploaderId) {
 		if (uploaderId == null) {
@@ -113,65 +92,28 @@ public class ClubPhotoController {
 		return dto;
 	}
 
-	// DTO轉換實體
-	private ClubPhoto convertToEntity(ClubPhotoDTO dto) {
-		ClubPhoto clubPhoto = new ClubPhoto();
-//		clubPhoto.setPhoto(dto.getPhoto());
-		clubPhoto.setUploaderId(uRepo.findById(dto.getUploaderId()).orElse(null));
-		clubPhoto.setClub(cRepo.findById(dto.getClubId()).orElse(null));
-		return clubPhoto;
-
-	}
-	
-	
 	@GetMapping("/{clubId}/{photoId}")
-    public ResponseEntity<Resource> getSpecificClubPhoto(@PathVariable Integer clubId, @PathVariable Integer photoId) throws MalformedURLException {
-        // 使用 productId 和 photoId 來獲取特定的照片
-       ClubPhoto photo = cpService.getClubPhoto(clubId, photoId);
+	public ResponseEntity<Resource> getSpecificClubPhoto(@PathVariable Integer clubId, @PathVariable Integer photoId)
+			throws MalformedURLException {
+		// 使用 clubId 和 photoId 來獲取特定的照片
+		ClubPhoto photo = cpService.getClubPhoto(clubId, photoId);
 
-        if (photo == null) {
-            return ResponseEntity.notFound().build();
-        }
+		if (photo == null) {
+			return ResponseEntity.notFound().build();
+		}
 
-        String photoPath = photo.getPhoto();
+		String photoPath = photo.getPhoto();
 
-        Path path = Paths.get(photoPath);
-        Resource resource = new UrlResource(path.toUri());
+		Path path = Paths.get(photoPath);
+		Resource resource = new UrlResource(path.toUri());
 
-        if (resource.exists() || resource.isReadable()) {
-            return ResponseEntity.ok()
-                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + photo.getPhoto() + "\"")
-                .contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
-                .body(resource);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
-    }
+		if (resource.exists() || resource.isReadable()) {
+			return ResponseEntity.ok()
+					.header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"" + photo.getPhoto() + "\"")
+					.contentType(MediaType.IMAGE_JPEG) // 或者根據實際情況設置
+					.body(resource);
+		} else {
+			return ResponseEntity.notFound().build();
+		}
+	}
 }
-//	@GetMapping("/{id}")
-//	public ResponseEntity<?> getClubPhoto(@PathVariable Integer id) {
-//
-//		ClubPhoto existingCP = cpService.findClubPhotoById(id);
-//
-//		if (existingCP != null) {
-//			ClubPhotoDTO clubPhotoDTO = convertToDTO(existingCP);
-//			return ResponseEntity.ok(clubPhotoDTO);
-//		}
-//		return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此ID");
-//	}
-
-//	
-//	@PutMapping("/{id}")
-//	public ResponseEntity<String> updateClubPhoto(@PathVariable Integer id, @RequestBody ClubPhoto clubPhoto) {
-//
-//		ClubPhoto existingCP = cpService.findClubPhotoById(id);
-//
-//		if (existingCP == null) {
-//			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("無此 ID");
-//		}
-//		clubPhoto.setId(id);
-//
-//		convertToDTO(cpService.saveClubPhoto(clubPhoto));
-//
-//		return ResponseEntity.status(HttpStatus.OK).body("更新成功");
-//	}
