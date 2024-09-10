@@ -54,7 +54,7 @@ public class ClubArticleComment {
 	private String photo;
 	
 	@Column(name="like_count")
-	private int likeCount;
+	private int likeCount=0;
 
 	public ClubArticleComment() {
 	}
