@@ -1,6 +1,7 @@
 package com.interverse.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,34 +36,52 @@ public class TransactionService {
 		return convert(transRepo.save(transaction));
 	}
 
-	// forAdmin
-	public TransactionDto updateStatusToCompleted(Transaction transaction) {
-
-		transaction.setStatus((short) 1);
-
-		return convert(transRepo.save(transaction));
-	}
-
-	// forUser
-	public TransactionDto updateStatusToCompleted(String transactionNo, Integer userId) {
-		Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
-
-		if (transaction != null) {
+	public TransactionDto updateStatusToCompleted(Integer transactionId) {
+		
+		Optional<Transaction> optional = transRepo.findById(transactionId);
+		
+		if(optional != null) {
+			Transaction transaction = optional.get();
 			transaction.setStatus((short) 1);
 			return convert(transRepo.save(transaction));
 		}
+		
 		return null;
 	}
-	// forUser
-    public TransactionDto updateStatusToFailed(String transactionNo, Integer userId) {
-        Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
-        
-		if (transaction != null) {
+	
+	public TransactionDto updateStatusToFailed(Integer transactionId) {
+		
+		Optional<Transaction> optional = transRepo.findById(transactionId);
+		
+		if(optional != null) {
+			Transaction transaction = optional.get();
 			transaction.setStatus((short) 0);
 			return convert(transRepo.save(transaction));
 		}
+		
 		return null;
-    }
+	}
+
+//	// forUser
+//	public TransactionDto updateStatusToCompleted(String transactionNo, Integer userId) {
+//		Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
+//
+//		if (transaction != null) {
+//			transaction.setStatus((short) 1);
+//			return convert(transRepo.save(transaction));
+//		}
+//		return null;
+//	}
+//	// forUser
+//    public TransactionDto updateStatusToFailed(String transactionNo, Integer userId) {
+//        Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
+//        
+//		if (transaction != null) {
+//			transaction.setStatus((short) 0);
+//			return convert(transRepo.save(transaction));
+//		}
+//		return null;
+//    }
 
 	public List<TransactionDto> findMyTransaction(Integer userId) {
 
@@ -90,5 +109,17 @@ public class TransactionService {
 
 		return transactionDtoList;
 	}
+	
+    public TransactionDto findTransactionsByEventAndUser(Integer eventId, Integer userId) {
+        String pattern = String.format("E%05d%%U%05d%%R", eventId, userId);
+        
+        Transaction transaction = transRepo.findByTransactionNoPattern(pattern);
+        
+        if(transaction!= null) {
+        	return convert(transaction);
+        }
+        
+        return null;
+    }
 
 }

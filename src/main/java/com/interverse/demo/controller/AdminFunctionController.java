@@ -36,11 +36,11 @@ public class AdminFunctionController {
 		return ResponseEntity.ok(handlingTransaction);
 	}
 	
-	@PutMapping("/transaction/switch-status")
-	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody Transaction transaction) {
-		TransactionDto transactionDto = transService.updateStatusToCompleted(transaction);
-		
-		return ResponseEntity.ok(transactionDto);
-	}
+//	@PutMapping("/transaction/switch-status")
+//	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody Transaction transaction) {
+//		TransactionDto transactionDto = transService.updateStatusToCompleted(transaction);
+//		
+//		return ResponseEntity.ok(transactionDto);
+//	}
 
 }
