@@ -312,4 +312,10 @@ public class UserController {
 		// 如果照片不存在或會員沒有大頭照，返回null
 		return new ResponseEntity<>(null, HttpStatus.OK);
 	}
+	
+	@GetMapping("/findName/{id}")
+	public String findUserName(@PathVariable("id") Integer id) {
+	    User user = userService.findUserById(id);
+	    return user.getNickname();
+	}
 }
