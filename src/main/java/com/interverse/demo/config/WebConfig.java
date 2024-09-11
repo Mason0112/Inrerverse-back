@@ -19,7 +19,7 @@ public class WebConfig implements WebMvcConfigurer {
 		registry.addInterceptor(jwtInterceptor)
 		.addPathPatterns("/user/secure/**")
 		.addPathPatterns("/transaction/**")
-//		.addPathPatterns("/friend/**")
+		.addPathPatterns("/friend/**")
 		.addPathPatterns("/admin/**");
 	}
 		
