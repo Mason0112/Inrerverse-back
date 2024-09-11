@@ -1,5 +1,7 @@
 package com.interverse.demo.dto;
 
+import java.time.LocalDateTime;
+
 import lombok.Getter;
 import lombok.Setter;
 
@@ -13,5 +15,6 @@ public class NotificationDto {
 	private Boolean status;
 	private Integer senderId;
 	private Integer receiverId;
+	private LocalDateTime added;
 
 }

@@ -1,6 +1,7 @@
 package com.interverse.demo.service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,36 +25,58 @@ public class NotificationService {
 		notifDto.setStatus(notif.getStatus());
 		notifDto.setSenderId(notif.getSender().getId());
 		notifDto.setReceiverId(notif.getReceiver().getId());
+		notifDto.setAdded(notif.getAdded());
 
 		return notifDto;
 	}
 
 	public NotificationDto addNotification(Notification notification) {
-		
-        try {
-            Notification savedNotification = notifRepo.save(notification);
-            System.out.println("Notification saved in database with ID: " + savedNotification.getId());
-            return convert(savedNotification);
-        } catch (Exception e) {
-            System.err.println("Error in addNotification: " + e.getMessage());
-            throw e; // 重新拋出異常以確保事務回滾
-        }
+
+		Notification savedNotification = notifRepo.save(notification);
+		return convert(savedNotification);
+
 	}
-	
-	public List<NotificationDto> findMyNotification(Integer id) {
+
+	public List<NotificationDto> findMyNotificationDto(Integer id) {
 
 		List<Notification> notificationList = notifRepo.findByReceiverId(id);
 
-		List<NotificationDto> notificationDtoList = notificationList.stream()
-				.map(this::convert)
+		List<NotificationDto> notificationDtoList = notificationList.stream().map(this::convert)
 				.collect(Collectors.toList());
 
 		return notificationDtoList;
 	}
 	
-	public Integer countMyUnreadNotification(Integer id) {
+	public List<Notification> findMyNotification(Integer id) {
+
+		return notifRepo.findByReceiverId(id);
+	}
+	
+	public Notification findNotificationById(Integer id) {
 		
+		Optional<Notification> optional = notifRepo.findById(id);
+		
+		if(optional.isPresent()) {
+			return optional.get();
+		}
+		return null;
+	}
+	
+	public List<Notification> findAllNotifcation() {
+		return notifRepo.findAll();
+	}
+
+	public Integer countMyUnreadNotification(Integer id) {
+
 		return notifRepo.countUnreadNotificationsByReceiverId(id);
+
+	}
+
+	public NotificationDto updateNotificationStatus(Notification notification) {
+
+		notification.setStatus(true);
+		Notification savedNotification = notifRepo.save(notification);
+		return convert(savedNotification);
 
 	}
 

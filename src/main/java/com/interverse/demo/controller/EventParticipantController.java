@@ -99,6 +99,13 @@ public class EventParticipantController {
         }
     }
     
+    // 品琇加的
+    @DeleteMapping("/{eventId}/{userId}")
+    public ResponseEntity<String> deleteParticipant(@PathVariable Integer eventId, @PathVariable Integer userId) {
+    	epService.removeParticipant(eventId, userId);
+        return ResponseEntity.ok("參與者已成功從活動中刪除");
+    }
+    
     // 新增方法: 檢查用戶參與狀態
     @GetMapping("/event/{eventId}/user/{userId}/status")
     public ResponseEntity<?> checkParticipationStatus(@PathVariable Integer eventId, @PathVariable Integer userId) {

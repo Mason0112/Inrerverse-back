@@ -38,5 +38,11 @@ public class FriendController {
 		List<FriendDto> requestList = friendService.findMyFriendRequest(user1Id);
 		return ResponseEntity.ok(requestList);
 	}
+	
+	@GetMapping("/decline-request/{user1Id}/{user2Id}")
+	public ResponseEntity<?> declineRequest(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
+		friendService.declineRequest(user1Id, user2Id);
+		return ResponseEntity.ok().build();
+	}
 
 }

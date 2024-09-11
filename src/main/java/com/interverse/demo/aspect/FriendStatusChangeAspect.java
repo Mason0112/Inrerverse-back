@@ -76,10 +76,10 @@ public class FriendStatusChangeAspect {
 	private String determineNotificationMessage(Friend possibility1, Friend possibility2) {
 		// 自已加對方好友(因為這是friend表格操作後的判斷)
 		if (possibility1 != null && possibility2 == null) {
-			return "對你發送好友邀請!";
+			return "對你發送好友邀請。";
 			// 自己接受對方加好友的邀請(因為這是friend表格操作後的判斷)
 		} else if (possibility1 != null && possibility2 != null) {
-			return "接受你的好友邀請!!";
+			return "接受你的好友邀請。";
 		}
 		return null;
 	}

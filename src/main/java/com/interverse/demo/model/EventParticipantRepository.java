@@ -34,4 +34,9 @@ public interface EventParticipantRepository extends JpaRepository<EventParticipa
     @Transactional
     @Query("DELETE FROM EventParticipant ep WHERE ep.eventParticipantId.eventId = :eventId AND ep.eventParticipantId.userId = :userId")
     void deleteUserFromEvent(@Param("eventId") Integer eventId, @Param("userId") Integer userId);
+    
+    //品琇加的
+    @Modifying
+    @Transactional
+    void deleteByEventIdAndUserId(Integer eventId, Integer userId);
 }

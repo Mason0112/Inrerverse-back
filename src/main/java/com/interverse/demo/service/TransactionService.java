@@ -35,12 +35,34 @@ public class TransactionService {
 		return convert(transRepo.save(transaction));
 	}
 
+	// forAdmin
 	public TransactionDto updateStatusToCompleted(Transaction transaction) {
 
 		transaction.setStatus((short) 1);
 
 		return convert(transRepo.save(transaction));
 	}
+
+	// forUser
+	public TransactionDto updateStatusToCompleted(String transactionNo, Integer userId) {
+		Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
+
+		if (transaction != null) {
+			transaction.setStatus((short) 1);
+			return convert(transRepo.save(transaction));
+		}
+		return null;
+	}
+	// forUser
+    public TransactionDto updateStatusToFailed(String transactionNo, Integer userId) {
+        Transaction transaction = transRepo.findByTransactionNoAndUserId(transactionNo, userId);
+        
+		if (transaction != null) {
+			transaction.setStatus((short) 0);
+			return convert(transRepo.save(transaction));
+		}
+		return null;
+    }
 
 	public List<TransactionDto> findMyTransaction(Integer userId) {
 
@@ -61,11 +83,11 @@ public class TransactionService {
 	}
 
 	public List<TransactionDto> findHandlingTransaction() {
-		
+
 		List<Transaction> transactionList = transRepo.findTransactionStatus2();
 		List<TransactionDto> transactionDtoList = transactionList.stream().map(this::convert)
 				.collect(Collectors.toList());
-		
+
 		return transactionDtoList;
 	}
 
