@@ -63,18 +63,25 @@ public class TransactionController {
 		return ResponseEntity.ok(myTransactionList);
 	}
 	
-	@PutMapping("/to-completed")
-	public ResponseEntity<TransactionDto> switchStatusToCompleted(@RequestBody TransactionUpdateRequest request) {
-		TransactionDto transactionDto = transService.updateStatusToCompleted(request.getTransactionNo(), request.getUserId());
+	@PutMapping("/to-completed/{id}")
+	public ResponseEntity<TransactionDto> switchStatusToCompleted(@PathVariable Integer id) {
+		TransactionDto transactionDto = transService.updateStatusToCompleted(id);
 		
 		return ResponseEntity.ok(transactionDto);
 	}
 	
-	@PutMapping("/to-failed")
-    public ResponseEntity<TransactionDto> switchStatusToFailed(@RequestBody TransactionUpdateRequest request) {
-        TransactionDto transactionDto = transService.updateStatusToFailed(request.getTransactionNo(), request.getUserId());
+	@PutMapping("/to-failed/{id}")
+    public ResponseEntity<TransactionDto> updateStatusToFailed(@PathVariable Integer id) {
+        TransactionDto transactionDto = transService.updateStatusToFailed(id);
+        
         return ResponseEntity.ok(transactionDto);
     }
+	
+	@GetMapping("/transNo/{eventId}/{userId}")
+	public ResponseEntity<TransactionDto> findTransactionByTransactionNo(@PathVariable Integer eventId, @PathVariable Integer userId) {
+		TransactionDto transactionDto = transService.findTransactionsByEventAndUser(eventId, userId);
+		return ResponseEntity.ok(transactionDto);
+	}
 
 	
     @PostMapping("/charge")
