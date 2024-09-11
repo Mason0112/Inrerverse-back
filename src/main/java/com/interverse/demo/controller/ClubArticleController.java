@@ -97,6 +97,10 @@ public class ClubArticleController {
 		articleService.deleteArticleById(articleId);
 	}
 	
-	
+    @GetMapping("/search")
+    public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title) {
+        List<ClubArticleDTO> articles = articleService.searchArticlesByTitle(title);
+        return ResponseEntity.ok(articles);
+    }
 	
 }

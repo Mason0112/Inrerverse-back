@@ -105,5 +105,11 @@ public class ClubArticleService {
 		clubArticlesRepo.deleteById(articleId);
 	}
 	
+    public List<ClubArticleDTO> searchArticlesByTitle(String title) {
+        List<ClubArticle> articles = clubArticlesRepo.findByTitleContainingIgnoreCase(title);
+        return articles.stream()
+                .map(ClubArticleDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
 	
 }
