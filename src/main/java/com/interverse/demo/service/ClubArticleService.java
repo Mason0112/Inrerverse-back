@@ -123,12 +123,21 @@ public class ClubArticleService {
 		clubArticlesRepo.deleteById(articleId);
 	}
 	
-    public List<ClubArticleDTO> searchArticlesByTitle(String title) {
-        List<ClubArticle> articles = clubArticlesRepo.findByTitleContainingIgnoreCase(title);
-        return articles.stream()
-                .map(ClubArticleDTO::fromEntity)
-                .collect(Collectors.toList());
-    }
+	public List<ClubArticleDTO> searchArticlesByTitleAndClubId(String title, Integer clubId) {
+	    return clubArticlesRepo.findByTitleContainingIgnoreCaseAndClubId(title, clubId).stream()
+	        .map(article -> {
+	            ClubArticleDTO dto = ClubArticleDTO.fromEntity(article);
+	            if (article.getPhotos() != null) {
+	                dto.setPhotos(article.getPhotos().stream()
+	                    .map(ArticlePhotoDTO::fromEntity)
+	                    .collect(Collectors.toList()));
+	            } else {
+	                dto.setPhotos(new ArrayList<>());
+	            }
+	            return dto;
+	        })
+	        .collect(Collectors.toList());
+	}
     
     
     //hashtags
@@ -164,11 +173,10 @@ public class ClubArticleService {
         return ClubArticleDTO.fromEntity(savedArticle);
     }
     
-    public List<ClubArticleDTO> findArticlesByHashtag(String tag) {
-        return clubArticlesRepo.findByHashtagsTag(tag).stream()
+    public List<ClubArticleDTO> findArticlesByHashtagAndClubId(String tag, Integer clubId) {
+        return clubArticlesRepo.findByHashtagsTagAndClubId(tag, clubId).stream()
             .map(article -> {
                 ClubArticleDTO dto = ClubArticleDTO.fromEntity(article);
-                // 確保 photos 被正確設置
                 if (article.getPhotos() != null) {
                     dto.setPhotos(article.getPhotos().stream()
                         .map(ArticlePhotoDTO::fromEntity)

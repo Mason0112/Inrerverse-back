@@ -94,11 +94,11 @@ public class ClubArticleController {
 		articleService.deleteArticleById(articleId);
 	}
 	
-    @GetMapping("/search")
-    public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title) {
-        List<ClubArticleDTO> articles = articleService.searchArticlesByTitle(title);
-        return ResponseEntity.ok(articles);
-    }
+	@GetMapping("/search")
+	public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title, @RequestParam Integer clubId) {
+	    List<ClubArticleDTO> articles = articleService.searchArticlesByTitleAndClubId(title, clubId);
+	    return ResponseEntity.ok(articles);
+	}
     
     @PostMapping("/{articleId}/hashtags")
     public ResponseEntity<?> addHashtagsToArticle(@PathVariable Integer articleId, @RequestBody Set<String> hashtags) {
@@ -125,8 +125,8 @@ public class ClubArticleController {
     }
 
     @GetMapping("/hashtag/{tag}")
-    public ResponseEntity<List<ClubArticleDTO>> findArticlesByHashtag(@PathVariable String tag) {
-        List<ClubArticleDTO> articles = articleService.findArticlesByHashtag(tag);
+    public ResponseEntity<List<ClubArticleDTO>> findArticlesByHashtag(@PathVariable String tag, @RequestParam Integer clubId) {
+        List<ClubArticleDTO> articles = articleService.findArticlesByHashtagAndClubId(tag, clubId);
         return ResponseEntity.ok(articles);
     }
 	
