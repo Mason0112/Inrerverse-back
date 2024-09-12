@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.interverse.demo.annotation.NotifyFriendStatusChange;
 import com.interverse.demo.dto.FriendDto;
 import com.interverse.demo.model.Friend;
 import com.interverse.demo.model.FriendId;
@@ -32,7 +33,7 @@ public class FriendService {
 		return friendDto;
 	}
 	
-//	@NotifyFriendStatusChange
+	@NotifyFriendStatusChange
 	public String switchFriendStatus(Integer user1Id, Integer user2Id) {
 		//自己已加對方的可能性
 		Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
@@ -157,5 +158,11 @@ public class FriendService {
          } else {
              return "friends";
          }
+    }
+	
+	
+	// for notification aspect
+    public Friend getFriendPossibility(Integer user1Id, Integer user2Id) {
+        return friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
     }
 }
