@@ -4,10 +4,12 @@ package com.interverse.demo.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.model.ClubArticleComment;
+import com.interverse.demo.model.ClubArticleHashtag;
 import com.interverse.demo.model.User;
 
 import lombok.Data;
@@ -25,6 +27,7 @@ public class ClubArticleDTO {
     private int likeCount;
     private List<ArticlePhotoDTO> photos;
     private List<ArticleCommentDTO> comments;
+    private Set<String> hashtags;
 
 
     public static ClubArticleDTO fromEntity(ClubArticle entity) {
@@ -49,6 +52,10 @@ public class ClubArticleDTO {
         } else {
             dto.setPhotos(new ArrayList<>()); // 設置一個空列表
         }
+        
+        dto.setHashtags(entity.getHashtags().stream()
+        						.map(ClubArticleHashtag::getTag)
+        						.collect(Collectors.toSet()));
         
         return dto;
     }

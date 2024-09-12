@@ -5,27 +5,24 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
-import com.interverse.demo.model.ArticlePhoto;
-import com.interverse.demo.model.ClubArticle;
-import com.interverse.demo.model.UserPost;
 import com.interverse.demo.service.ClubArticleService;
-
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.PutMapping;
 
 
 
@@ -100,6 +97,36 @@ public class ClubArticleController {
     @GetMapping("/search")
     public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title) {
         List<ClubArticleDTO> articles = articleService.searchArticlesByTitle(title);
+        return ResponseEntity.ok(articles);
+    }
+    
+    @PostMapping("/{articleId}/hashtags")
+    public ResponseEntity<?> addHashtagsToArticle(@PathVariable Integer articleId, @RequestBody Set<String> hashtags) {
+        try {
+            ClubArticleDTO updatedArticle = articleService.addHashtagsToArticle(articleId, hashtags);
+            return ResponseEntity.ok(updatedArticle);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("添加hashtags時發生錯誤");
+        }
+    }
+
+    @DeleteMapping("/{articleId}/hashtags")
+    public ResponseEntity<?> removeHashtagsFromArticle(@PathVariable Integer articleId, @RequestBody Set<String> hashtags) {
+        try {
+            ClubArticleDTO updatedArticle = articleService.removeHashtagsFromArticle(articleId, hashtags);
+            return ResponseEntity.ok(updatedArticle);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("移除hashtags時發生錯誤");
+        }
+    }
+
+    @GetMapping("/hashtag/{tag}")
+    public ResponseEntity<List<ClubArticleDTO>> findArticlesByHashtag(@PathVariable String tag) {
+        List<ClubArticleDTO> articles = articleService.findArticlesByHashtag(tag);
         return ResponseEntity.ok(articles);
     }
 	

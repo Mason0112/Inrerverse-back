@@ -18,4 +18,5 @@ public interface ClubArticlesRepository extends JpaRepository<ClubArticle, Integ
     @Query("SELECT ca FROM ClubArticle ca WHERE LOWER(ca.title) LIKE LOWER(CONCAT('%', :title, '%'))")
     List<ClubArticle> searchByTitleContaining(@Param("title") String title);
 
+    List<ClubArticle> findByHashtagsTag(String tag);
 }
