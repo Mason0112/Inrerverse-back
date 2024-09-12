@@ -3,6 +3,7 @@ package com.interverse.demo.service;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Set;
@@ -165,7 +166,18 @@ public class ClubArticleService {
     
     public List<ClubArticleDTO> findArticlesByHashtag(String tag) {
         return clubArticlesRepo.findByHashtagsTag(tag).stream()
-            .map(ClubArticleDTO::fromEntity)
+            .map(article -> {
+                ClubArticleDTO dto = ClubArticleDTO.fromEntity(article);
+                // 確保 photos 被正確設置
+                if (article.getPhotos() != null) {
+                    dto.setPhotos(article.getPhotos().stream()
+                        .map(ArticlePhotoDTO::fromEntity)
+                        .collect(Collectors.toList()));
+                } else {
+                    dto.setPhotos(new ArrayList<>());
+                }
+                return dto;
+            })
             .collect(Collectors.toList());
     }
 	

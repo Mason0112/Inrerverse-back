@@ -19,6 +19,7 @@ public class ArticlePhotoDTO {
         dto.setId(entity.getId());
         dto.setUrl(entity.getUrl());
         dto.setName(entity.getName());
+        dto.setBase64Photo(entity.getBase64Photo());
         dto.setClubArticleId(entity.getClubArticle().getId());
         return dto;
     }
