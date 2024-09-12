@@ -22,6 +22,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
+import com.interverse.demo.model.ArticlePhoto;
+import com.interverse.demo.model.ClubArticle;
 import com.interverse.demo.service.ClubArticleService;
 
 
@@ -95,9 +97,22 @@ public class ClubArticleController {
 	}
 	
 	@GetMapping("/search")
-	public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title, @RequestParam Integer clubId) {
-	    List<ClubArticleDTO> articles = articleService.searchArticlesByTitleAndClubId(title, clubId);
-	    return ResponseEntity.ok(articles);
+	public ResponseEntity<List<ClubArticleDTO>> searchArticles(@RequestParam String title, @RequestParam Integer clubId) throws IOException {
+	     List<ClubArticleDTO> articleDTOs = articleService.searchArticlesByTitleAndClubId(title, clubId);
+	        articleService.loadBase64Photos(articleDTOs);
+
+	     
+	     
+//	     for(ClubArticleDTO article: articleDTOs) {
+//	    	 List<ArticlePhotoDTO> photos = article.getPhotos();
+//	    	 for(ArticlePhotoDTO photo:photos) {
+//	    		 File file = new File(photo.getUrl());
+//	    		 byte[] photoFile = Files.readAllBytes(file.toPath());
+//	    		 String base64Photo = "data:image/png;base64," + Base64.getEncoder().encodeToString(photoFile);
+//	    		 photo.setBase64Photo(base64Photo);
+//	    	 }
+//	     }
+	    return ResponseEntity.ok(articleDTOs);
 	}
     
     @PostMapping("/{articleId}/hashtags")
@@ -125,8 +140,10 @@ public class ClubArticleController {
     }
 
     @GetMapping("/hashtag/{tag}")
-    public ResponseEntity<List<ClubArticleDTO>> findArticlesByHashtag(@PathVariable String tag, @RequestParam Integer clubId) {
+    public ResponseEntity<List<ClubArticleDTO>> findArticlesByHashtag(@PathVariable String tag, @RequestParam Integer clubId) throws IOException {
         List<ClubArticleDTO> articles = articleService.findArticlesByHashtagAndClubId(tag, clubId);
+        articleService.loadBase64Photos(articles);
+
         return ResponseEntity.ok(articles);
     }
 	
