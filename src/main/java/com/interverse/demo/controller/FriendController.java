@@ -1,6 +1,8 @@
 package com.interverse.demo.controller;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -22,9 +24,11 @@ public class FriendController {
 	private FriendService friendService;
 	
 	@GetMapping("/switch-status/{user1Id}/{user2Id}")
-	public ResponseEntity<?> switchFriendStatus(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
-		friendService.switchFriendStatus(user1Id, user2Id);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<Map<String, String>> switchFriendStatus(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
+		String status = friendService.switchFriendStatus(user1Id, user2Id);
+		Map<String, String> response = new HashMap<>();
+        response.put("status", status);
+		return ResponseEntity.ok(response);
 	}
 	
 	@GetMapping("/{user1Id}/list")
@@ -40,9 +44,23 @@ public class FriendController {
 	}
 	
 	@GetMapping("/decline-request/{user1Id}/{user2Id}")
-	public ResponseEntity<?> declineRequest(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
-		friendService.declineRequest(user1Id, user2Id);
-		return ResponseEntity.ok().build();
+	public ResponseEntity<Map<String, String>> declineRequest(@PathVariable Integer user1Id, @PathVariable Integer user2Id) {
+		String status = friendService.declineRequest(user1Id, user2Id);
+		Map<String, String> response = new HashMap<>();
+        response.put("status", status);
+		return ResponseEntity.ok(response);
+	}
+	
+	@GetMapping("/friend-status/{user1Id}/{user2Id}")
+	public ResponseEntity<Map<String, String>> getFriendStatus(@PathVariable Integer user1Id,
+            @PathVariable Integer user2Id) {
+		String status = friendService.getFriendStatus(user1Id, user2Id);
+
+        Map<String, String> response = new HashMap<>();
+        response.put("status", status);
+
+        return ResponseEntity.ok(response);
+		
 	}
 
 }

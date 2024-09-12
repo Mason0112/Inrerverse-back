@@ -33,8 +33,8 @@ public class FriendService {
 		return friendDto;
 	}
 	
-	@NotifyFriendStatusChange
-	public void switchFriendStatus(Integer user1Id, Integer user2Id) {
+//	@NotifyFriendStatusChange
+	public String switchFriendStatus(Integer user1Id, Integer user2Id) {
 		//自己已加對方的可能性
 		Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
 		//對方已加自己的可能性
@@ -46,8 +46,8 @@ public class FriendService {
 		Optional<User> optional2 = userRepo.findById(user2Id);
 		User user2 = optional2.get();
 
-		// 自已加對方好友
 		if (possibility1 == null && possibility2 == null) {
+			// 自已加對方好友
 
 			FriendId friendId = new FriendId();
 			friendId.setUser1Id(user1Id);
@@ -60,17 +60,22 @@ public class FriendService {
 			friend.setStatus(false);
 
 			friendRepo.save(friend);
+			
+			return "pending_sent";
 
-			// 自己取消對對方的加好友申請
 		} else if (possibility1 != null && possibility2 == null) {
+			// 自己取消對對方的加好友申請
 
 			FriendId friendId = new FriendId();
 			friendId.setUser1Id(user1Id);
 			friendId.setUser2Id(user2Id);
 
 			friendRepo.deleteById(friendId);
-			// 自己接受對方加好友的邀請
+			
+			return "not_friend";
+			
 		} else if (possibility1 == null && possibility2 != null) {
+			// 自己接受對方加好友的邀請
 
 			possibility2.setStatus(true);
 			friendRepo.save(possibility2);
@@ -86,8 +91,10 @@ public class FriendService {
 			friend.setStatus(true);
 
 			friendRepo.save(friend);
-			// 刪除與對方的好友關係
+			
+			return "friends";
 		} else if (possibility1 != null && possibility2 != null) {
+			// 刪除與對方的好友關係
 
 			FriendId friendId1 = new FriendId();
 			friendId1.setUser1Id(user1Id);
@@ -100,17 +107,22 @@ public class FriendService {
 			friendId2.setUser2Id(user1Id);
 
 			friendRepo.deleteById(friendId2);
-
+			
+			return "not_friend";
 		}
+		
+		 return getFriendStatus(user1Id, user2Id);
 	}
 
-	public void declineRequest(Integer user1Id, Integer user2Id) {
+	public String declineRequest(Integer user1Id, Integer user2Id) {
 
 		FriendId friendId = new FriendId();
 		friendId.setUser1Id(user2Id);
 		friendId.setUser2Id(user1Id);
 
 		friendRepo.deleteById(friendId);
+		
+		return "not_friend";
 	}
 
 	public List<FriendDto> findMyFriend(Integer user1Id) {
@@ -134,7 +146,17 @@ public class FriendService {
 	}
 
 	
-	public Friend getFriendStatus(Integer user1Id, Integer user2Id) {
-        return friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
+	public String getFriendStatus(Integer user1Id, Integer user2Id) {
+         Friend possibility1 = friendRepo.findByUser1IdAndUser2Id(user1Id, user2Id);
+         Friend possibility2 = friendRepo.findByUser1IdAndUser2Id(user2Id, user1Id);
+         
+         if (possibility1 == null && possibility2 == null) {
+             return "not_friend";
+         } else if ((possibility1 != null && !possibility1.getStatus()) || 
+                    (possibility2 != null && !possibility2.getStatus())) {
+             return possibility1 != null ? "pending_sent" : "pending_received";
+         } else {
+             return "friends";
+         }
     }
 }
