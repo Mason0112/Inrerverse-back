@@ -7,7 +7,6 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.interverse.demo.annotation.NotifyFriendStatusChange;
 import com.interverse.demo.dto.FriendDto;
 import com.interverse.demo.model.Friend;
 import com.interverse.demo.model.FriendId;
