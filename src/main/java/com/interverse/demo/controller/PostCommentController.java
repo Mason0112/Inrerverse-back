@@ -7,6 +7,7 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.interverse.demo.model.PostComment;
+import com.interverse.demo.model.UserPost;
 import com.interverse.demo.service.PostCommentService;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,8 @@ public class PostCommentController {
 	
 	@PostMapping("/postComment")
 	public PostComment addComment(@RequestBody PostComment postComment) {
+		String content = postComment.getComment().replaceAll("\\r\\n|\\r|\\n", "\n");
+		postComment.setComment(content);
 		return commentService.addComment(postComment);
 	}
 	

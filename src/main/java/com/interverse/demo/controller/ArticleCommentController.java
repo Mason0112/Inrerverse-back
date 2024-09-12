@@ -27,6 +27,8 @@ public class ArticleCommentController {
 	
 	@PostMapping
 	public ResponseEntity<ArticleCommentDTO> addComment(@RequestBody ArticleCommentDTO articleDTO) {
+		String saveContent = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+		articleDTO.setContent(saveContent);
 		ArticleCommentDTO savedComment = commentService.createComment(articleDTO);
 		return new ResponseEntity<>(savedComment, HttpStatus.CREATED);
 	}

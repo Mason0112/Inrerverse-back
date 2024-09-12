@@ -39,7 +39,9 @@ public class ClubArticleController {
     @PostMapping
     public ResponseEntity<?> addArticle(@RequestBody ClubArticleDTO articleDTO) {
         try {
-            ClubArticleDTO savedArticle = articleService.createArticle(articleDTO);
+        	String saveContent = articleDTO.getContent().replaceAll("\\r\\n|\\r|\\n", "\n");
+        	articleDTO.setContent(saveContent);
+        	ClubArticleDTO savedArticle = articleService.createArticle(articleDTO);
             return new ResponseEntity<>(savedArticle, HttpStatus.CREATED);
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());

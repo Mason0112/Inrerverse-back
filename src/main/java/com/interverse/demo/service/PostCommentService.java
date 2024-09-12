@@ -36,7 +36,8 @@ public class PostCommentService {
 		Optional<PostComment> optional = commentRepo.findById(commentId);
 		if(optional.isPresent()) {
 			PostComment comment = optional.get();
-			return commentRepo.save(newComment);
+			comment.setComment(newComment.getComment());
+			return commentRepo.save(comment);
 		}
 		return null;
 	}
