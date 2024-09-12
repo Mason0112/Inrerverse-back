@@ -10,4 +10,13 @@ public interface ClubArticlesRepository extends JpaRepository<ClubArticle, Integ
 	
 	@Query("from ClubArticle where club.id = :id order by added desc")
 	List<ClubArticle> findAllArticleByClubId(@Param("id") Integer clubId);
+	
+	//模糊時間
+    List<ClubArticle> findByTitleContainingIgnoreCase(String title);
+    
+ // 方法 2：使用 @Query 註解
+    @Query("SELECT ca FROM ClubArticle ca WHERE LOWER(ca.title) LIKE LOWER(CONCAT('%', :title, '%'))")
+    List<ClubArticle> searchByTitleContaining(@Param("title") String title);
+
+    List<ClubArticle> findByHashtagsTag(String tag);
 }

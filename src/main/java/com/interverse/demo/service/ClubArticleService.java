@@ -5,7 +5,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,9 +15,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.interverse.demo.dto.ArticleCommentDTO;
 import com.interverse.demo.dto.ArticlePhotoDTO;
 import com.interverse.demo.dto.ClubArticleDTO;
-import com.interverse.demo.model.ArticlePhoto;
 import com.interverse.demo.model.Club;
 import com.interverse.demo.model.ClubArticle;
+import com.interverse.demo.model.ClubArticleHashtag;
+import com.interverse.demo.model.ClubArticleHashtagRepository;
 import com.interverse.demo.model.ClubArticlesRepository;
 import com.interverse.demo.model.ClubRepository;
 import com.interverse.demo.model.User;
@@ -38,23 +39,39 @@ public class ClubArticleService {
 	@Autowired
 	private UserRepository userRepo;
 	
+	@Autowired
+	private ClubArticleHashtagRepository hashtagRepo;
+	
   
 	
-    public ClubArticleDTO createArticle(ClubArticleDTO articleDTO) {
-        ClubArticle article = new ClubArticle();
-        article.setTitle(articleDTO.getTitle());
-        article.setContent(articleDTO.getContent());
-        User user = userRepo.findById(articleDTO.getUserId())
-                .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getUserId() + " 的用戶"));
-            article.setUser(user);
-            
-            Club club = clubRepo.findById(articleDTO.getClubId())
-                .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getClubId() + " 的俱樂部"));
-            article.setClub(club);
-        
-        ClubArticle savedArticle = clubArticlesRepo.save(article);
-        return ClubArticleDTO.fromEntity(savedArticle);
-    }
+	public ClubArticleDTO createArticle(ClubArticleDTO articleDTO) {
+	    ClubArticle article = new ClubArticle();
+	    article.setTitle(articleDTO.getTitle());
+	    article.setContent(articleDTO.getContent());
+	    User user = userRepo.findById(articleDTO.getUserId())
+	            .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getUserId() + " 的用戶"));
+	    article.setUser(user);
+	        
+	    Club club = clubRepo.findById(articleDTO.getClubId())
+	        .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleDTO.getClubId() + " 的俱樂部"));
+	    article.setClub(club);
+
+	    // 處理 hashtags
+	    if (articleDTO.getHashtags() != null && !articleDTO.getHashtags().isEmpty()) {
+	        for (String tag : articleDTO.getHashtags()) {
+	            ClubArticleHashtag hashtag = hashtagRepo.findByTag(tag)
+	                .orElseGet(() -> {
+	                    ClubArticleHashtag newTag = new ClubArticleHashtag();
+	                    newTag.setTag(tag);
+	                    return hashtagRepo.save(newTag);
+	                });
+	            article.addHashtag(hashtag);
+	        }
+	    }
+	    
+	    ClubArticle savedArticle = clubArticlesRepo.save(article);
+	    return ClubArticleDTO.fromEntity(savedArticle);
+	}
 	
     public ClubArticleDTO findArticleById(Integer articleId) {
         ClubArticleDTO articleDTO = clubArticlesRepo.findById(articleId)
@@ -105,5 +122,51 @@ public class ClubArticleService {
 		clubArticlesRepo.deleteById(articleId);
 	}
 	
+    public List<ClubArticleDTO> searchArticlesByTitle(String title) {
+        List<ClubArticle> articles = clubArticlesRepo.findByTitleContainingIgnoreCase(title);
+        return articles.stream()
+                .map(ClubArticleDTO::fromEntity)
+                .collect(Collectors.toList());
+    }
+    
+    
+    //hashtags
+    @Transactional
+    public ClubArticleDTO addHashtagsToArticle(Integer articleId, Set<String> hashtags) {
+        ClubArticle article = clubArticlesRepo.findById(articleId)
+            .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleId + " 的文章"));
+
+        for (String tag : hashtags) {
+            ClubArticleHashtag hashtag = hashtagRepo.findByTag(tag)
+                .orElseGet(() -> {
+                    ClubArticleHashtag newTag = new ClubArticleHashtag();
+                    newTag.setTag(tag);
+                    return hashtagRepo.save(newTag);
+                });
+            article.addHashtag(hashtag);
+        }
+
+        ClubArticle savedArticle = clubArticlesRepo.save(article);
+        return ClubArticleDTO.fromEntity(savedArticle);
+    }
+
+    @Transactional
+    public ClubArticleDTO removeHashtagsFromArticle(Integer articleId, Set<String> hashtags) {
+        ClubArticle article = clubArticlesRepo.findById(articleId)
+            .orElseThrow(() -> new IllegalArgumentException("找不到ID為 " + articleId + " 的文章"));
+
+        for (String tag : hashtags) {
+            hashtagRepo.findByTag(tag).ifPresent(article::removeHashtag);
+        }
+
+        ClubArticle savedArticle = clubArticlesRepo.save(article);
+        return ClubArticleDTO.fromEntity(savedArticle);
+    }
+    
+    public List<ClubArticleDTO> findArticlesByHashtag(String tag) {
+        return clubArticlesRepo.findByHashtagsTag(tag).stream()
+            .map(ClubArticleDTO::fromEntity)
+            .collect(Collectors.toList());
+    }
 	
 }
