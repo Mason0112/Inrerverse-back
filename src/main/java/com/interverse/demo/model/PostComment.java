@@ -32,7 +32,7 @@ public class PostComment {
 	@ManyToOne
 	@JoinColumn(name = "user_id")
     @JsonIgnoreProperties({"userPosts", "postComment","sentNotification", "receivedNotification","transaction","orders","club","event","clubPhoto","userDetail","clubArticle","accountNumber",
-    	"password","email","walletBalance","added","clubArticle","clubArticleComment"}) // 忽略不需要序列化的屬性
+    	"password","email","walletBalance","added","clubArticle","clubArticleComment", "eventPhoto"}) // 忽略不需要序列化的屬性
 	private User user;
 	
 	@Column(name = "comment")
