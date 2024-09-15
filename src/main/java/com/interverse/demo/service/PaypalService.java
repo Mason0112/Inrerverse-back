@@ -94,7 +94,7 @@ public class PaypalService {
         try {
         	
         	 Map<String, Object> experience_context = Map.of(
-                     "return_url", "http://localhost:5173/order/userOrders",
+                     "return_url", "http://localhost:5173/",
                      "cancel_url", "http://localhost:5173/product/Cart"
                   );
 
