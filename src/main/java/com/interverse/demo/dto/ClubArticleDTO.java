@@ -37,6 +37,7 @@ public class ClubArticleDTO {
         dto.setContent(entity.getContent());
         dto.setAdded(entity.getAdded());
         dto.setLikeCount(entity.getLikeCount());
+        dto.setClubId(entity.getClub().getId());
         
         // 檢查 user 是否為 null
         if (entity.getUser() != null) {
