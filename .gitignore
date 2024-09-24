@@ -61,6 +61,8 @@ buildNumber.properties
 .mvn/timing.properties
 .mvn/wrapper/maven-wrapper.jar
 
+application.properties
+
 ##############################
 ## Gradle
 ##############################
