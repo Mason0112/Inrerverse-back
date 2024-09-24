@@ -21,7 +21,7 @@ public class JwtUtil {
 	private long expiration;
 	
 	// JWT Encrypted with a Password
-	Password password = Keys.password("edawizF0cyw1KWcZHzcwzDFvQYOpy0vSw4obselq89Y=".toCharArray());
+	Password password = Keys.password(secret.toCharArray());
 
 	// Choose the desired PBES2 key derivation algorithm:
 	KeyAlgorithm<Password, Password> alg = Jwts.KEY.PBES2_HS512_A256KW;
@@ -33,7 +33,7 @@ public class JwtUtil {
 		return Jwts.builder()
 				.subject(loggedInUserData)
 				.issuedAt(new Date())
-				.expiration(new Date(System.currentTimeMillis() + 86400000))
+				.expiration(new Date(System.currentTimeMillis() + expiration))
 				.encryptWith(password, alg, enc)
 				.compact();
 	}

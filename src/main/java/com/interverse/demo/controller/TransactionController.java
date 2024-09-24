@@ -23,9 +23,6 @@ import com.stripe.exception.StripeException;
 import com.stripe.model.Charge;
 import com.stripe.param.ChargeCreateParams;
 
-import lombok.Getter;
-import lombok.Setter;
-
 @RestController
 @RequestMapping("/transaction")
 public class TransactionController {
@@ -102,11 +99,4 @@ public class TransactionController {
         }
     }
 
-}
-
-@Getter
-@Setter
-class TransactionUpdateRequest {
-    private String transactionNo;
-    private Integer userId;
 }
