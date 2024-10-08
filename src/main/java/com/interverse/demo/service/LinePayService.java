@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.digest.HmacAlgorithms;
 import org.apache.commons.codec.digest.HmacUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -33,6 +34,11 @@ public class LinePayService{
 	private PostApiUtil postApiUtil;
 	@Autowired
 	private ProductRepository pRepository;
+	
+	@Value("${linepay.secretKey}")
+	String channelSecret;
+	
+	String channelId = "2005966585";
 	
 	
 	public static String encrypt(final String keys, final String data) {
@@ -103,9 +109,7 @@ public class LinePayService{
 		ObjectMapper mapper = new ObjectMapper();
 		
 		LinePayDTO linePayDTO = new LinePayDTO();
-		
-		String channelId = "2005966585";
-		String channelSecret = "6ae54e020168ccb8f6af8f34e21e2efe";
+			
 		String requestUri = "/v3/payments/request";
 		String requestHttpUri = "https://sandbox-api-pay.line.me/v3/payments/request";
 		String nonce = UUID.randomUUID().toString();

@@ -4,6 +4,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
@@ -21,10 +22,23 @@ import com.interverse.demo.dto.PaypalUrlDTO;
 @Service
 public class PaypalService {
 	
-	String clientId = "ATHTvA6shc6QEv8hx_c9BP_VrRzCIx0PzbBLHVbtu7d5l_3q_7GyjZ-Zve1AeRzmTqT7N01URj0EjSK7";
-    String clientSecret = "EAmCFzhc0B8NlDZnjsqY8IQdwXfkAAUNTVS4qFAvPHPmwmaA8xJyBNPFJF9cfERnO6ZYzBeQxNkzdIgg";
+	//不要在service中new一個新的自己來操作別的方法 會導致properties沒有辦法讀取到
 	
+	String clientSecret;	
+	String clientId;
     String atoken ;
+    
+    
+    
+    private final ObjectMapper objectMapper;
+    
+    public PaypalService(@Value("${paypal.client-secret}") String clientSecret,
+            			@Value("${paypal.client-id}") String clientId,
+            			ObjectMapper objectMapper) {
+				    		this.clientSecret = clientSecret;
+				    		this.clientId = clientId;
+				    		this.objectMapper = objectMapper;
+    }
     
     
     public static PaypalUrlDTO extractUrls(String jsonResponse) {
@@ -53,10 +67,10 @@ public class PaypalService {
     }
     
 	
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    
 
     public PaypalDTO getToken() {
-        String response = getTokenResponse();
+        String response = this.getTokenResponse();
         try {
             return objectMapper.readValue(response, PaypalDTO.class);
         } catch (Exception e) {
@@ -67,6 +81,7 @@ public class PaypalService {
 	
 	public String  getTokenResponse() {
 		String auth = clientId + ":" + clientSecret;
+		System.out.println(auth);
         String encodedAuth = Base64.getEncoder().encodeToString(auth.getBytes());
 
         RestClient restClient = RestClient.create();
@@ -123,8 +138,7 @@ public class PaypalService {
                 
             );
             
-            PaypalService paypalService = new PaypalService();
-    		PaypalDTO token = paypalService.getToken();
+    		PaypalDTO token = this.getToken();
     		String Access_token = "Bearer " +token.getAccess_token();
 
             String jsonBody = objectMapper.writeValueAsString(requestBody);
@@ -139,7 +153,7 @@ public class PaypalService {
                 .retrieve()
                 .body(String.class);
             
-            PaypalUrlDTO urls = paypalService.extractUrls(response);
+            PaypalUrlDTO urls = this.extractUrls(response);
             
             
             return urls;
@@ -156,8 +170,7 @@ public class PaypalService {
 		
 		RestClient restClient = RestClient.create();
 		
-		PaypalService paypalService = new PaypalService();
-		PaypalDTO token = paypalService.getToken();
+		PaypalDTO token = this.getToken();
 		String Access_token = "Bearer " +token.getAccess_token();
 		
 		String response = restClient.get()
